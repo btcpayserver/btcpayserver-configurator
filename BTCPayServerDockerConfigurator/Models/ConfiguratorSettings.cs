@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -110,7 +109,7 @@ namespace BTCPayServerDockerConfigurator.Models
 
         private string GetAbstractedPackageManager()
         {
-            return $"#!/bin/bash{Environment.NewLine}declare -A osInfo;{Environment.NewLine}osInfo[/etc/debian_version]=\"apt-get install -y\"{Environment.NewLine}osInfo[/etc/alpine-release]=\"apk --update add\"{Environment.NewLine}osInfo[/etc/centos-release]=\"yum install -y\"{Environment.NewLine}osInfo[/etc/fedora-release]=\"dnf install -y\"{Environment.NewLine}{Environment.NewLine}for f in ${!osInfo[@]}{Environment.NewLine}do{Environment.NewLine}    if [[ -f $f ]];then{Environment.NewLine}        package_manager=${osInfo[$f]}{Environment.NewLine}    fi{Environment.NewLine}done";
+            return "package_manager=\"apt-get install -y\"";
         }
 
         private string InstallPackage(string package)
