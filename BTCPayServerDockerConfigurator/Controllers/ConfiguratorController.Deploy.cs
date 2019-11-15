@@ -23,7 +23,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 {
                     Additional = new DeployAdditionalData()
                     {
-                        Bash = oneliner.Replace("\n", "")
+                        Bash = bash
                     },
                     Json = model.ToString(),
                     Settings = model
@@ -63,7 +63,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 {
                     Additional = new DeployAdditionalData()
                     {
-                        Bash = oneliner,
+                        Bash = bash,
                         Error = result.Error,
                         Output = result.Output,
                         ExitStatus = result.ExitStatus
@@ -79,7 +79,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 {
                     Additional = new DeployAdditionalData()
                     {
-                        Bash = oneliner,
+                        Bash = bash,
                         Error = e.Message
                     },
                     Json = model.ToString(),
