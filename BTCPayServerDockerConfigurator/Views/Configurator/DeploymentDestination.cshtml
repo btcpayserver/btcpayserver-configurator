@@ -1,5 +1,6 @@
 @{
     ViewData["Title"] = "What BTCPay Server are you configuring?";
+    ViewData["CurrentStep"] = 1;
 }
 @model UpdateSettings<DeploymentSettings, DeploymentAdditionalData>;
 <form class="container" method="post" asp-action="DeploymentDestination">

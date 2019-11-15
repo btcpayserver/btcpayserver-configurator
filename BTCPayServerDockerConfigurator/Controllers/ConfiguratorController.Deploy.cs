@@ -14,7 +14,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             var model = GetConfiguratorSettings();
             var bash = model.ConstructBashFile(null);
             var oneliner = bash
-                .Replace("\r\n", "\n")
+                .Replace(Environment.NewLine, "\n")
                 .Replace("\n", " &&\n");
 
             if (model.DeploymentSettings.DeploymentType == DeploymentType.Manual)
@@ -23,7 +23,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 {
                     Additional = new DeployAdditionalData()
                     {
-                        Bash = oneliner
+                        Bash = oneliner.Replace("\n", "")
                     },
                     Json = model.ToString(),
                     Settings = model
@@ -54,21 +54,38 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 throw new Exception("lolita bonita");
             }
 
-            var connection = await ssh.ConnectAsync();
-            var result = await connection.RunBash(oneliner);
-            return View(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
+            try
             {
-                Additional = new DeployAdditionalData()
-                {
-                    Bash = oneliner,
-                    Error = result.Error,
-                    Output = result.Output,
-                    ExitStatus = result.ExitStatus
-                },
-                Json = model.ToString(),
-                Settings = model
-            });
 
+                var connection = await ssh.ConnectAsync();
+                var result = await connection.RunBash(oneliner);
+                return View(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
+                {
+                    Additional = new DeployAdditionalData()
+                    {
+                        Bash = oneliner,
+                        Error = result.Error,
+                        Output = result.Output,
+                        ExitStatus = result.ExitStatus
+                    },
+                    Json = model.ToString(),
+                    Settings = model
+                });
+
+            }
+            catch (Exception e)
+            {
+                return View(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
+                {
+                    Additional = new DeployAdditionalData()
+                    {
+                        Bash = oneliner,
+                        Error = e.Message
+                    },
+                    Json = model.ToString(),
+                    Settings = model
+                });
+            }
 
         }
     }

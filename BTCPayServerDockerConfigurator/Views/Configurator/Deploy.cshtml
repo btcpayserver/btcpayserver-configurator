@@ -1,7 +1,22 @@
 @model UpdateSettings<ConfiguratorSettings, BTCPayServerDockerConfigurator.Controllers.DeployAdditionalData>
+<div class="container">
 
+    <div class="row mb-4">
+        <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
+            <div class="card-body">
+                @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
+                {
+                    var withoutbash = Model.Additional;
+                    withoutbash.Bash = null;
+                    <code>@Json.Serialize(withoutbash)</code>
+                }
 
+                <code>
+                    @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
+                </code>
 
-<code>
-    @Json.Serialize(Model.Additional)
-</code>
+            </div>
+
+        </div>
+    </div>
+</div>

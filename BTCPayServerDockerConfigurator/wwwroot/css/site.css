@@ -159,4 +159,40 @@ label{
     -ms-transition: all 1s ease;
     transition: all 1s ease;
 }
+
+
+.wizard {
+    margin-top: 20px;
+}
+
+.wizard .nav{
+    position: relative;
+    z-index:1
+}
+
+.wizard > div.wizard-inner {
+    position: relative;
+    
+}
+
+.connecting-line {
+    height: 2px;
+    background: var(--light);
+    position: absolute;
+    width: 85%;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    top: 25%;
+    z-index: 1;
+}
+
+.btn-circle {
+    width: 45px;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    padding: 0;
+    border-radius: 50%;
+}
 /**/

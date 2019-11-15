@@ -1,4 +1,8 @@
-@{ ViewData["Title"] = "Does this look right to you?"; } 
+@{
+    ViewData["Title"] = "Does this look right to you?";
+    ViewData["CurrentStep"] = 7;
+} 
+
 @model UpdateSettings<ConfiguratorSettings, AdditionalDataStub>;
     <div class="container">
         <input type="hidden" asp-for="Json" />

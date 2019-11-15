@@ -5,9 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BTCPayServerDockerConfigurator.Models;
-using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.Extensions.Options;
-using Renci.SshNet;
 using Options = BTCPayServerDockerConfigurator.Models.Options;
 
 namespace BTCPayServerDockerConfigurator.Controllers

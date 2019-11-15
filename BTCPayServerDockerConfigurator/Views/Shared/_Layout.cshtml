@@ -6,11 +6,119 @@
     <title>@ViewData["Title"] - BTCPayServer Docker Configurator</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
     <link rel="stylesheet" href="~/css/site.css"/>
+
+    @functions{
+
+        string GetClass(int step)
+        {
+            var currentStep = 0;
+            if (ViewData.TryGetValue("CurrentStep", out var currstep))
+            {
+                currentStep = (int) currstep;
+            }
+
+            if (currentStep == step)
+            {
+                return "btn-primary";
+            }
+            else if (currentStep > step)
+            {
+                return "btn-success";
+            }
+            return "btn-secondary btn-disabled";
+        }
+
+    }
+
 </head>
 <body class="bg-light">
 <header class="bg-dark mb-md-4">
-    <div class="container p-md-5 text-white">
+    <div class="container p-md-2 text-white">
         <h1 class="text-center w-100">BTCPay Server Configurator</h1>
+        <div class="wizard">
+            <div class="wizard-inner">
+                <div class="connecting-line d-none d-md-block"></div>
+                <ul class="nav nav-fill w-100">
+                    <li class="nav-item active">
+                        @if (GetClass(1).Contains("btn-disabled"))
+                        {
+                            <button type="button" class="btn btn-circle @GetClass(1)">1</button>
+                        }
+                        else
+                        {
+                            <a asp-action="DeploymentDestination" type="button" class="btn btn-circle @GetClass(1)">1</a>
+                        }
+                        <p>Destination</p>
+                    </li>
+                    <li class="nav-item">
+                        @if (GetClass(2).Contains("btn-disabled"))
+                        {
+                            <button type="button" class="btn btn-circle @GetClass(2)">2</button>
+                        }
+                        else
+                        {
+                            <a asp-action="DomainSettings" type="button" class="btn btn-circle @GetClass(2)">2</a>
+                        }
+                        <p>Domain</p>
+                    </li>
+                    <li class="nav-item">
+                        @if (GetClass(3).Contains("btn-disabled"))
+                        {
+                            <button type="button" class="btn btn-circle @GetClass(3)">3</button>
+                        }
+                        else
+                        {
+                            <a asp-action="ChainSettings" type="button" class="btn btn-circle @GetClass(3)">3</a>
+                        }
+                        <p>Chain</p>
+                    </li>
+                    <li class="nav-item">
+                        @if (GetClass(4).Contains("btn-disabled"))
+                        {
+                            <button type="button" class="btn btn-circle @GetClass(4)">4</button>
+                        }
+                        else
+                        {
+                            <a asp-action="LightningSettings" type="button" class="btn btn-circle @GetClass(4)">4</a>
+                        }
+                        <p>Lightning</p>
+                    </li>
+                    <li class="nav-item">
+                        @if (GetClass(5).Contains("btn-disabled"))
+                        {
+                            <button type="button" class="btn btn-circle @GetClass(5)">5</button>
+                        }
+                        else
+                        {
+                            <a asp-action="AdditionalServices" type="button" class="btn btn-circle @GetClass(5)">5</a>
+                        }
+                        <p>Additional</p>
+                    </li>
+                    <li class="nav-item">
+                        @if (GetClass(6).Contains("btn-disabled"))
+                        {
+                            <button type="button" class="btn btn-circle @GetClass(6)">6</button>
+                        }
+                        else
+                        {
+                            <a asp-action="AdvancedSettings" type="button" class="btn btn-circle @GetClass(6)">6</a>
+                        }
+                        <p>Advanced</p>
+                    </li>
+                    <li class="nav-item">
+                        @if (GetClass(7).Contains("btn-disabled"))
+                        {
+                            <button type="button" class="btn btn-circle @GetClass(7)">7</button>
+                        }
+                        else
+                        {
+                            <a asp-action="Summary" type="button" class="btn btn-circle @GetClass(7)">7</a>
+                        }
+                        <p>Summary</p>
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </header>
 <div class="container">
