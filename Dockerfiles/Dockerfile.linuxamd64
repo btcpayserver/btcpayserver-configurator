@@ -5,21 +5,18 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/core/sdk:3.0-alpine AS build
 WORKDIR /src
-COPY ["BtcTransmuter/BtcTransmuter.csproj", "BtcTransmuter/"]
-RUN dotnet restore "BtcTransmuter/BtcTransmuter.csproj"
+COPY ["BTCPayServerDockerConfigurator/BTCPayServerDockerConfigurator.csproj", "BTCPayServerDockerConfigurator/"]
+RUN dotnet restore "BTCPayServerDockerConfigurator/BTCPayServerDockerConfigurator.csproj"
 COPY . .
-WORKDIR "/src/BtcTransmuter"
-RUN dotnet build "BtcTransmuter.csproj" -c Release -o /app
+WORKDIR "/src/BTCPayServerDockerConfigurator"
+RUN dotnet build "BTCPayServerDockerConfigurator.csproj" -c Release -o /app
 
 FROM build AS publish
-RUN dotnet publish "BtcTransmuter.csproj" -c Release -o /app
+RUN dotnet publish "BTCPayServerDockerConfigurator.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
 
-ENV TRANSMUTER_Database="Data Source=data/btctransmuter.db;"
-ENV TRANSMUTER_DatabaseType="sqlite"
-ENV TRANSMUTER_DataProtectionDir="data"
 
-ENTRYPOINT ["dotnet", "BtcTransmuter.dll"]
+ENTRYPOINT ["dotnet", "BTCPayServerDockerConfigurator.dll"]
