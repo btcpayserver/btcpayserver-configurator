@@ -6,17 +6,30 @@
             <div class="card-body">
                 @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
                 {
-                    var withoutbash = Model.Additional;
-                    withoutbash.Bash = null;
-                    <code>@Json.Serialize(withoutbash)</code>
+                    <code>@Json.Serialize(new
+                          {
+                              Model.Additional.Error,
+                              Model.Additional.Output,
+                              Model.Additional.ExitStatus
+                          })</code>
                 }
 
-                <code>
-                    @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
-                </code>
 
             </div>
 
         </div>
     </div>
+    
+     <div class="row mb-4">
+            <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
+                <div class="card-body">
+                    
+                    <code>
+                        @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
+                    </code>
+    
+                </div>
+    
+            </div>
+        </div>
 </div>
