@@ -1,0 +1,117 @@
+@{
+    ViewData["Title"] = "How do your want your nodes?";
+}
+@model UpdateSettings<ChainSettings, AdditionalDataStub>;
+<form class="container" method="post" asp-action="ChainSettings">
+    @* <div asp-validation-summary="All" class="text-danger"></div> *@
+    <input type="hidden" asp-for="Json"/>
+    <div class="row mb-md-4">
+        <h2 class=" text-center w-100">@ViewData["Title"]</h2>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6 col-sm-12 offset-md-3">
+            <label class="card-input-element-label">
+                <input type="checkbox" asp-for="Settings.Bitcoin" class="card-input-element d-none"/>
+                <div class="card shadow-sm w-100">
+                    <div class="card-img-top bg-light" style="position:relative; background-image: url(assets/Bitcoin.svg); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card-body">
+                        <h3 class="card-title text-center">Bitcoin</h3>
+                        <p class="card-text">A full Bitcoin node will de deployed alongside BTCPay in order to validate your incoming transactions without third parties.</p>
+                        <span asp-validation-for="Settings.Bitcoin" class="text-danger"></span>
+                    </div>
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
+            <div class="card-body">
+                <div class="form-group">
+                    <label asp-for="Settings.Network"></label>
+                    <select class="form-control" asp-for="Settings.Network">
+                        <option value="@NetworkType.Mainnet">Mainnet</option>
+                        <option value="@NetworkType.Testnet">Testnet</option>
+                        <option value="@NetworkType.Regtest">Regtest</option>
+                    </select>
+                    <span asp-validation-for="Settings.Network" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="Settings.PruneMode"></label>
+                    <select class="form-control" asp-for="Settings.PruneMode">
+                        <option value="@PruneMode.NoPruning">@EnumTextHelper.PruneMode[PruneMode.NoPruning]</option>
+                        <option value="@PruneMode.Minimal">@EnumTextHelper.PruneMode[PruneMode.Minimal]</option>
+                        <option value="@PruneMode.Small">@EnumTextHelper.PruneMode[PruneMode.Small]</option>
+                        <option value="@PruneMode.ExtraSmall">@EnumTextHelper.PruneMode[PruneMode.ExtraSmall]</option>
+                        <option value="@PruneMode.ExtraExtraSmall">@EnumTextHelper.PruneMode[PruneMode.ExtraExtraSmall]</option>
+                    </select>
+                    <small class="text-muted">Bitcoin uses up quite a bit of data. Fortunately, there is pruning mode which lets you operate uyour full node while only keeping a certain amount of the latest blocks.</small>
+                    <span asp-validation-for="Settings.PruneMode" class="text-danger"></span>
+                </div>
+
+            </div>
+
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6 col-sm-12 offset-md-3 @(Model.Settings.AltChains.Any() ? "card shadow-sm pt-4" : string.Empty)">
+            <ul class="list-group list-group-flush" style="list-style-type: none">
+                @for (var index = 0; index < Model.Settings.AltChains.Count; index++)
+                {
+                    <li class="list-group-item justify-content-between align-items-center">
+                        <div class="form-group">
+                            <div class="input-group mb-3">
+                                <input class="form-control" asp-for="Settings.AltChains[index]" placeholder="Crypto Code">
+                                <div class="input-group-append">
+                                    <button type="submit" name="command" value="@($"remove-chain:{index}")" class="btn btn-outline-secondary">Remove</button>
+                                </div>
+                            </div>
+                            <span asp-validation-for="Settings.AltChains[index]" class="text-danger"></span>
+                        </div>
+                    </li>
+                }
+                <li class="list-group-item-action text-center">
+                    <button name="command" value="add-chain" class="btn btn-link text-black-50">Add an altcoin</button>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 col-sm-12 offset-md-3 text-center">
+            <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade" id="warningModal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">⚠ Lightning is not supported with this level of pruning.</h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+        var warningToggled = false;
+        $(document).ready(function() {
+            var select = $("#Settings_PruneMode");
+            select.on("change input", function(){ toggleWarning(select)});
+        });
+        
+        function toggleWarning(select){
+             var pruning = select.val();
+             if(pruning === "@PruneMode.ExtraExtraSmall"){
+                 $("#warningModal").modal("show");
+             }
+        }
+    </script>
+}

@@ -1,0 +1,102 @@
+@{
+    ViewData["Title"] = "What BTCPay Server are you configuring?";
+}
+@model UpdateSettings<DeploymentSettings, DeploymentAdditionalData>;
+<form class="container" method="post" asp-action="DeploymentDestination">
+    @* <div asp-validation-summary="All" class="text-danger"></div> *@
+    <input type="hidden" asp-for="Json"/>
+    <div class="row mb-md-4">
+        <h2 class=" text-center w-100">@ViewData["Title"]</h2>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label class="card-input-element-label">
+                <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.ThisMachine" class="card-input-element d-none"/>
+                <div class="card shadow-sm  w-100">
+                    <div class="card-img-top bg-light" style="background-image: url(assets/machine.svg); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card-body">
+                        <h3 class="card-title text-center">This machine</h3>
+                        <p class="card-text text-center">
+                            We'll configure BTCPay on the current machine
+                            <br/><br/><br/>
+                        </p>
+                    </div>
+                </div>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label class="card-input-element-label">
+                <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.RemoteMachine" class="card-input-element d-none"/>
+                <div class="card shadow-sm w-100">
+                    <div class="card-img-top bg-light" style="position:relative; background-image: url(assets/remote.svg); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card-body">
+                        <h3 class="card-title text-center">A remote machine</h3>
+                        <p class="card-text">A remote machine that you can provide the SSH connectivity details to so that the configurator automagically sets it up for you</p>
+                    </div>
+                </div>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label class="card-input-element-label">
+                <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.Manual" class="card-input-element d-none"/>
+                <div class="card shadow-sm w-100 ">
+                    <div class="card-img-top bg-light" style="position:relative; background-image: url(assets/shell.png); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card-body">
+                        <h3 class="card-title text-center">Manual</h3>
+                        <p class="card-text">We'll generate a bash script that you run on the server without ever providing us access.<br/><br/></p>
+
+                    </div>
+                </div>
+            </label>
+        </div>
+        <span asp-validation-for="Settings.DeploymentType" class="text-danger w-100 text-center"></span>
+    </div>
+    <div class="row mb-4" style="display: none" id="remote-machine-form">
+        <div class="col-md-6 col-sm-12 offset-md-3 ">
+            <div class="card shadow-sm ">
+                <h3 class="card-title text-center pt-2">Remote Machine SSH Details</h3>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label asp-for="Settings.Host"></label>
+                        <input class="form-control" asp-for="Settings.Host">
+                        <span asp-validation-for="Settings.Host" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Settings.Username"></label>
+                        <input class="form-control" asp-for="Settings.Username">
+                        <span asp-validation-for="Settings.Username" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Settings.Password">Password</label>
+                        <input type="password" class="form-control" asp-for="Settings.Password" placeholder="Password">
+                        <span asp-validation-for="Settings.Password" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row w-100">
+        <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
+    </div>
+</form>
+
+@section Scripts
+{
+    <script>
+    $(document).ready(function() {
+        toggleForm();
+      $("label").on("click", toggleForm);
+    });
+    
+    function toggleForm(){
+         var selectedDeploymentType = $('input[name=Settings\\.DeploymentType]:checked').val();
+               if(selectedDeploymentType === "@nameof(DeploymentType.RemoteMachine)"){
+                   $("#remote-machine-form").show();
+               }else{
+                    $("#remote-machine-form").hide();
+               }
+    }
+    </script>
+}

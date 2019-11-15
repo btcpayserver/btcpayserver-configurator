@@ -1,0 +1,71 @@
+@{
+    ViewData["Title"] = "Lightning Configuration";
+}
+@model UpdateSettings<LightningSettings, AdditionalDataStub>;
+<form class="container" method="post">
+    <input type="hidden" asp-for="Json"/>
+    <div class="row mb-md-4">
+        <h2 class=" text-center w-100">@ViewData["Title"]</h2>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <label class="card-input-element-label">
+                <input type="radio" asp-for="Settings.Implementation" value="lnd" class="card-input-element d-none"/>
+                <div class="card shadow-sm  w-100">
+                    <div class="card-img-top bg-light" style="background-image: url(assets/lnd.png); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card-body">
+                        <h3 class="card-title text-center">LND</h3>
+                        <p class="card-text text-center">
+                            by Lightning Labs
+                            <br/><br/>
+                        </p>
+                    </div>
+                </div>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label class="card-input-element-label">
+                <input type="radio" asp-for="Settings.Implementation" value="eclair" class="card-input-element d-none"/>
+                <div class="card shadow-sm w-100">
+                    <div class="card-img-top bg-light" style="position:relative; background-image: url(assets/eclair.svg); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card-body">
+                        <h3 class="card-title text-center">Eclair</h3>
+                        <p class="card-text text-center">by ACINQ<br/><br/></p>
+                    </div>
+                </div>
+            </label>
+        </div>
+        <div class="col-md-4">
+            <label class="card-input-element-label">
+                <input type="radio" asp-for="Settings.Implementation" value="clightning" class="card-input-element d-none"/>
+                <div class="card dark shadow-sm w-100 ">
+                    <div class="card-img-top bg-dark" style="position:relative; background-image: url(assets/clightning.png); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card-body">
+                        <h3 class="card-title text-center">CLightning</h3>
+                        <p class="card-text text-center">By Blockstream<br/><br/></p>
+
+                    </div>
+                </div>
+            </label>
+        </div>
+        <div class="col-md-4 offset-md-4">
+            <label class="card-input-element-label">
+                <input type="radio" asp-for="Settings.Implementation" value="" class="card-input-element d-none" />
+                <div class="card dark shadow-sm w-100 ">
+                    <div class="card-img-top bg-dark" style="position:relative; background-image: url(assets/sad.svg); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card-body">
+                        <h3 class="card-title text-center">None</h3>
+                        <p class="card-text text-center">You're missing out.<br/><br/></p>
+
+                    </div>
+                </div>
+            </label>
+        </div>
+        <span asp-validation-for="Settings.Implementation" class="text-danger w-100 text-center"></span>
+    </div>
+
+
+    <div class="row w-100">
+        <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
+    </div>
+</form>

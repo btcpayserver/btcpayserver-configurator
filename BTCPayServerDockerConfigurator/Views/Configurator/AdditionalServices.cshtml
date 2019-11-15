@@ -1,0 +1,57 @@
+@{
+    ViewData["Title"] = "How about some extra icing on top?";
+}
+@model UpdateSettings<AdditionalServices, AdditionalDataStub>;
+<form class="container" method="post" asp-action="AdditionalServices">
+    @* <div asp-validation-summary="All" class="text-danger"></div> *@
+    <input type="hidden" asp-for="Json"/>
+    <div class="row mb-md-4">
+        <h2 class=" text-center w-100">@ViewData["Title"]</h2>
+    </div>
+    
+    <partial for="Settings.TorRelaySettings" name="Additional/TorRelaySettings"/>
+    <partial for="Settings.BTCTransmuterSettings" name="Additional/BTCTransmuterSettings"/>
+    <partial for="Settings.LibrePatronSettings" name="Additional/LibrePatronSettings"/>
+    <partial for="Settings.WooCommerceSettings" name="Additional/WooCommerceSettings"/>
+    <div class="row w-100">
+        <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
+    </div>
+</form>
+
+
+@section Scripts
+{
+    <script>
+    
+         $(document).ready(function(){
+            var torBody = $("#tor-relay-body");
+            var torInput = $("#Settings_TorRelaySettings_Enabled");
+            toggle(torInput, torBody);
+            torInput.on("change input", function(){ toggle(torInput, torBody)});
+            
+            var transmuterBody = $("#transmuter-body");
+            var transmuterInput = $("#Settings_BTCTransmuterSettings_Enabled");
+            toggle(transmuterInput, transmuterBody);
+            transmuterInput.on("change input", function(){ toggle(transmuterInput, transmuterBody)});
+            
+            var librepatronBody = $("#librepatron-body");
+            var librepatronInput = $("#Settings_LibrePatronSettings_Enabled");
+            toggle(librepatronInput, librepatronBody);
+            librepatronInput.on("change input", function(){ toggle(librepatronInput, librepatronBody)}); 
+            
+            var woocommerceBody = $("#woocommerce-body");
+            var woocommerceInput = $("#Settings_WooCommerceSettings_Enabled");
+            toggle(woocommerceInput, woocommerceBody);
+            woocommerceInput.on("change input", function(){ toggle(woocommerceInput, woocommerceBody)});            
+         });
+        
+         function toggle(input, el){
+            if(input.prop('checked')){              
+                el.show();
+            }else{
+                  el.hide();
+            }
+         }
+    
+    </script>
+}

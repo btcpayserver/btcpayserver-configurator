@@ -1,0 +1,72 @@
+@{
+    ViewData["Title"] = "How will you be accessing your BTCPay Server?";
+}
+@model UpdateSettings<DomainSettings, AdditionalDataStub>;
+<form class="container" method="post" asp-action="DomainSettings">
+    @* <div asp-validation-summary="All" class="text-danger"></div> *@
+    <input type="hidden" asp-for="Json"/>
+    <div class="row mb-md-4">
+        <h2 class=" text-center w-100">@ViewData["Title"]</h2>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6 col-sm-12 offset-md-3 ">
+            <div class="card shadow-sm ">
+                <div class="card-body">
+                    <div class="form-group">
+                        <label asp-for="Settings.Domain"></label>
+                        <input class="form-control" asp-for="Settings.Domain">
+                        <small class="text-muted">If you don't have a domain to use, you'll still be able to access BTCPay and other related services via TOR. <a href="https://docs.btcpayserver.org/features/dynamicdns" target="_blank">There's also built-in support for dynamic DNS providers.</a></small>
+                        <span asp-validation-for="Settings.Domain" class="text-danger"></span>
+                    </div>
+
+                    <ul class="list-group list-group-flush" style="list-style-type: none">
+                        @for (var index = 0; index < Model.Settings.AdditionalDomains.Count; index++)
+                        {
+                            <li class="list-group-item justify-content-between align-items-center">
+                                <div class="form-group">
+                                    <label asp-for="Settings.AdditionalDomains[index]"></label>
+                                    <div class="input-group mb-3">
+
+                                        <input class="form-control" asp-for="Settings.AdditionalDomains[index]">
+                                        <div class="input-group-append">
+                                            <button type="submit" name="command" value="@($"remove-domain:{index}")" class="btn btn-outline-secondary">Remove</button>
+                                        </div>
+                                    </div>
+                                    <span asp-validation-for="Settings.AdditionalDomains[index]" class="text-danger"></span>
+                                </div>
+                            </li>
+                        }
+                        <li class="list-group-item-action text-center" style="visibility: hidden" id="btn-additional-domain">
+                            <button name="command" value="add-domain" class="btn btn-sm">Add an additional domain</button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="row w-100">
+        <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
+    </div>
+</form>
+
+@section Scripts
+{
+    <script>
+    $(document).ready(function() {
+        var btn = $("#btn-additional-domain");
+        var input = $("#Settings_Domain");
+        toggleBtn(btn, input);
+        input.on("change input", function(){ toggleBtn(btn, input)});
+    });
+    
+    function toggleBtn(btn,input){
+        if(input.val()){
+            btn.css("visibility", "visible");
+        }else{
+            btn.css("visibility", "hidden");
+        }
+    }
+    </script>
+}
