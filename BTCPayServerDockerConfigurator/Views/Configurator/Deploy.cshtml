@@ -16,8 +16,13 @@
                         })</code>
 
                 </div>
+               
 
             </div>
+             @if (Model.Additional.ExitStatus != 0)
+                            {
+                                <form class="card-footer" asp-action="Deploy"><button type="submit" class="btn-primary btn-primary">Retry</button></form>
+                            }
         </div>
     }
     <div class="row mb-4">

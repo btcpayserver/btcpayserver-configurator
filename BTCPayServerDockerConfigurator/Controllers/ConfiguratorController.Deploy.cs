@@ -1,5 +1,4 @@
 using System;
-using System.ComponentModel;
 using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -15,7 +14,8 @@ namespace BTCPayServerDockerConfigurator.Controllers
             var bash = model.ConstructBashFile(null);
             var oneliner = bash
                 .Replace(Environment.NewLine, "\n")
-                .Replace("\n", " &&\n");
+                .Replace("\n", " && \n")
+                .TrimEnd(" && \n", StringComparison.InvariantCultureIgnoreCase);
 
             if (model.DeploymentSettings.DeploymentType == DeploymentType.Manual)
             {
@@ -58,7 +58,9 @@ namespace BTCPayServerDockerConfigurator.Controllers
             {
 
                 var connection = await ssh.ConnectAsync();
-                var result = await connection.RunBash(oneliner);
+                
+                var result = await connection.RunBash(oneliner.Replace("\n", ""));
+                
                 return View(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
                 {
                     Additional = new DeployAdditionalData()

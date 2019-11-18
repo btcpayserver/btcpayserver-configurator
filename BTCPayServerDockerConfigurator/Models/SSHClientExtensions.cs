@@ -1,6 +1,8 @@
 using System;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Components;
 using Renci.SshNet;
 
 namespace BTCPayServerDockerConfigurator.Models
@@ -50,10 +52,10 @@ namespace BTCPayServerDockerConfigurator.Models
 
         public static async Task<string> GetEnvVar(this SshClient sshClient, string name, TimeSpan? timeout = null)
         {
-            var result =  await sshClient.RunBash($"echo \"{name}\"", timeout);
+            var result =  await sshClient.RunBash($"echo \"${name}\"", timeout);
             if (string.IsNullOrEmpty(result.Error) && result.ExitStatus == 0)
             {
-                return result.Output;
+                return result.Output.Replace("\n", "").Replace(Environment.NewLine, "").Trim();
             }
 
             return "";
@@ -71,12 +73,16 @@ namespace BTCPayServerDockerConfigurator.Models
             if (timeout is TimeSpan v)
                 sshCommand.CommandTimeout = v;
             var tcs = new TaskCompletionSource<SSHCommandResult>(TaskCreationOptions.RunContinuationsAsynchronously);
-            new Thread(() =>
+            
+            
+            new Thread(async () =>
                 {
-                    sshCommand.BeginExecute(ar =>
+                    
+                    var asyncResult  = sshCommand.BeginExecute(ar =>
                     {
                         try
                         {
+                            
                             sshCommand.EndExecute(ar);
                             tcs.TrySetResult(CreateSSHCommandResult(sshCommand));
                         }
@@ -90,9 +96,12 @@ namespace BTCPayServerDockerConfigurator.Models
                         }
                     });
                 })
-                { IsBackground = true }.Start();
+                { IsBackground = false }.Start();
             return tcs.Task;
         }
+
+        
+        
 
         private static SSHCommandResult CreateSSHCommandResult(SshCommand sshCommand)
         {
@@ -134,6 +143,16 @@ namespace BTCPayServerDockerConfigurator.Models
             public int ExitStatus { get; internal set; }
             public string Output { get; internal set; }
             public string Error { get; internal set; }
+        }
+        
+        public static string TrimEnd(this string input, string suffixToRemove,
+            StringComparison comparisonType) {
+
+            if (input != null && suffixToRemove != null
+                              && input.EndsWith(suffixToRemove, comparisonType)) {
+                return input.Substring(0, input.Length - suffixToRemove.Length);
+            }
+            else return input;
         }
     }
 }
