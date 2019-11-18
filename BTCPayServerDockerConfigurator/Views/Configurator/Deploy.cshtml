@@ -1,4 +1,8 @@
 @model UpdateSettings<ConfiguratorSettings, BTCPayServerDockerConfigurator.Controllers.DeployAdditionalData>
+@{
+    ViewData["Title"] = "Deploying your BTCPay Server!";
+    ViewData["CurrentStep"] = 8;
+}
 <div class="container">
     @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
     {
@@ -6,23 +10,21 @@
             <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
                 <h3 class="card-title">Response</h3>
                 <div class="card-body">
-
                     <code>
-                        @Json.Serialize(new
-                        {
-                            Model.Additional.Error,
-                            Model.Additional.Output,
-                            Model.Additional.ExitStatus
-                        })</code>
-
+                        @Html.Raw(Model.Additional.Output.Replace("\n", "<br/>"))
+                    </code>
+                    <code>
+                        @Html.Raw(Model.Additional.Error.Replace("\n", "<br/>"))
+                    </code>
                 </div>
-               
-
+                @if (Model.Additional.ExitStatus != 0)
+                {
+                    <form class="card-footer" asp-action="Deploy">
+                        <button type="submit" class="btn-primary btn-primary">Retry</button>
+                    </form>
+                }
             </div>
-             @if (Model.Additional.ExitStatus != 0)
-                            {
-                                <form class="card-footer" asp-action="Deploy"><button type="submit" class="btn-primary btn-primary">Retry</button></form>
-                            }
+
         </div>
     }
     <div class="row mb-4">
@@ -37,7 +39,7 @@
             }
             <div class="card-body">
 
-                <code> 
+                <code>
                     @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
                 </code>
 
