@@ -1,35 +1,43 @@
 @model UpdateSettings<ConfiguratorSettings, BTCPayServerDockerConfigurator.Controllers.DeployAdditionalData>
 <div class="container">
+    @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
+    {
+        <div class="row mb-4">
+            <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
+                <h3 class="card-title">Response</h3>
+                <div class="card-body">
 
+                    <code>
+                        @Json.Serialize(new
+                        {
+                            Model.Additional.Error,
+                            Model.Additional.Output,
+                            Model.Additional.ExitStatus
+                        })</code>
+
+                </div>
+
+            </div>
+        </div>
+    }
     <div class="row mb-4">
         <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
+            @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
+            {
+                <h3 class="card-title">Executed commands</h3>
+            }
+            else
+            {
+                <h3 class="card-title">Copy these commands to your terminal</h3>
+            }
             <div class="card-body">
-                @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
-                {
-                    <code>@Json.Serialize(new
-                          {
-                              Model.Additional.Error,
-                              Model.Additional.Output,
-                              Model.Additional.ExitStatus
-                          })</code>
-                }
 
+                <code>
+                    @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
+                </code>
 
             </div>
 
         </div>
     </div>
-    
-     <div class="row mb-4">
-            <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
-                <div class="card-body">
-                    
-                    <code>
-                        @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
-                    </code>
-    
-                </div>
-    
-            </div>
-        </div>
 </div>
