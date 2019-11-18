@@ -91,5 +91,6 @@ namespace BTCPayServerDockerConfigurator.Controllers
             return Dns.GetHostAddresses(host).ToList().Any(address =>
                 address.ToString().Equals(hostToCheckAgainst, StringComparison.InvariantCultureIgnoreCase));
         }
+        
     }
 }

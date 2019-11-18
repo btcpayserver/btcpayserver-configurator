@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Models;
@@ -67,10 +69,19 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 return View(updateSettings);
             }
 
-            var configuratorSettings = string.IsNullOrEmpty(updateSettings.Json)
-                ? new ConfiguratorSettings()
-                : JsonSerializer.Deserialize<ConfiguratorSettings>(updateSettings.Json);
-            configuratorSettings.DeploymentSettings = updateSettings.Settings;
+            ConfiguratorSettings configuratorSettings;
+            if (updateSettings.Settings.DeploymentType != DeploymentType.Manual)
+            {
+                configuratorSettings = await LoadSettingsThroughSSH(updateSettings.Settings);
+            }
+            else
+            {
+                configuratorSettings = string.IsNullOrEmpty(updateSettings.Json)
+                    ? new ConfiguratorSettings()
+                    : JsonSerializer.Deserialize<ConfiguratorSettings>(updateSettings.Json);
+                configuratorSettings.DeploymentSettings = updateSettings.Settings;
+            }
+
             SetConfiguratorSettings(configuratorSettings);
             return RedirectToAction(nameof(DomainSettings));
         }
@@ -108,5 +119,153 @@ namespace BTCPayServerDockerConfigurator.Controllers
             additionalData.AvailableDeploymentTypes.Add(DeploymentType.Manual);
             return additionalData;
         }
+
+        public async Task<ConfiguratorSettings> LoadSettingsThroughSSH(DeploymentSettings settings)
+        {
+            SSHSettings sshSettings = null;
+            var result = new ConfiguratorSettings()
+            {
+                DeploymentSettings = settings
+            };
+            switch (settings.DeploymentType)
+            {
+                case DeploymentType.RemoteMachine when ModelState.IsValid:
+                {
+                    sshSettings = new SSHSettings()
+                    {
+                        Password = settings.Password,
+                        Server = settings.Host,
+                        Username = settings.Username
+                    };
+
+                    break;
+                }
+                case DeploymentType.ThisMachine when ModelState.IsValid:
+                {
+                    sshSettings =  _options.Value.ParseSSHConfiguration();
+
+                    break;
+                }
+            }
+            using(var ssh = await sshSettings.ConnectAsync())
+            {
+                result.AdvancedSettings ??= new AdvancedSettings();
+
+                var branch =
+                    ssh.RunCommand(
+                        "[ -d \"/btcpayserver-docker/\" ] && cd btcpayserver-docker && git branch | grep \\* | cut -d ' ' -f2");
+                if (branch.ExitStatus == 0)
+                {
+                    result.AdvancedSettings.BTCPayDockerBranch = branch.Result;
+                }
+                var repo =
+                    ssh.RunCommand(
+                        "[ -d \"/btcpayserver-docker/\" ] && cd btcpayserver-docker && ls-remote --get-url");
+                if (branch.ExitStatus == 0)
+                {
+                    result.AdvancedSettings.BTCPayDockerRepository = repo.Result;
+                }
+                result.AdvancedSettings.CustomBTCPayImage = await ssh.GetEnvVar("BTCPAY_IMAGE");
+                result.AdvancedSettings.AdditionalFragments = (await ssh.GetEnvVar("BTCPAYGEN_ADDITIONAL_FRAGMENTS"))
+                    .Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
+                result.AdvancedSettings.ExcludedFragments = (await ssh.GetEnvVar("BTCPAYGEN_EXCLUDE_FRAGMENTS"))
+                    .Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
+                
+
+                
+                result.AdditionalServices ??= new AdditionalServices();
+                if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-librepatron"))
+                {
+                    result.AdvancedSettings.AdditionalFragments.Remove("opt-add-librepatron");
+                    result.AdditionalServices.LibrePatronSettings.Enabled = true;
+                    result.AdditionalServices.LibrePatronSettings.Host = await ssh.GetEnvVar("LIBREPATRON_HOST");
+                }
+                
+                if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-woocommerce"))
+                {
+                    result.AdvancedSettings.AdditionalFragments.Remove("opt-add-woocommerce");
+                    result.AdditionalServices.WooCommerceSettings.Enabled = true;
+                    result.AdditionalServices.WooCommerceSettings.Host = await ssh.GetEnvVar("WOOCOMMERCE_HOST");
+                }
+                if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-btctransmuter"))
+                {
+                    result.AdvancedSettings.AdditionalFragments.Remove("opt-add-btctransmuter");
+                    result.AdditionalServices.BTCTransmuterSettings.Enabled = true;
+                    result.AdditionalServices.BTCTransmuterSettings.Host = await ssh.GetEnvVar("BTCTRANSMUTER_HOST");
+                }
+                if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-tor-relay"))
+                {
+                    result.AdvancedSettings.AdditionalFragments.Remove("opt-add-tor-relay");
+                    result.AdditionalServices.TorRelaySettings.Enabled = true;
+                    result.AdditionalServices.TorRelaySettings.Nickname =  await ssh.GetEnvVar("TOR_RELAY_NICKNAME");
+                    result.AdditionalServices.TorRelaySettings.Email =  await ssh.GetEnvVar("TOR_RELAY_EMAIL");
+                }
+                
+                result.LightningSettings ??= new LightningSettings();
+                result.LightningSettings.Implementation  = await ssh.GetEnvVar("BTCPAYGEN_LIGHTNING");
+                result.LightningSettings.Alias  = await ssh.GetEnvVar("LIGHTNING_ALIAS");
+                
+                var index = 1;
+                result.ChainSettings ??= new ChainSettings();
+                while (true)
+                {
+                    var chain = await ssh.GetEnvVar($"BTCPAYGEN_CRYPTO{index}");
+                    if (string.IsNullOrEmpty(chain))
+                    {
+                        break;
+                    }
+
+                    if (chain.Equals("btc", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        result.ChainSettings.Bitcoin = true;
+                    }
+                    else
+                    {
+                        result.ChainSettings.AltChains.Add(chain);
+                    }
+                    index++;
+                }
+
+                var matching = result.AdvancedSettings.AdditionalFragments.FirstOrDefault(s => s.StartsWith("opt-save-storage"));
+                if (string.IsNullOrEmpty(matching))
+                {
+                    result.ChainSettings.PruneMode = PruneMode.NoPruning;
+                }
+                else
+                {
+                    result.AdvancedSettings.AdditionalFragments.Remove(matching);
+                    switch (matching.Replace("opt-save-storage-", ""))
+                    {
+                        case "":
+                            result.ChainSettings.PruneMode = PruneMode.Minimal;
+                            break;
+                        case "s":
+                            result.ChainSettings.PruneMode = PruneMode.Small;
+                            break;
+                        case "xs":
+                            result.ChainSettings.PruneMode = PruneMode.ExtraSmall;
+                            break;
+                        case "xxs":
+                            result.ChainSettings.PruneMode = PruneMode.ExtraExtraSmall;
+                            break;
+                    }
+                }
+
+                if (Enum.TryParse<NetworkType>(await ssh.GetEnvVar("NBITCOIN_NETWORK"), true, out var networkType))
+                {
+                    result.ChainSettings.Network = networkType;
+                }
+
+                result.DomainSettings ??= new DomainSettings();
+                result.DomainSettings.Domain = await ssh.GetEnvVar("BTCPAY_HOST");
+                result.DomainSettings.AdditionalDomains =(await ssh.GetEnvVar("BTCPAY_ADDITIONAL_HOSTS"))
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
+            }
+
+            return result;
+
+        }
+       
+        
     }
 }
