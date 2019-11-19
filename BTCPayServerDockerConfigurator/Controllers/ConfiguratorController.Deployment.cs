@@ -151,19 +151,19 @@ namespace BTCPayServerDockerConfigurator.Controllers
             {
                 result.AdvancedSettings ??= new AdvancedSettings();
 
-                var branch =
-                    ssh.RunCommand(
+                var branch = await
+                    ssh.RunBash(
                         "[ -d \"/btcpayserver-docker/\" ] && cd btcpayserver-docker && git branch | grep \\* | cut -d ' ' -f2");
                 if (branch.ExitStatus == 0)
                 {
-                    result.AdvancedSettings.BTCPayDockerBranch = branch.Result;
+                    result.AdvancedSettings.BTCPayDockerBranch = branch.Output;
                 }
-                var repo =
-                    ssh.RunCommand(
+                var repo =await
+                    ssh.RunBash(
                         "[ -d \"/btcpayserver-docker/\" ] && cd btcpayserver-docker && ls-remote --get-url");
                 if (branch.ExitStatus == 0)
                 {
-                    result.AdvancedSettings.BTCPayDockerRepository = repo.Result;
+                    result.AdvancedSettings.BTCPayDockerRepository = repo.Output;
                 }
                 result.AdvancedSettings.CustomBTCPayImage = await ssh.GetEnvVar("BTCPAY_IMAGE");
                 result.AdvancedSettings.AdditionalFragments = (await ssh.GetEnvVar("BTCPAYGEN_ADDITIONAL_FRAGMENTS"))

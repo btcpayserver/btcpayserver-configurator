@@ -75,26 +75,33 @@ namespace BTCPayServerDockerConfigurator.Models
             var tcs = new TaskCompletionSource<SSHCommandResult>(TaskCreationOptions.RunContinuationsAsynchronously);
             
             
-            new Thread(async () =>
+            new Thread(() =>
                 {
-                    
-                    var asyncResult  = sshCommand.BeginExecute(ar =>
+                    try
                     {
-                        try
+                        sshCommand.BeginExecute(ar =>
                         {
-                            
-                            sshCommand.EndExecute(ar);
-                            tcs.TrySetResult(CreateSSHCommandResult(sshCommand));
-                        }
-                        catch (Exception ex)
-                        {
-                            tcs.TrySetException(ex);
-                        }
-                        finally
-                        {
-                            sshCommand.Dispose();
-                        }
-                    });
+                            try
+                            {
+
+                                sshCommand.EndExecute(ar);
+                                tcs.TrySetResult(CreateSSHCommandResult(sshCommand));
+                            }
+                            catch (Exception ex)
+                            {
+                                tcs.TrySetException(ex);
+                            }
+                            finally
+                            {
+                                sshCommand.Dispose();
+                            }
+                        });
+
+                    }
+                    catch (Exception ex)
+                    {
+                        tcs.TrySetException(ex);
+                    }
                 })
                 { IsBackground = false }.Start();
             return tcs.Task;
