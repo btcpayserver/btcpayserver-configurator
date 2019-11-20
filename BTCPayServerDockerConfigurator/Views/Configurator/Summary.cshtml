@@ -293,10 +293,10 @@ else
     $(document).ready(function(){
         $("form").on("submit", function(){
             $("#deploying-modal").modal("show");
-            window.onbeforeunload = confirmExit;
-                function confirmExit() {
-                    return "You have attempted to leave this page. The BTCPay deployment has already started and will keep on executing even if you do close this page.";
-                }
+            // window.onbeforeunload = confirmExit;
+            //     function confirmExit() {
+            //         return "You have attempted to leave this page. The BTCPay deployment has already started and will keep on executing even if you do close this page.";
+            //     }
         })
     })
     </script>

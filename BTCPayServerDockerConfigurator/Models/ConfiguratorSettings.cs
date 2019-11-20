@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -80,6 +81,26 @@ namespace BTCPayServerDockerConfigurator.Models
             {
                 result.AppendLine($"export BTCPAYGEN_CRYPTO{index}=\"{chainSettingsAltChain}\"");
                 index++;
+            }
+
+            switch (ChainSettings.PruneMode)
+            {
+                case PruneMode.NoPruning:
+                    break;
+                case PruneMode.Minimal:
+                    additionalFragments.Add("opt-save-storage");
+                    break;
+                case PruneMode.Small:
+                    additionalFragments.Add("opt-save-storage-s");
+                    break;
+                case PruneMode.ExtraSmall:
+                    additionalFragments.Add("opt-save-storage-xs");
+                    break;
+                case PruneMode.ExtraExtraSmall:
+                    additionalFragments.Add("opt-save-storage-xxs");
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
             
             result.AppendLine($"export BTCPAY_ENABLE_SSH=true");

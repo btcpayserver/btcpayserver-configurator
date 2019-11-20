@@ -277,18 +277,18 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 else
                 {
                     result.AdvancedSettings.AdditionalFragments.Remove(matching);
-                    switch (matching.Replace("opt-save-storage-", ""))
+                    switch (matching.Replace("opt-save-storage", ""))
                     {
                         case "":
                             result.ChainSettings.PruneMode = PruneMode.Minimal;
                             break;
-                        case "s":
+                        case "-s":
                             result.ChainSettings.PruneMode = PruneMode.Small;
                             break;
-                        case "xs":
+                        case "-xs":
                             result.ChainSettings.PruneMode = PruneMode.ExtraSmall;
                             break;
-                        case "xxs":
+                        case "-xxs":
                             result.ChainSettings.PruneMode = PruneMode.ExtraExtraSmall;
                             break;
                     }
