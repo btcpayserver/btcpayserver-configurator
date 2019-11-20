@@ -1,215 +1,221 @@
 @{
     ViewData["Title"] = "Does this look right to you?";
     ViewData["CurrentStep"] = 7;
-} 
+}
 
 @model UpdateSettings<ConfiguratorSettings, AdditionalDataStub>;
-    <div class="container">
-        <input type="hidden" asp-for="Json" />
-        <div class="row mb-md-4">
-            <h2 class=" text-center w-100">@ViewData["Title"]</h2>
+<div class="container">
+<input type="hidden" asp-for="Json"/>
+<div class="row mb-md-4">
+    <h2 class=" text-center w-100">@ViewData["Title"]</h2>
+</div>
+
+<div class="row mb-4">
+<div class="col-md-6 col-sm-12 offset-md-3 ">
+<div class="card shadow-sm ">
+<table class="table">
+<thead>
+<tr>
+    <th colspan="2">
+        <div class="d-flex justify-content-between">
+            <h3 class="mb-0 pb-0">Deployment</h3>
+            <a asp-action="DeploymentDestination">Edit</a>
         </div>
+    </th>
+</tr>
+</thead>
 
-        <div class="row mb-4">
-            <div class="col-md-6 col-sm-12 offset-md-3 ">
-                <div class="card shadow-sm ">
-                    <table class="table">
-                        <thead>
-                            <tr>
-                                <th colspan="2">
-                                    <div class="d-flex justify-content-between">
-                                        <h3 class="mb-0 pb-0">Deployment</h3>
-                                        <a asp-action="DeploymentDestination">Edit</a>
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
+<tr>
+    <td>Destination</td>
+    <td>@Model.Settings.DeploymentSettings.DeploymentType</td>
+</tr>
+@if (Model.Settings.DeploymentSettings.DeploymentType == DeploymentType.RemoteMachine)
+{
+    <tr>
+        <td>Machine Host</td>
+        <td>@Model.Settings.DeploymentSettings.Host</td>
+    </tr>
+    <tr>
+        <td>Machine User</td>
+        <td>@Model.Settings.DeploymentSettings.Username</td>
+    </tr>
+}
 
-                        <tr>
-                            <td>Destination</td>
-                            <td>@Model.Settings.DeploymentSettings.DeploymentType</td>
-                        </tr>
-                        @if (Model.Settings.DeploymentSettings.DeploymentType == DeploymentType.RemoteMachine) {
-                        <tr>
-                            <td>Machine Host</td>
-                            <td>@Model.Settings.DeploymentSettings.Host</td>
-                        </tr>
-                        <tr>
-                            <td>Machine User</td>
-                            <td>@Model.Settings.DeploymentSettings.Username</td>
-                        </tr>
-                        }
+<thead>
+<tr>
+    <th colspan="2">
+        <div class="d-flex justify-content-between">
+            <h3 class="mb-0 pb-0">Domain</h3>
+            <a asp-action="DomainSettings">Edit</a>
+        </div>
+    </th>
+</tr>
+</thead>
 
-                        <thead>
-                            <tr>
-                                <th colspan="2">
-                                    <div class="d-flex justify-content-between">
-                                        <h3 class="mb-0 pb-0">Domain</h3>
-                                        <a asp-action="DomainSettings">Edit</a>
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
+<tr>
+    <td>Primary domain</td>
+    <td>@(string.IsNullOrEmpty(Model.Settings.DomainSettings.Domain) ? "Not set" : Model.Settings.DomainSettings.Domain)</td>
+</tr>
+<tr>
+    <td>Additional domains</td>
+    <td>@(Model.Settings.DomainSettings.AdditionalDomains.Any() ? string.Join(',', Model.Settings.DomainSettings.AdditionalDomains) : "None")</td>
+</tr>
+<thead>
+<tr>
+    <th colspan="2">
+        <div class="d-flex justify-content-between">
+            <h3 class="mb-0 pb-0">Chain</h3>
+            <a asp-action="ChainSettings">Edit</a>
+        </div>
+    </th>
+</tr>
+</thead>
 
-                        <tr>
-                            <td>Primary domain</td>
-                            <td>@(string.IsNullOrEmpty(Model.Settings.DomainSettings.Domain) ? "Not set" : Model.Settings.DomainSettings.Domain)</td>
-                        </tr>
-                        <tr>
-                            <td>Additional domains</td>
-                            <td>@(Model.Settings.DomainSettings.AdditionalDomains.Any() ? string.Join(',', Model.Settings.DomainSettings.AdditionalDomains) : "None")</td>
-                        </tr>
-                        <thead>
-                            <tr>
-                                <th colspan="2">
-                                    <div class="d-flex justify-content-between">
-                                        <h3 class="mb-0 pb-0">Chain</h3>
-                                        <a asp-action="ChainSettings">Edit</a>
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
+<tr>
+    <td>Bitcoin</td>
+    <td>@(Model.Settings.ChainSettings.Bitcoin ? "Enabled" : "Not enabled")</td>
+</tr>
+<tr>
+    <td>Network</td>
+    <td>
+        @Model.Settings.ChainSettings.Network.ToString()
+    </td>
+</tr>
+@if (Model.Settings.ChainSettings.AltChains.Any())
+{
+    <tr>
+        <td>Altcoins</td>
+        <td>@string.Join(',', Model.Settings.ChainSettings.AltChains)</td>
+    </tr>
+}
+<tr>
+    <td>Pruning</td>
+    <td>
+        @EnumTextHelper.PruneMode[Model.Settings.ChainSettings.PruneMode]
+    </td>
+</tr>
 
-                    <tr>
-                        <td>Bitcoin</td>
-                        <td>@(Model.Settings.ChainSettings.Bitcoin ? "Enabled" :  "Not enabled")</td>
-                    </tr>
-                    <tr>
-                                                <td>Network</td>
-                                                <td>
-                                                    @Model.Settings.ChainSettings.Network.ToString()
-                                                </td>
-                                            </tr>
-                        @if (Model.Settings.ChainSettings.AltChains.Any()) {
-                        <tr>
-                            <td>Altcoins</td>
-                            <td>@string.Join(',', Model.Settings.ChainSettings.AltChains)</td>
-                        </tr>
-                        }
-                        <tr>
-                            <td>Pruning</td>
-                            <td>
-                                @EnumTextHelper.PruneMode[Model.Settings.ChainSettings.PruneMode]
-                            </td>
-                        </tr>
+<thead>
+<tr>
+    <th colspan="2">
+        <div class="d-flex justify-content-between">
+            <h3 class="mb-0 pb-0">Lightning</h3>
+            <a asp-action="LightningSettings">Edit</a>
+        </div>
+    </th>
+</tr>
+</thead>
 
-                        <thead>
-                            <tr>
-                                <th colspan="2">
-                                    <div class="d-flex justify-content-between">
-                                        <h3 class="mb-0 pb-0">Lightning</h3>
-                                        <a asp-action="LightningSettings">Edit</a>
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
+<tr>
+    <td>Lightning</td>
+    <td>@(string.IsNullOrEmpty(Model.Settings.LightningSettings.Implementation) ? "Not enabled" : Model.Settings.LightningSettings.Implementation)</td>
+</tr>
+<thead>
+<tr>
+    <th colspan="2">
+        <div class="d-flex justify-content-between">
+            <h3 class="mb-0 pb-0">Additional Services</h3>
+            <a asp-action="AdditionalServices">Edit</a>
+        </div>
+    </th>
+</tr>
+</thead>
 
-                        <tr>
-                            <td>Lightning</td>
-                            <td>@(string.IsNullOrEmpty(Model.Settings.LightningSettings.Implementation) ? "Not enabled" : Model.Settings.LightningSettings.Implementation)</td>
-                        </tr>
-                        <thead>
-                            <tr>
-                                <th colspan="2">
-                                    <div class="d-flex justify-content-between">
-                                        <h3 class="mb-0 pb-0">Additional Services</h3>
-                                        <a asp-action="AdditionalServices">Edit</a>
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
+<tr>
+    <td>
+        BTC Transmuter
+    </td>
+    <td>
+        @(Model.Settings.AdditionalServices.BTCTransmuterSettings.Enabled ? "Enabled" : "Not enabled")
+    </td>
+</tr>
+@if (Model.Settings.AdditionalServices.BTCTransmuterSettings.Enabled)
+{
+    <tr>
+        <td>
+            BTC Transmuter Host
+        </td>
+        <td>
+            @Model.Settings.AdditionalServices.BTCTransmuterSettings.Host
+        </td>
+    </tr>
+}
+<tr>
+    <td>
+        Libre Patron
+    </td>
+    <td>
+        @(Model.Settings.AdditionalServices.LibrePatronSettings.Enabled ? "Enabled" : "Not enabled")
+    </td>
+</tr>
+@if (Model.Settings.AdditionalServices.LibrePatronSettings.Enabled)
+{
+    <tr>
+        <td>
+            Libre Patron Host
+        </td>
+        <td>
+            @Model.Settings.AdditionalServices.LibrePatronSettings.Host
+        </td>
+    </tr>
+}
+<tr>
+    <td>
+        WooCommerce
+    </td>
+    <td>
+        @(Model.Settings.AdditionalServices.WooCommerceSettings.Enabled ? "Enabled" : "Not enabled")
+    </td>
+</tr>
+@if (Model.Settings.AdditionalServices.WooCommerceSettings.Enabled)
+{
+    <tr>
+        <td>
+            WooCommerce Host
+        </td>
+        <td>
+            @Model.Settings.AdditionalServices.WooCommerceSettings.Host
+        </td>
+    </tr>
+}
+<tr>
+    <td>
+        Tor Relay
+    </td>
+    <td>
+        @(Model.Settings.AdditionalServices.TorRelaySettings.Enabled ? "Enabled" : "Not enabled")
+    </td>
+</tr>
+@if (Model.Settings.AdditionalServices.TorRelaySettings.Enabled)
+{
+    <tr>
+        <td>
+            Tor Relay nickname
+        </td>
+        <td>
+            @Model.Settings.AdditionalServices.TorRelaySettings.Nickname
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Tor Relay contact email
+        </td>
+        <td>
+            @Model.Settings.AdditionalServices.TorRelaySettings.Email
+        </td>
+    </tr>
+}
 
-                        <tr>
-                            <td>
-                                BTC Transmuter
-                            </td>
-                            <td>
-                                @(Model.Settings.AdditionalServices.BTCTransmuterSettings.Enabled ? "Enabled" : "Not enabled")
-                            </td>
-                        </tr>
-                        @if (Model.Settings.AdditionalServices.BTCTransmuterSettings.Enabled) {
-                        <tr>
-                            <td>
-                                BTC Transmuter Host
-                            </td>
-                            <td>
-                                @Model.Settings.AdditionalServices.BTCTransmuterSettings.Host
-                            </td>
-                        </tr>
-                        }
-                        <tr>
-                            <td>
-                                Libre Patron
-                            </td>
-                            <td>
-                                @(Model.Settings.AdditionalServices.LibrePatronSettings.Enabled ? "Enabled" : "Not enabled")
-                            </td>
-                        </tr>
-                        @if (Model.Settings.AdditionalServices.LibrePatronSettings.Enabled) {
-                        <tr>
-                            <td>
-                                Libre Patron Host
-                            </td>
-                            <td>
-                                @Model.Settings.AdditionalServices.LibrePatronSettings.Host
-                            </td>
-                        </tr>
-                        }
-                        <tr>
-                            <td>
-                                WooCommerce
-                            </td>
-                            <td>
-                                @(Model.Settings.AdditionalServices.WooCommerceSettings.Enabled ? "Enabled" : "Not enabled")
-                            </td>
-                        </tr>
-                        @if (Model.Settings.AdditionalServices.WooCommerceSettings.Enabled) {
-                        <tr>
-                            <td>
-                                WooCommerce Host
-                            </td>
-                            <td>
-                                @Model.Settings.AdditionalServices.WooCommerceSettings.Host
-                            </td>
-                        </tr>
-                        }
-                        <tr>
-                            <td>
-                                Tor Relay
-                            </td>
-                            <td>
-                                @(Model.Settings.AdditionalServices.TorRelaySettings.Enabled ? "Enabled" : "Not enabled")
-                            </td>
-                        </tr>
-                        @if (Model.Settings.AdditionalServices.TorRelaySettings.Enabled) {
-                        <tr>
-                            <td>
-                                Tor Relay nickname
-                            </td>
-                            <td>
-                                @Model.Settings.AdditionalServices.TorRelaySettings.Nickname
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Tor Relay contact email
-                            </td>
-                            <td>
-                                @Model.Settings.AdditionalServices.TorRelaySettings.Email
-                            </td>
-                        </tr>
-                        }
-
-                        <thead>
-                            <tr>
-                                <th colspan="2">
-                                    <div class="d-flex justify-content-between">
-                                        <h3 class="mb-0 pb-0">Advanced</h3>
-                                        <a asp-action="AdvancedSettings">Edit</a>
-                                    </div>
-                                </th>
-                            </tr>
-                        </thead>
+<thead>
+<tr>
+    <th colspan="2">
+        <div class="d-flex justify-content-between">
+            <h3 class="mb-0 pb-0">Advanced</h3>
+            <a asp-action="AdvancedSettings">Edit</a>
+        </div>
+    </th>
+</tr>
+</thead>
 @if (Model.Settings.AdvancedSettings.AnythingSet())
 {
     <tr>
@@ -241,20 +247,59 @@
 }
 else
 {
-    <tr><td colspan="2">No advanced settings configured</td></tr>
+    <tr>
+        <td colspan="2">No advanced settings configured</td>
+    </tr>
 }
-                       
-                    </table>
-                </div>
 
-            </div>
-        </div>
+</table>
+</div>
 
-        <form method="post" asp-action="Deploy" class="row w-100">
-            <input type="hidden" asp-for="Json" />
+</div>
+</div>
 
-            <button type="submit" class="m-auto btn btn-primary btn-lg p-0 border-0 overflow-hidden justdoitbutton bg-transparent">
-                <img src="assets/doit.gif" height="100" />
-            </button>
-        </form>
-    </div>
+<form method="post" asp-action="Deploy" class="row w-100">
+    <input type="hidden" asp-for="Json"/>
+
+    <button type="submit" class="m-auto btn btn-primary btn-lg p-0 border-0 overflow-hidden justdoitbutton bg-transparent">
+        <img src="assets/doit.gif" height="100"/>
+    </button>
+</form>
+</div>
+
+@if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
+{
+    
+    
+   <div class="modal" tabindex="-1" role="dialog" id="deploying-modal" data-keyboard="false" data-backdrop="static">
+     <div class="modal-dialog" role="document">
+       <div class="modal-content">
+         <div class="modal-header">
+           <h5 class="modal-title">Deploying BTCPay Server</h5>
+         </div>
+         <div class="modal-body">
+             <p>We're sending the commands to the server and executing. This could take a few minutes!</p>
+             <div class="progress">
+                       <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                     </div>
+         </div>
+       </div>
+     </div>
+   </div> 
+
+@section Scripts
+{
+    <script>
+    $(document).ready(function(){
+        $("form").on("submit", function(){
+            $("#deploying-modal").modal("show");
+            window.onbeforeunload = confirmExit;
+                function confirmExit() {
+                    return "You have attempted to leave this page. The BTCPay deployment has already started and will keep on executing even if you do close this page.";
+                }
+        })
+    })
+    </script>
+}
+
+}
