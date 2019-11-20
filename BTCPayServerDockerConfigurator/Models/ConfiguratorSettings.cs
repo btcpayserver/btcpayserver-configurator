@@ -21,7 +21,7 @@ namespace BTCPayServerDockerConfigurator.Models
         public string ConstructBashFile(string downloadLink)
         {
             var result = new StringBuilder();
-            result.AppendLine(SSHClientExtensions.LoginAsRoot());
+//            result.AppendLine(SSHClientExtensions.LoginAsRoot());
             result.AppendLine(GetAbstractedPackageManager());
             result.AppendLine(InstallPackage("git wget"));
             DownloadFile(downloadLink);
@@ -31,7 +31,19 @@ namespace BTCPayServerDockerConfigurator.Models
             var gitBranch = string.IsNullOrEmpty(AdvancedSettings.BTCPayDockerBranch)
                 ? "master" : AdvancedSettings.BTCPayDockerBranch;
 
-            result.AppendLine($"git clone -b {gitBranch} {gitRepo}");
+
+//            result.AppendLine(
+//                "if [ -d \"btcpayserver-docker\" ]; then export export EXISTING_BRANCH=`echo $(git -C \"btcpayserver-docker\" branch | grep \\* | cut -d \" \"  -f2)`  fi");
+//            result.AppendLine(  "if [ -d \"btcpayserver-docker\" ]; then export export EXISTING_REMOTE=`echo $(git -C \"btcpayserver-docker\" ls-remote --get-url)`  fi");
+//
+//            result.AppendLine($"if [\"$EXISTING_REMOTE\" != \"{gitRepo}\"] then git -C \"btcpayserver-docker\" remote add btcpay {gitRepo};  fi");
+            result.AppendLine(
+                $"if [ -d \"btcpayserver-docker\" ] && [ \"$EXISTING_BRANCH\" != \"{gitBranch}\" ] && [ \"$EXISTING_REMOTE\" != \"{gitBranch}\" ]; then echo \"existing btcpayserver-docker folder found that did not match our specified fork. Moving.\"; mv \"btcpayserver-docker\" \"btcpayserver-docker_$(date +%s)\"; fi");
+            
+            result.AppendLine(
+                $"if [ -d \"btcpayserver-docker\" ] && [ \"$EXISTING_BRANCH\" == \"{gitBranch}\" ] && [ \"$EXISTING_REMOTE\" == \"{gitBranch}\" ]; then echo \"existing btcpayserver-docker folder found, pulling instead of cloning.\"; git pull; fi");
+            result.AppendLine(
+                $"if [ ! -d \"btcpayserver-docker\" ]; then echo \"cloning btcpayserver-docker\"; git clone -b {gitBranch} {gitRepo} btcpayserver-docker; fi");
             result.AppendLine($"cd btcpayserver-docker");
             if (!string.IsNullOrEmpty(AdvancedSettings.CustomBTCPayImage))
             {
@@ -103,7 +115,7 @@ namespace BTCPayServerDockerConfigurator.Models
                 result.AppendLine($"export BTCPAYGEN_EXCLUDE_FRAGMENTS=\"{string.Join(';', excludedFragments)}\"");
             }
 
-            result.AppendLine(". ./btcpay.setup -i");
+            result.AppendLine(". ./btcpay-setup.sh -i");
             return result.ToString();
         }
 

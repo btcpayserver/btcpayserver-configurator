@@ -150,7 +150,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             using(var ssh = await sshSettings.ConnectAsync())
             {
                 result.AdvancedSettings ??= new AdvancedSettings();
-                await ssh.RunBash(SSHClientExtensions.LoginAsRoot());
+//                await ssh.RunBash(SSHClientExtensions.LoginAsRoot());
                 
                 var branch = await
                     ssh.RunBash(

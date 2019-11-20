@@ -62,11 +62,11 @@ namespace BTCPayServerDockerConfigurator.Models
 
         }
 
-        public static string LoginAsRoot(string rootPassword = null)
-        {
-            var command =  (string.IsNullOrEmpty(rootPassword)?string.Empty: $"echo {rootPassword} | ") +  "sudo su -;";
-            return $"if [ \"$EUID\" -ne 0 ] then {command} fi";
-        }
+//        public static string LoginAsRoot(string rootPassword = null)
+//        {
+//            var command =  (string.IsNullOrEmpty(rootPassword)?string.Empty: $"echo {rootPassword} | ") +  "sudo su -;";
+//            return command;
+//        }
         
         public static Task<SSHCommandResult> RunBash(this SshClient sshClient, string command, TimeSpan? timeout = null)
         {
@@ -120,7 +120,7 @@ namespace BTCPayServerDockerConfigurator.Models
         {
             return new SSHCommandResult()
             {
-                Output = sshCommand.Result,
+                Output = sshCommand.Result.TrimEnd('\n'),
                 Error = sshCommand.Error,
                 ExitStatus = sshCommand.ExitStatus
             };
