@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Models;
 using Microsoft.AspNetCore.Mvc;
+using Renci.SshNet;
 
 namespace BTCPayServerDockerConfigurator.Controllers
 {
@@ -120,6 +121,16 @@ namespace BTCPayServerDockerConfigurator.Controllers
             return additionalData;
         }
 
+        private async Task<string> GetVar(Dictionary<string, string> dictionary, SshClient client, string name)
+        {
+            if (dictionary.ContainsKey(name))
+            {
+                return dictionary[name];
+            }
+
+            return await client.GetEnvVar(name);
+        }
+
         public async Task<ConfiguratorSettings> LoadSettingsThroughSSH(DeploymentSettings settings)
         {
             SSHSettings sshSettings = null;
@@ -142,16 +153,34 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 }
                 case DeploymentType.ThisMachine when ModelState.IsValid:
                 {
-                    sshSettings =  _options.Value.ParseSSHConfiguration();
+                    sshSettings = _options.Value.ParseSSHConfiguration();
 
                     break;
                 }
             }
-            using(var ssh = await sshSettings.ConnectAsync())
+
+            using (var ssh = await sshSettings.ConnectAsync())
             {
                 result.AdvancedSettings ??= new AdvancedSettings();
 //                await ssh.RunBash(SSHClientExtensions.LoginAsRoot());
-                
+
+                var x = await ssh.RunBash("cat .env");
+                Dictionary<string, string> preloadedEnvVars = new Dictionary<string, string>();
+                if (x.ExitStatus == 0)
+                {
+                    preloadedEnvVars = x.Output.Split("\n", StringSplitOptions.RemoveEmptyEntries)
+                        .Select(s => s.Split("=", StringSplitOptions.None)).ToDictionary(strings => strings[0],
+                            strings => strings.Length > 1 ? strings[1] : "");
+                }
+                x = await ssh.RunBash("cat /etc/profile.d/btcpay-env.sh");
+                if (x.ExitStatus == 0)
+                {
+                    preloadedEnvVars = x.Output.Split("\n", StringSplitOptions.RemoveEmptyEntries)
+                        .Where(s => s.Contains("=") && !s.Contains("==") && s.Contains("export"))
+                        .Select(s => s.Split("=", StringSplitOptions.None)).ToDictionary(strings => strings[0].Replace("export ", ""),
+                            strings => strings.Length > 1 ? strings[1].Trim('"') : "").Concat(preloadedEnvVars)
+                        .ToDictionary(pair => pair.Key, pair => pair.Value);
+                }
                 var branch = await
                     ssh.RunBash(
                         "if [ -d \"btcpayserver-docker\" ]; then git -C \"btcpayserver-docker\" branch | grep \\* | cut -d \" \"  -f2; fi");
@@ -159,58 +188,69 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 {
                     result.AdvancedSettings.BTCPayDockerBranch = branch.Output;
                 }
-                var repo =await
+
+                var repo = await
                     ssh.RunBash(
                         "if [ -d \"btcpayserver-docker\" ]; then git -C \"btcpayserver-docker\" ls-remote --get-url;  fi");
                 if (branch.ExitStatus == 0)
                 {
                     result.AdvancedSettings.BTCPayDockerRepository = repo.Output;
                 }
-                result.AdvancedSettings.CustomBTCPayImage = await ssh.GetEnvVar("BTCPAY_IMAGE");
-                result.AdvancedSettings.AdditionalFragments = (await ssh.GetEnvVar("BTCPAYGEN_ADDITIONAL_FRAGMENTS"))
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
-                result.AdvancedSettings.ExcludedFragments = (await ssh.GetEnvVar("BTCPAYGEN_EXCLUDE_FRAGMENTS"))
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
-                
 
-                
+
+                result.AdvancedSettings.CustomBTCPayImage = await GetVar(preloadedEnvVars, ssh, "BTCPAY_IMAGE");
+                result.AdvancedSettings.AdditionalFragments =
+                    (await GetVar(preloadedEnvVars, ssh, "BTCPAYGEN_ADDITIONAL_FRAGMENTS"))
+                    .Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
+                result.AdvancedSettings.ExcludedFragments =
+                    (await GetVar(preloadedEnvVars, ssh, "BTCPAYGEN_EXCLUDE_FRAGMENTS"))
+                    .Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
+
+
                 result.AdditionalServices ??= new AdditionalServices();
                 if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-librepatron"))
                 {
                     result.AdvancedSettings.AdditionalFragments.Remove("opt-add-librepatron");
                     result.AdditionalServices.LibrePatronSettings.Enabled = true;
-                    result.AdditionalServices.LibrePatronSettings.Host = await ssh.GetEnvVar("LIBREPATRON_HOST");
+                    result.AdditionalServices.LibrePatronSettings.Host =
+                        await GetVar(preloadedEnvVars, ssh, "LIBREPATRON_HOST");
                 }
-                
+
                 if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-woocommerce"))
                 {
                     result.AdvancedSettings.AdditionalFragments.Remove("opt-add-woocommerce");
                     result.AdditionalServices.WooCommerceSettings.Enabled = true;
-                    result.AdditionalServices.WooCommerceSettings.Host = await ssh.GetEnvVar("WOOCOMMERCE_HOST");
+                    result.AdditionalServices.WooCommerceSettings.Host =
+                        await GetVar(preloadedEnvVars, ssh, "WOOCOMMERCE_HOST");
                 }
+
                 if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-btctransmuter"))
                 {
                     result.AdvancedSettings.AdditionalFragments.Remove("opt-add-btctransmuter");
                     result.AdditionalServices.BTCTransmuterSettings.Enabled = true;
-                    result.AdditionalServices.BTCTransmuterSettings.Host = await ssh.GetEnvVar("BTCTRANSMUTER_HOST");
+                    result.AdditionalServices.BTCTransmuterSettings.Host =
+                        await GetVar(preloadedEnvVars, ssh, "BTCTRANSMUTER_HOST");
                 }
+
                 if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-tor-relay"))
                 {
                     result.AdvancedSettings.AdditionalFragments.Remove("opt-add-tor-relay");
                     result.AdditionalServices.TorRelaySettings.Enabled = true;
-                    result.AdditionalServices.TorRelaySettings.Nickname =  await ssh.GetEnvVar("TOR_RELAY_NICKNAME");
-                    result.AdditionalServices.TorRelaySettings.Email =  await ssh.GetEnvVar("TOR_RELAY_EMAIL");
+                    result.AdditionalServices.TorRelaySettings.Nickname =
+                        await GetVar(preloadedEnvVars, ssh, "TOR_RELAY_NICKNAME");
+                    result.AdditionalServices.TorRelaySettings.Email =
+                        await GetVar(preloadedEnvVars, ssh, "TOR_RELAY_EMAIL");
                 }
-                
+
                 result.LightningSettings ??= new LightningSettings();
-                result.LightningSettings.Implementation  = await ssh.GetEnvVar("BTCPAYGEN_LIGHTNING");
-                result.LightningSettings.Alias  = await ssh.GetEnvVar("LIGHTNING_ALIAS");
-                
+                result.LightningSettings.Implementation = await GetVar(preloadedEnvVars, ssh, "BTCPAYGEN_LIGHTNING");
+                result.LightningSettings.Alias = await GetVar(preloadedEnvVars, ssh, "LIGHTNING_ALIAS");
+
                 var index = 1;
                 result.ChainSettings ??= new ChainSettings();
                 while (true)
                 {
-                    var chain = await ssh.GetEnvVar($"BTCPAYGEN_CRYPTO{index}");
+                    var chain = await GetVar(preloadedEnvVars, ssh, $"BTCPAYGEN_CRYPTO{index}");
                     if (string.IsNullOrEmpty(chain))
                     {
                         break;
@@ -224,10 +264,12 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     {
                         result.ChainSettings.AltChains.Add(chain);
                     }
+
                     index++;
                 }
 
-                var matching = result.AdvancedSettings.AdditionalFragments.FirstOrDefault(s => s.StartsWith("opt-save-storage"));
+                var matching =
+                    result.AdvancedSettings.AdditionalFragments.FirstOrDefault(s => s.StartsWith("opt-save-storage"));
                 if (string.IsNullOrEmpty(matching))
                 {
                     result.ChainSettings.PruneMode = PruneMode.NoPruning;
@@ -252,21 +294,20 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     }
                 }
 
-                if (Enum.TryParse<NetworkType>(await ssh.GetEnvVar("NBITCOIN_NETWORK"), true, out var networkType))
+                if (Enum.TryParse<NetworkType>(await GetVar(preloadedEnvVars, ssh, "NBITCOIN_NETWORK"), true,
+                    out var networkType))
                 {
                     result.ChainSettings.Network = networkType;
                 }
 
                 result.DomainSettings ??= new DomainSettings();
-                result.DomainSettings.Domain = await ssh.GetEnvVar("BTCPAY_HOST");
-                result.DomainSettings.AdditionalDomains =(await ssh.GetEnvVar("BTCPAY_ADDITIONAL_HOSTS"))
+                result.DomainSettings.Domain = await GetVar(preloadedEnvVars, ssh, "BTCPAY_HOST");
+                result.DomainSettings.AdditionalDomains =
+                    (await GetVar(preloadedEnvVars, ssh, "BTCPAY_ADDITIONAL_HOSTS"))
                     .Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
             }
 
             return result;
-
         }
-       
-        
     }
 }

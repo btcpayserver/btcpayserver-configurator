@@ -50,6 +50,7 @@ namespace BTCPayServerDockerConfigurator.Models
             return command.Replace("'", "'\"'\"'", StringComparison.OrdinalIgnoreCase);
         }
 
+        
         public static async Task<string> GetEnvVar(this SshClient sshClient, string name, TimeSpan? timeout = null)
         {
             var result =  await sshClient.RunBash($"echo \"${name}\"", timeout);

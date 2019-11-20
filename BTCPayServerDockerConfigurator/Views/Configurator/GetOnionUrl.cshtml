@@ -1,0 +1,26 @@
+@model BTCPayServerDockerConfigurator.Models.SSHClientExtensions.SSHCommandResult
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+    <link rel="stylesheet" href="~/css/site.css"/>
+@{
+    Layout = null;
+}
+
+@if (Model.ExitStatus == 0)
+{
+    <div class="input-group form-group">
+        <div class="input-group-prepend">
+            <a href="@Model.Output" class="input-group-text">
+                <span class="input-group-addon"></span>
+                <img src="/assets/Onion_Color.svg" height="16">
+            </a>
+        </div>
+        <input class="form-control" onclick="this.select();" type="text" style="font-size:0.75em;" value="@Model.Output" readonly="">
+    </div>
+}
+else
+{
+    <span>Onion could not be loaded. Retrying in 3 seconds.</span>
+    <script>
+        setTimeout(window.location.reload, 3000);
+    </script>
+}

@@ -7,25 +7,37 @@
     @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
     {
         <div class="row mb-4">
-            <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
-                <h3 class="card-title">Response</h3>
-                <div class="card-body">
-                    <code>
-                        @Html.Raw(Model.Additional.Output.Replace("\n", "<br/>"))
-                    </code>
-                    <code>
-                        @Html.Raw(Model.Additional.Error.Replace("\n", "<br/>"))
-                    </code>
+            <div class="col-md-6 col-sm-12 offset-md-3 ">
+                <div class="card shadow-sm ">
+                    <h3 class="card-title">Response</h3>
+                    <div class="card-body">
+                        @if (Model.Additional.ExitStatus == 0)
+                        {
+                            <iframe src="@Url.Action("GetOnionUrl")" frameborder="0" class="w-100">
+                                
+                            </iframe>
+                            <div class="input-group form-group">
+                                
+                                <input class="form-control" onclick="this.select();" type="text" style="font-size:0.75em;" value="@Model.Settings.DomainSettings.Domain" readonly="">
+                            </div>
+                        }
+                        <code>
+                            @Html.Raw(Model.Additional.Output.Replace("\n", "<br/>"))
+                        </code>
+                        <code>
+                            @Html.Raw(Model.Additional.Error.Replace("\n", "<br/>"))
+                        </code>
+                    </div>
+                    @if (Model.Additional.ExitStatus != 0)
+                    {
+                        <form class="card-footer" asp-action="Deploy">
+                            <button type="submit" class="btn-primary btn-primary">Retry</button>
+                        </form>
+                    }
                 </div>
-                @if (Model.Additional.ExitStatus != 0)
-                {
-                    <form class="card-footer" asp-action="Deploy">
-                        <button type="submit" class="btn-primary btn-primary">Retry</button>
-                    </form>
-                }
-            </div>
 
-        </div>
+            </div>
+            </div>
     }
     <div class="row mb-4">
         <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">

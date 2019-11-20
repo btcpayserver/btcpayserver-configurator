@@ -7,6 +7,21 @@ namespace BTCPayServerDockerConfigurator.Controllers
 {
     public partial class ConfiguratorController
     {
+        [HttpGet("onion")]
+        public async Task<IActionResult> GetOnionUrl()
+        {
+            var ssh = GetSshSettings(GetConfiguratorSettings());
+            using (var sshC = await ssh.ConnectAsync())
+            {
+
+                {
+                    var result =
+                        await sshC.RunBash("cat /var/lib/docker/volumes/generated_tor_servicesdir/_data/BTCPayServer/hostname");
+                    return View(result);
+                }
+            }
+        }
+
         [HttpPost("deploy")]
         public async Task<IActionResult> Deploy()
         {
@@ -29,30 +44,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     Settings = model
                 });
             }
-            SSHSettings ssh = null;;
-            switch (model.DeploymentSettings.DeploymentType)
-            {
-                case DeploymentType.RemoteMachine when ModelState.IsValid:
-                {
-                    ssh = new SSHSettings()
-                    {
-                        Password = model.DeploymentSettings.Password,
-                        Server = model.DeploymentSettings.Host,
-                        Username = model.DeploymentSettings.Username
-                    };
-                    break;
-                }
-                case DeploymentType.ThisMachine when ModelState.IsValid:
-                {
-                    ssh = _options.Value.ParseSSHConfiguration();
-                    break;
-                }
-            }
-
-            if (ssh == null)
-            {
-                throw new Exception("lolita bonita");
-            }
+            var ssh = GetSshSettings(model);
 
             try
             {
@@ -89,6 +81,37 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 });
             }
 
+        }
+
+        private SSHSettings GetSshSettings(ConfiguratorSettings model)
+        {
+            SSHSettings ssh = null;
+            ;
+            switch (model.DeploymentSettings.DeploymentType)
+            {
+                case DeploymentType.RemoteMachine when ModelState.IsValid:
+                {
+                    ssh = new SSHSettings()
+                    {
+                        Password = model.DeploymentSettings.Password,
+                        Server = model.DeploymentSettings.Host,
+                        Username = model.DeploymentSettings.Username
+                    };
+                    break;
+                }
+                case DeploymentType.ThisMachine when ModelState.IsValid:
+                {
+                    ssh = _options.Value.ParseSSHConfiguration();
+                    break;
+                }
+            }
+
+            if (ssh == null)
+            {
+                throw new Exception("lolita bonita");
+            }
+
+            return ssh;
         }
     }
 
