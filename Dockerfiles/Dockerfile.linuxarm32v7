@@ -1,11 +1,14 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0.0-buster-slim-arm32v7 as base
 WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends iproute2 openssh-client \
+    && rm -rf /var/lib/apt/lists/* 
+
 ENV LC_ALL en_US.UTF-8
 ENV LANG en_US.UTF-8
 EXPOSE 80
 EXPOSE 443
 
-FROM mcr.microsoft.com/dotnet/core/sdk:3.0.100-buster-arm32v7 AS build
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0.100 AS build
 RUN apt-get update \
 	&& apt-get install -qq --no-install-recommends qemu qemu-user-static qemu-user binfmt-support
 WORKDIR /src
