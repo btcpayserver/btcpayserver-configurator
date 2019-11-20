@@ -62,6 +62,12 @@ namespace BTCPayServerDockerConfigurator.Models
 
         }
 
+        public static string LoginAsRoot(string rootPassword = null)
+        {
+            var command =  (string.IsNullOrEmpty(rootPassword)?string.Empty: $"echo {rootPassword} | ") +  "sudo su -;";
+            return $"if [ \"$EUID\" -ne 0 ] then {command} fi";
+        }
+        
         public static Task<SSHCommandResult> RunBash(this SshClient sshClient, string command, TimeSpan? timeout = null)
         {
             if (sshClient == null)

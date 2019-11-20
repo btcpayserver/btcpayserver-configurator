@@ -21,7 +21,7 @@ namespace BTCPayServerDockerConfigurator.Models
         public string ConstructBashFile(string downloadLink)
         {
             var result = new StringBuilder();
-            
+            result.AppendLine(SSHClientExtensions.LoginAsRoot());
             result.AppendLine(GetAbstractedPackageManager());
             result.AppendLine(InstallPackage("git wget"));
             DownloadFile(downloadLink);

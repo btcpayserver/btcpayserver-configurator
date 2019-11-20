@@ -150,17 +150,18 @@ namespace BTCPayServerDockerConfigurator.Controllers
             using(var ssh = await sshSettings.ConnectAsync())
             {
                 result.AdvancedSettings ??= new AdvancedSettings();
-
+                await ssh.RunBash(SSHClientExtensions.LoginAsRoot());
+                
                 var branch = await
                     ssh.RunBash(
-                        "[ -d \"/btcpayserver-docker/\" ] && cd btcpayserver-docker && git branch | grep \\* | cut -d ' ' -f2");
+                        "if [ -d \"btcpayserver-docker\" ]; then git -C \"btcpayserver-docker\" branch | grep \\* | cut -d \" \"  -f2; fi");
                 if (branch.ExitStatus == 0)
                 {
                     result.AdvancedSettings.BTCPayDockerBranch = branch.Output;
                 }
                 var repo =await
                     ssh.RunBash(
-                        "[ -d \"/btcpayserver-docker/\" ] && cd btcpayserver-docker && ls-remote --get-url");
+                        "if [ -d \"btcpayserver-docker\" ]; then git -C \"btcpayserver-docker\" ls-remote --get-url;  fi");
                 if (branch.ExitStatus == 0)
                 {
                     result.AdvancedSettings.BTCPayDockerRepository = repo.Output;
