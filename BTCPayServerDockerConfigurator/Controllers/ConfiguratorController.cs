@@ -37,7 +37,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             TempData.Add(name, JsonSerializer.Serialize(data));
         }
         
-        private T? GetTempData<T>(string name, bool remove = false) where T: class
+        private T GetTempData<T>(string name, bool remove = false) where T: class
         {
             if (remove && !TempData.ContainsKey(name))
             {
