@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Models;
@@ -11,7 +12,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         public IActionResult LightningSettings()
         {
             var model = GetConfiguratorSettings();
-
+            
             return View(new UpdateSettings<LightningSettings, AdditionalDataStub>()
             {
                 Json = model.ToString(),
@@ -34,7 +35,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     nameof(updateSettings.Settings) + "." + nameof(updateSettings.Settings.Implementation),
                     "You cannot use Eclair when you have pruning enabled.");
             }else if (configuratorSettings.ChainSettings.PruneMode == PruneMode.ExtraExtraSmall &&
-                !string.IsNullOrEmpty(updateSettings.Settings.Implementation))
+                      !updateSettings.Settings.Implementation.Equals("none", StringComparison.InvariantCultureIgnoreCase))
             {
                 ModelState.AddModelError(
                     nameof(updateSettings.Settings) + "." + nameof(updateSettings.Settings.Implementation),

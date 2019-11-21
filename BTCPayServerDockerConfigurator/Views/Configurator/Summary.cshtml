@@ -108,7 +108,7 @@
 
 <tr>
     <td>Lightning</td>
-    <td>@(string.IsNullOrEmpty(Model.Settings.LightningSettings.Implementation) ? "Not enabled" : Model.Settings.LightningSettings.Implementation)</td>
+    <td>@(Model.Settings.LightningSettings.Implementation == "none" ? "Not enabled" : Model.Settings.LightningSettings.Implementation)</td>
 </tr>
 <thead>
 <tr>

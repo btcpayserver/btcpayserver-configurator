@@ -244,6 +244,10 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
                 result.LightningSettings ??= new LightningSettings();
                 result.LightningSettings.Implementation = await GetVar(preloadedEnvVars, ssh, "BTCPAYGEN_LIGHTNING");
+                if (string.IsNullOrEmpty(result.LightningSettings.Implementation))
+                {
+                    result.LightningSettings.Implementation = "none";
+                }
                 result.LightningSettings.Alias = await GetVar(preloadedEnvVars, ssh, "LIGHTNING_ALIAS");
 
                 var index = 1;

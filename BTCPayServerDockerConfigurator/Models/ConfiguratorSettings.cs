@@ -69,7 +69,7 @@ namespace BTCPayServerDockerConfigurator.Models
             }
             result.AppendLine($"export NBITCOIN_NETWORK=\"{ChainSettings.Network.ToString().ToLower()}\"");
             result.AppendLine($"export LIGHTNING_ALIAS=\"{LightningSettings.Alias}\"");
-            result.AppendLine($"export BTCPAYGEN_LIGHTNING=\"{LightningSettings.Implementation}\"");
+            result.AppendLine($"export BTCPAYGEN_LIGHTNING=\"{(LightningSettings.Implementation=="none"? string.Empty:LightningSettings.Implementation )}\"");
             var index = 1;
             if (ChainSettings.Bitcoin)
             {
