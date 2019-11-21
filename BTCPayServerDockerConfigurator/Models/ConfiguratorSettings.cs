@@ -58,7 +58,7 @@ namespace BTCPayServerDockerConfigurator.Models
 
             var additionalFragments = AdvancedSettings.AdditionalFragments;
             var excludedFragments = AdvancedSettings.ExcludedFragments;
-            
+            additionalFragments.Add("opt-add-configurator");
             result.AppendLine($"export BTCPAY_IMAGE=\"{AdvancedSettings.CustomBTCPayImage}\"");
             var domain = string.IsNullOrEmpty(DomainSettings.Domain) ? "btcpay.local" : DomainSettings.Domain;
             result.AppendLine($"export BTCPAY_HOST=\"{domain}\"");
