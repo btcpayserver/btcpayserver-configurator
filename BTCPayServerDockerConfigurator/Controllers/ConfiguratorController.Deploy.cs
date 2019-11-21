@@ -109,7 +109,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
             if (ssh == null)
             {
-                throw new Exception("lolita bonita");
+                throw new Exception("I doubt this has ever happened");
             }
 
             return ssh;
