@@ -21,8 +21,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         }
         private ConfiguratorSettings GetConfiguratorSettings()
         {
-
-            return GetTempData<ConfiguratorSettings>(nameof(ConfiguratorSettings));
+            return GetTempData<ConfiguratorSettings>(nameof(ConfiguratorSettings))?? new ConfiguratorSettings();
         }
 
         private void SetConfiguratorSettings(ConfiguratorSettings settings)
