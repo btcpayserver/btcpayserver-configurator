@@ -13,10 +13,10 @@ namespace BTCPayServerDockerConfigurator.Controllers
             var ssh = GetSshSettings(GetConfiguratorSettings());
             using (var sshC = await ssh.ConnectAsync())
             {
-
                 {
                     var result =
-                        await sshC.RunBash("cat /var/lib/docker/volumes/generated_tor_servicesdir/_data/BTCPayServer/hostname");
+                        await sshC.RunBash(
+                            "cat /var/lib/docker/volumes/generated_tor_servicesdir/_data/BTCPayServer/hostname");
                     return View(result);
                 }
             }
@@ -34,7 +34,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
             if (model.DeploymentSettings.DeploymentType == DeploymentType.Manual)
             {
-                return View(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
+                TempData["DeployResult"] = new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
                 {
                     Additional = new DeployAdditionalData()
                     {
@@ -42,18 +42,20 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     },
                     Json = model.ToString(),
                     Settings = model
-                });
+                };
+                
+                return RedirectToAction("DeployResult");
             }
+
             var ssh = GetSshSettings(model);
 
             try
             {
-
                 var connection = await ssh.ConnectAsync();
-                
+
                 var result = await connection.RunBash(oneliner.Replace("\n", ""));
-                
-                return View(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
+
+                TempData["DeployResult"] = new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
                 {
                     Additional = new DeployAdditionalData()
                     {
@@ -64,12 +66,11 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     },
                     Json = model.ToString(),
                     Settings = model
-                });
-
+                };
             }
             catch (Exception e)
             {
-                return View(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
+                TempData["DeployResult"] = new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
                 {
                     Additional = new DeployAdditionalData()
                     {
@@ -78,15 +79,15 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     },
                     Json = model.ToString(),
                     Settings = model
-                });
+                };
             }
 
+            return RedirectToAction("DeployResult");
         }
 
         private SSHSettings GetSshSettings(ConfiguratorSettings model)
         {
             SSHSettings ssh = null;
-            ;
             switch (model.DeploymentSettings.DeploymentType)
             {
                 case DeploymentType.RemoteMachine when ModelState.IsValid:
@@ -113,9 +114,20 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
             return ssh;
         }
+
+        public IActionResult DeployResult()
+        {
+            if (TempData.TryGetValue("DeployResult", out var deployResult) &&
+                deployResult is UpdateSettings<ConfiguratorSettings, DeployAdditionalData> updateSettings)
+            {
+                return View(deployResult);
+            }
+
+            return RedirectToAction("Summary");
+        }
     }
 
-    public class DeployAdditionalData: SSHClientExtensions.SSHCommandResult
+    public class DeployAdditionalData : SSHClientExtensions.SSHCommandResult
     {
         public string Bash { get; set; }
     }
