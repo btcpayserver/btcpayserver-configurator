@@ -97,61 +97,64 @@ label.card-input-element-label {
     transition: border .3s;
 }
 
-label{
+label {
     cursor: pointer;
 }
 
 
-.card-input-element:checked+.card::after {
-  content: '✓';
-  color: #1b1e21;
-  
-  font-size: 50px;
-  -webkit-animation-name: fadeInCheckbox;
-  animation-name: fadeInCheckbox;
-  -webkit-animation-duration: .5s;
-  animation-duration: .5s;
-  -webkit-animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-  position: absolute;
-  right: 5px;
-  top:0;
-  text-align: center;
+.card-input-element:checked + .card::after {
+    content: '✓';
+    color: #1b1e21;
+
+    font-size: 50px;
+    -webkit-animation-name: fadeInCheckbox;
+    animation-name: fadeInCheckbox;
+    -webkit-animation-duration: .5s;
+    animation-duration: .5s;
+    -webkit-animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    position: absolute;
+    right: 5px;
+    top: 0;
+    text-align: center;
 }
 
-.card-input-element:checked+.card.dark::after{
+.card-input-element:checked + .card.dark::after {
     color: var(--light);
 }
 
 @-webkit-keyframes fadeInCheckbox {
-  from {
-    opacity: 0;
-    -webkit-transform: rotateZ(-20deg);
-  }
-  to {
-    opacity: 1;
-    -webkit-transform: rotateZ(0deg);
-  }
+    from {
+        opacity: 0;
+        -webkit-transform: rotateZ(-20deg);
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: rotateZ(0deg);
+    }
 }
 
 @keyframes fadeInCheckbox {
-  from {
-    opacity: 0;
-    transform: rotateZ(-20deg);
-  }
-  to {
-    opacity: 1;
-    transform: rotateZ(0deg);
-  }
+    from {
+        opacity: 0;
+        transform: rotateZ(-20deg);
+    }
+    to {
+        opacity: 1;
+        transform: rotateZ(0deg);
+    }
 }
 
+.styled-checkbox {
+    margin: 20px;
+}
 
-.styled-checkbox-label:hover{
+.styled-checkbox-label:hover {
     background-color: var(--light);
 }
 
 
-.justdoitbutton:hover{
+.justdoitbutton:hover {
     -webkit-filter: brightness(70%);
     -webkit-transition: all 1s ease;
     -moz-transition: all 1s ease;
@@ -165,14 +168,14 @@ label{
     margin-top: 20px;
 }
 
-.wizard .nav{
+.wizard .nav {
     position: relative;
-    z-index:1
+    z-index: 1
 }
 
 .wizard > div.wizard-inner {
     position: relative;
-    
+
 }
 
 .connecting-line {
@@ -195,6 +198,7 @@ label{
     padding: 0;
     border-radius: 50%;
 }
+
 /**/
 
 

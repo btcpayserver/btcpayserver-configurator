@@ -20,7 +20,10 @@
                     </button>
                     <br/>
                     <br/>
-                    <button type="submit" name="command" value="show" class="btn btn-link h2 w-100 text-center">Show me the advanced settings.</button>
+                     <label class="btn btn-link h2 w-100 text-center">
+                                        <input type="submit" name="command" value="show" class="d-none"/>
+                                        Show me the advanced settings.
+                                    </label>
                 </div>
             </div>
         </div>
@@ -37,16 +40,20 @@
                             <div class="input-group mb-3">
                                 <input class="form-control" asp-for="Settings.AdditionalFragments[index]" placeholder="Fragment">
                                 <div class="input-group-append">
-                                    <button type="submit" name="command" value="@($"remove-additional:{index}")" class="btn btn-outline-secondary">Remove</button>
+                                    <label class="btn btn-outline-secondary">
+                                        Remove
+                                        <input type="submit" name="command" value="@($"remove-additional:{index}")" class="d-none"/>
+                                    </label>
                                 </div>
                             </div>
                             <span asp-validation-for="Settings.AdditionalFragments[index]" class="text-danger"></span>
                         </div>
                     </li>
                 }
-                <li class="list-group-item-action text-center">
-                    <button name="command" value="add-additional" class="btn btn-link text-black-50">Add additional fragment</button>
-                </li>
+                <label class="list-group-item-action text-center">
+                    <input type="submit" name="command" value="add-additional" class="d-none"/>
+                    Add additional fragment
+                </label>
             </ul>
 
         </div>
@@ -62,16 +69,21 @@
                             <div class="input-group mb-3">
                                 <input class="form-control" asp-for="Settings.ExcludedFragments[index]" placeholder="Fragment">
                                 <div class="input-group-append">
-                                    <button type="submit" name="command" value="@($"remove-excluded:{index}")" class="btn btn-outline-secondary">Remove</button>
+                                    <label class="btn btn-outline-secondary">
+                                        Remove
+                                        <input type="submit" name="command" value="@($"remove-excluded:{index}")" class="d-none"/>
+                                    </label>
                                 </div>
                             </div>
                             <span asp-validation-for="Settings.ExcludedFragments[index]" class="text-danger"></span>
                         </div>
                     </li>
                 }
-                <li class="list-group-item-action text-center">
-                    <button name="command" value="add-excluded" class="btn btn-link text-black-50">Add excluded fragment</button>
-                </li>
+                <label class="list-group-item-action text-center">
+                    <input type="submit" name="command" value="add-excluded" class="d-none"/>
+                    Add excluded fragment
+                </label>
+
             </ul>
 
         </div>

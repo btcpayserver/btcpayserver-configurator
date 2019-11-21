@@ -64,16 +64,21 @@
                             <div class="input-group mb-3">
                                 <input class="form-control" asp-for="Settings.AltChains[index]" placeholder="Crypto Code">
                                 <div class="input-group-append">
-                                    <button type="submit" name="command" value="@($"remove-chain:{index}")" class="btn btn-outline-secondary">Remove</button>
+                                    <label class="btn btn-outline-secondary">
+                                        Remove
+                                        <input type="submit" name="command" value="@($"remove-chain:{index}")" class="d-none"/>
+                                    </label>
                                 </div>
                             </div>
                             <span asp-validation-for="Settings.AltChains[index]" class="text-danger"></span>
                         </div>
                     </li>
                 }
-                <li class="list-group-item-action text-center">
-                    <button name="command" value="add-chain" class="btn btn-link text-black-50">Add an altcoin</button>
-                </li>
+                <label class="list-group-item-action text-center text-black-50">
+                    <input type="submit" name="command" value="add-chain" class="d-none"/>
+                    Add an altcoin
+                </label>
+
             </ul>
 
         </div>

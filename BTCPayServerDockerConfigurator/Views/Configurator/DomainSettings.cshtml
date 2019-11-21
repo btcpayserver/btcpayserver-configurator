@@ -25,21 +25,24 @@
                         {
                             <li class="list-group-item justify-content-between align-items-center">
                                 <div class="form-group">
-                                    <label asp-for="Settings.AdditionalDomains[index]"></label>
                                     <div class="input-group mb-3">
-
                                         <input class="form-control" asp-for="Settings.AdditionalDomains[index]">
                                         <div class="input-group-append">
-                                            <button type="submit" name="command" value="@($"remove-domain:{index}")" class="btn btn-outline-secondary">Remove</button>
+                                            <label class="btn btn-outline-secondary">
+                                                Remove
+                                                <input type="submit" name="command" value="@($"remove-domain:{index}")" class="d-none"/>
+                                            </label>
                                         </div>
                                     </div>
                                     <span asp-validation-for="Settings.AdditionalDomains[index]" class="text-danger"></span>
                                 </div>
                             </li>
                         }
-                        <li class="list-group-item-action text-center" style="visibility: hidden" id="btn-additional-domain">
-                            <button name="command" value="add-domain" class="btn btn-sm">Add an additional domain</button>
-                        </li>
+                        <label class="list-group-item-action text-center" style="visibility: hidden" id="btn-additional-domain">
+                            <input type="submit" name="command" value="add-domain" class="d-none"/>
+                            Add an additional domain
+                        </label>
+
                     </ul>
                 </div>
             </div>
