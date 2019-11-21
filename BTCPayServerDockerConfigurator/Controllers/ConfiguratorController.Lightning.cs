@@ -47,6 +47,10 @@ namespace BTCPayServerDockerConfigurator.Controllers
             }
 
             configuratorSettings.LightningSettings = updateSettings.Settings;
+            if (configuratorSettings.LightningSettings.Implementation.Equals("eclair"))
+            {
+                configuratorSettings.AdvancedSettings.EnsureTxIndex();
+            }
             SetConfiguratorSettings(configuratorSettings);
             return RedirectToAction(nameof(AdditionalServices));
         }

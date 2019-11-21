@@ -20,5 +20,17 @@ namespace BTCPayServerDockerConfigurator.Models
             return !string.IsNullOrEmpty(CustomBTCPayImage) || !string.IsNullOrEmpty(BTCPayDockerRepository) ||
                    !string.IsNullOrEmpty(BTCPayDockerBranch) || AdditionalFragments.Any() || ExcludedFragments.Any();
         }
+
+        public void EnsureTxIndex()
+        {
+            var fragment = "opt-txindex";
+
+            if (AdditionalFragments.Contains(fragment))
+            {
+                return;
+            }
+            AdditionalFragments.Add(fragment);
+
+        }
     }
 }
