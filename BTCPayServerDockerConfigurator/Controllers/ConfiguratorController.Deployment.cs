@@ -13,11 +13,11 @@ namespace BTCPayServerDockerConfigurator.Controllers
     {
         [HttpGet("destination")]
         [HttpGet("")]
-        public IActionResult DeploymentDestination()
+        public IActionResult DeploymentDestination(string password=null)
         {
             var model = GetConfiguratorSettings();
 
-
+            model.DeploymentSettings.ThisMachinePassword = password;
             return View(new UpdateSettings<DeploymentSettings, DeploymentAdditionalData>()
             {
                 Json = JsonSerializer.Serialize(model),
@@ -53,7 +53,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 }
                 case DeploymentType.ThisMachine when ModelState.IsValid:
                 {
-                    var ssh = _options.Value.ParseSSHConfiguration();
+                    var ssh = _options.Value.ParseSSHConfiguration(updateSettings.Settings.ThisMachinePassword);
                     if (!await TestSSH(ssh))
                     {
                         ModelState.AddModelError(
@@ -89,6 +89,10 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
         private async Task<bool> TestSSH(SSHSettings ssh)
         {
+            if (ssh == null)
+            {
+                return false;
+            }
             try
             {
                 var test = await ssh.ConnectAsync();
@@ -153,7 +157,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 }
                 case DeploymentType.ThisMachine when ModelState.IsValid:
                 {
-                    sshSettings = _options.Value.ParseSSHConfiguration();
+                    sshSettings = _options.Value.ParseSSHConfiguration(settings.ThisMachinePassword);
 
                     break;
                 }

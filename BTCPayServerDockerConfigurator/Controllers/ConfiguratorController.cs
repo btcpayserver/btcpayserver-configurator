@@ -21,18 +21,35 @@ namespace BTCPayServerDockerConfigurator.Controllers
         }
         private ConfiguratorSettings GetConfiguratorSettings()
         {
-            var rawResult = TempData.Peek(nameof(ConfiguratorSettings))?.ToString();
-            return string.IsNullOrEmpty(rawResult)
-                ? new ConfiguratorSettings()
-                : JsonSerializer.Deserialize<ConfiguratorSettings>(rawResult);
+
+            return GetTempData<ConfiguratorSettings>(nameof(ConfiguratorSettings));
         }
 
         private void SetConfiguratorSettings(ConfiguratorSettings settings)
         {
-            if (TempData.ContainsKey(nameof(ConfiguratorSettings)))
-                TempData.Remove(nameof(ConfiguratorSettings));
-            TempData.Add(nameof(ConfiguratorSettings), JsonSerializer.Serialize(settings));
+            SetTempData(nameof(ConfiguratorSettings), settings);
         }
+        
+        private void SetTempData<T>(string name, T data)
+        {
+            if (TempData.ContainsKey(name))
+                TempData.Remove(name);
+            TempData.Add(name, JsonSerializer.Serialize(data));
+        }
+        
+        private T? GetTempData<T>(string name, bool remove = false) where T: class
+        {
+            if (remove && !TempData.ContainsKey(name))
+            {
+                return null;
+            }
+            
+            var rawResult = remove? TempData[name].ToString() : TempData.Peek(name)?.ToString();
+            return string.IsNullOrEmpty(rawResult)
+                ? null
+                : JsonSerializer.Deserialize<T>(rawResult);
+        }
+
 
         private async Task<string> CheckHost(string host, ConfiguratorSettings configuratorSettings)
         {

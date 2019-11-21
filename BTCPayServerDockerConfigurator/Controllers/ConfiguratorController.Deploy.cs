@@ -43,7 +43,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     Json = model.ToString(),
                     Settings = model
                 };
-                
+
                 return RedirectToAction("DeployResult");
             }
 
@@ -54,8 +54,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 var connection = await ssh.ConnectAsync();
 
                 var result = await connection.RunBash(oneliner.Replace("\n", ""));
-
-                TempData["DeployResult"] = new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
+                SetTempData("DeployResult", new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
                 {
                     Additional = new DeployAdditionalData()
                     {
@@ -66,11 +65,11 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     },
                     Json = model.ToString(),
                     Settings = model
-                };
+                });
             }
             catch (Exception e)
             {
-                TempData["DeployResult"] = new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
+                SetTempData("DeployResult", new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
                 {
                     Additional = new DeployAdditionalData()
                     {
@@ -79,7 +78,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     },
                     Json = model.ToString(),
                     Settings = model
-                };
+                });
             }
 
             return RedirectToAction("DeployResult");
@@ -102,7 +101,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 }
                 case DeploymentType.ThisMachine when ModelState.IsValid:
                 {
-                    ssh = _options.Value.ParseSSHConfiguration();
+                    ssh = _options.Value.ParseSSHConfiguration(model.DeploymentSettings.ThisMachinePassword);
                     break;
                 }
             }
@@ -117,8 +116,9 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
         public IActionResult DeployResult()
         {
-            if (TempData.TryGetValue("DeployResult", out var deployResult) &&
-                deployResult is UpdateSettings<ConfiguratorSettings, DeployAdditionalData> updateSettings)
+            var deployResult =
+                GetTempData<UpdateSettings<ConfiguratorSettings, DeployAdditionalData>>("DeployResult", true);
+            if (deployResult != null)
             {
                 return View(deployResult);
             }
