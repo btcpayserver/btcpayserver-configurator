@@ -4,6 +4,7 @@ namespace BTCPayServerDockerConfigurator.Models
 {
     public class Options
     {
+        public string RootPath { get; set; } = "/";
         public string PasswordFilePath { get; set; }
         public string SSHConnection { get; set; } = null;
         public string SSHPassword { get; set; } = "";

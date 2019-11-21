@@ -2,13 +2,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BTCPayServerDockerConfigurator.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
+using Options = BTCPayServerDockerConfigurator.Models.Options;
 
 namespace BTCPayServerDockerConfigurator
 {
@@ -26,17 +27,22 @@ namespace BTCPayServerDockerConfigurator
         {
             services.AddOptions();
             services.Configure<Options>(Configuration);
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();        
+            services.AddControllersWithViews().AddRazorRuntimeCompilation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, IOptions<Options> options)
         {
-            
+            app.UseStaticFiles(options.Value.RootPath);
+            app.UsePathBase(options.Value.RootPath);
+            ConfigureCore(app, env);
+        }
+
+        private static void ConfigureCore(IApplicationBuilder app, IWebHostEnvironment env)
+        {
             app.UseDeveloperExceptionPage();
             if (env.IsDevelopment())
             {
-               
             }
             else
             {
