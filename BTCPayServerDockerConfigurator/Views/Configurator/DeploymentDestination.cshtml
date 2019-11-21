@@ -15,13 +15,12 @@
             <div class="col-md-@(12 / Model.Additional.AvailableDeploymentTypes.Count)">
                 <label class="card-input-element-label">
                     <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.ThisMachine" class="card-input-element d-none"/>
-                    <div class="card shadow-sm  w-100">
-                        <div class="card-img-top bg-light" style="background-image: url(assets/machine.svg); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card shadow-sm  w-100  h-100">
+                        <div class="card-img-top bg-light" style="background-image: url(assets/machine.svg); "></div>
                         <div class="card-body">
                             <h3 class="card-title text-center">This machine</h3>
                             <p class="card-text text-center">
                                 We'll configure BTCPay on the current machine
-                                <br/><br/><br/>
                             </p>
                         </div>
                     </div>
@@ -33,8 +32,8 @@
             <div class="col-md-@(12 / Model.Additional.AvailableDeploymentTypes.Count)">
                 <label class="card-input-element-label">
                     <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.RemoteMachine" class="card-input-element d-none"/>
-                    <div class="card shadow-sm w-100">
-                        <div class="card-img-top bg-light" style="position:relative; background-image: url(assets/remote.svg); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card shadow-sm w-100  h-100">
+                        <div class="card-img-top bg-light" style="background-image: url(assets/remote.svg);"></div>
                         <div class="card-body">
                             <h3 class="card-title text-center">A remote machine</h3>
                             <p class="card-text">A remote machine that you can provide the SSH connectivity details to so that the configurator automagically sets it up for you</p>
@@ -48,11 +47,11 @@
             <div class="col-md-@(12 / Model.Additional.AvailableDeploymentTypes.Count)">
                 <label class="card-input-element-label">
                     <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.Manual" class="card-input-element d-none"/>
-                    <div class="card shadow-sm w-100 ">
-                        <div class="card-img-top bg-light" style="position:relative; background-image: url(assets/shell.png); background-repeat: no-repeat ; background-size: contain ;background-position: center;  width: 100%; height: 225px"></div>
+                    <div class="card shadow-sm w-100  h-100">
+                        <div class="card-img-top bg-light" style="background-image: url(assets/shell.png);"></div>
                         <div class="card-body">
                             <h3 class="card-title text-center">Manual</h3>
-                            <p class="card-text">We'll generate a bash script that you run on the server without ever providing us access.<br/><br/></p>
+                            <p class="card-text">We'll generate a bash script that you run on the server without ever providing us access.</p>
 
                         </div>
                     </div>
