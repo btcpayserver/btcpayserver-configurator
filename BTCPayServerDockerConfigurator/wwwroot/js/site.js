@@ -5,6 +5,6 @@
 $(document).ready(function () {
 
     $("form").on("submit", function () {
-        $(this).find("button[type=submit]").attr("disabled", "disabled")
+        $(this).find("button").attr("disabled", "disabled")
     });
 });
