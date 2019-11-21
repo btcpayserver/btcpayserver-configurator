@@ -6,6 +6,7 @@
 <form class="container" method="post" asp-action="DeploymentDestination">
     @* <div asp-validation-summary="All" class="text-danger"></div> *@
     <input type="hidden" asp-for="Json"/>
+    <input type="hidden" asp-for="Settings.ThisMachinePassword"/>
     <div class="row mb-md-4">
         <h2 class=" text-center w-100">@ViewData["Title"]</h2>
     </div>

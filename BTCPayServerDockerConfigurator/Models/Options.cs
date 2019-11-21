@@ -1,15 +1,27 @@
+using System.IO;
+
 namespace BTCPayServerDockerConfigurator.Models
 {
     public class Options
     {
+        public string PasswordFilePath { get; set; }
         public string SSHConnection { get; set; } = null;
         public string SSHPassword { get; set; } = "";
         public string SSHKeyFile { get; set; }= "";
         public string SSHAuthorizedKeys { get; set; }= "";
         public string SSHKeyFilePassword { get; set; }= "";
         
-        public SSHSettings ParseSSHConfiguration()
+        public SSHSettings ParseSSHConfiguration(string password)
         {
+            if (!string.IsNullOrEmpty(PasswordFilePath) && File.Exists(PasswordFilePath))
+            {
+                var storedPassword = File.ReadAllText(PasswordFilePath);
+                if (!string.IsNullOrEmpty(storedPassword) && password != storedPassword)
+                {
+                    return null;
+                }
+            }
+            
             var settings = new SSHSettings()
             {
                 Password = SSHPassword,
