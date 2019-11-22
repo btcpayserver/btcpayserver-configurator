@@ -208,10 +208,10 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 result.AdvancedSettings.CustomBTCPayImage = await GetVar(preloadedEnvVars, ssh, "BTCPAY_IMAGE");
                 result.AdvancedSettings.AdditionalFragments =
                     (await GetVar(preloadedEnvVars, ssh, "BTCPAYGEN_ADDITIONAL_FRAGMENTS"))
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
+                    .Split(';', StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
                 result.AdvancedSettings.ExcludedFragments =
                     (await GetVar(preloadedEnvVars, ssh, "BTCPAYGEN_EXCLUDE_FRAGMENTS"))
-                    .Split(';', StringSplitOptions.RemoveEmptyEntries).ToList();
+                    .Split(';', StringSplitOptions.RemoveEmptyEntries).Distinct().ToList();
 
 
                 result.AdditionalServices ??= new AdditionalServices();
@@ -221,6 +221,11 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     result.AdditionalServices.LibrePatronSettings.Enabled = true;
                     result.AdditionalServices.LibrePatronSettings.Host =
                         await GetVar(preloadedEnvVars, ssh, "LIBREPATRON_HOST");
+                }
+
+                if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-configurator"))
+                {
+                    result.AdvancedSettings.AdditionalFragments.Remove("opt-add-configurator");
                 }
 
                 if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-woocommerce"))
