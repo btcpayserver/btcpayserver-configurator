@@ -131,5 +131,8 @@ namespace BTCPayServerDockerConfigurator.Controllers
     public class DeployAdditionalData : SSHClientExtensions.SSHCommandResult
     {
         public string Bash { get; set; }
+        public int ExitStatus { get;set; }
+        public string Output { get; set;  }
+        public string Error { get; set;  }
     }
 }
