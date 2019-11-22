@@ -34,7 +34,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
             if (model.DeploymentSettings.DeploymentType == DeploymentType.Manual)
             {
-                TempData["DeployResult"] = new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
+                SetTempData("DeployResult", new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
                 {
                     Additional = new DeployAdditionalData()
                     {
@@ -42,7 +42,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     },
                     Json = model.ToString(),
                     Settings = model
-                };
+                });
 
                 return RedirectToAction("DeployResult");
             }
