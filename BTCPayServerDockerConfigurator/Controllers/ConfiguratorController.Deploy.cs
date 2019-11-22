@@ -74,7 +74,8 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     Additional = new DeployAdditionalData()
                     {
                         Bash = bash,
-                        Error = e.Message
+                        Error = e.Message,
+                        ExitStatus = -1
                     },
                     Json = model.ToString(),
                     Settings = model
