@@ -72,7 +72,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             }
 
             ConfiguratorSettings configuratorSettings;
-            if (updateSettings.Settings.DeploymentType != DeploymentType.Manual)
+            if (updateSettings.Settings.DeploymentType == DeploymentType.ThisMachine || (updateSettings.Settings.DeploymentType == DeploymentType.RemoteMachine && updateSettings.Additional.LoadFromServer))
             {
                 configuratorSettings = await LoadSettingsThroughSSH(updateSettings.Settings);
             }

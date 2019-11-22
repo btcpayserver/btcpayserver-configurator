@@ -81,6 +81,11 @@
                         <input type="password" class="form-control" asp-for="Settings.Password" placeholder="Password" value="@Model.Settings.Password">
                         <span asp-validation-for="Settings.Password" class="text-danger"></span>
                     </div>
+                    <div class="form-group">
+                        <label asp-for="Additional.LoadFromServer">Password</label>
+                        <input type="password" class="form-check-inline" asp-for="Additional.LoadFromServer" placeholder="Password" value="@Model.Settings.Password">
+                        <span asp-validation-for="Additional.LoadFromServer" class="text-danger"></span>
+                    </div>
                 </div>
             </div>
 
