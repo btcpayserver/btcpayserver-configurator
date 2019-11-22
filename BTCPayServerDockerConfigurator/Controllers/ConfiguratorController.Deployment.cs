@@ -22,7 +22,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             {
                 Json = JsonSerializer.Serialize(model),
                 Settings = model.DeploymentSettings,
-                Additional = ConstructDeploymentAdditionalData()
+                Additional = ConstructDeploymentAdditionalData(model.DeploymentSettings, _options.Value)
             });
         }
 
@@ -30,7 +30,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         public async Task<IActionResult> DeploymentDestination(
             UpdateSettings<DeploymentSettings, DeploymentAdditionalData> updateSettings)
         {
-            updateSettings.Additional = ConstructDeploymentAdditionalData();
+            updateSettings.Additional = ConstructDeploymentAdditionalData(updateSettings.Settings, _options.Value);
             switch (updateSettings.Settings.DeploymentType)
             {
                 case DeploymentType.RemoteMachine when ModelState.IsValid:
@@ -112,10 +112,11 @@ namespace BTCPayServerDockerConfigurator.Controllers
             }
         }
 
-        private DeploymentAdditionalData ConstructDeploymentAdditionalData()
+        private DeploymentAdditionalData ConstructDeploymentAdditionalData(DeploymentSettings updateSettingsSettings,
+            Options optionsValue)
         {
             var additionalData = new DeploymentAdditionalData();
-            if (!string.IsNullOrEmpty(_options.Value.SSHConnection))
+            if (!string.IsNullOrEmpty(_options.Value.SSHConnection) &&  optionsValue.VerifyPassword(updateSettingsSettings.ThisMachinePassword))
             {
                 additionalData.AvailableDeploymentTypes.Add(DeploymentType.ThisMachine);
             }

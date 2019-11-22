@@ -1,4 +1,5 @@
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
 
 namespace BTCPayServerDockerConfigurator.Models
 {
@@ -11,16 +12,24 @@ namespace BTCPayServerDockerConfigurator.Models
         public string SSHKeyFile { get; set; }= "";
         public string SSHAuthorizedKeys { get; set; }= "";
         public string SSHKeyFilePassword { get; set; }= "";
-        
-        public SSHSettings ParseSSHConfiguration(string password)
+
+        public bool VerifyPassword(string password)
         {
             if (!string.IsNullOrEmpty(PasswordFilePath) && File.Exists(PasswordFilePath))
             {
                 var storedPassword = File.ReadAllText(PasswordFilePath);
                 if (!string.IsNullOrEmpty(storedPassword) && password != storedPassword)
                 {
-                    return null;
+                    return false;
                 }
+            }
+            return true;
+        }
+        public SSHSettings ParseSSHConfiguration(string password)
+        {
+            if (!VerifyPassword(password))
+            {
+                return null;
             }
             
             var settings = new SSHSettings()
