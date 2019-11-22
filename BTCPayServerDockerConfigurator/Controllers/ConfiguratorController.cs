@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BTCPayServerDockerConfigurator.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Options = BTCPayServerDockerConfigurator.Models.Options;
 
@@ -14,10 +15,12 @@ namespace BTCPayServerDockerConfigurator.Controllers
     public partial class ConfiguratorController : Controller
     {
         private readonly IOptions<Options> _options;
+        private readonly ILogger<ConfiguratorController> _logger;
 
-        public ConfiguratorController(IOptions<Options> options)
+        public ConfiguratorController(IOptions<Options> options, ILogger<ConfiguratorController> logger)
         {
             _options = options;
+            _logger = logger;
         }
         private ConfiguratorSettings GetConfiguratorSettings()
         {
