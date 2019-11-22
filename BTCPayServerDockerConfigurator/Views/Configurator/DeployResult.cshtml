@@ -21,7 +21,7 @@
                                 <input class="form-control" onclick="this.select();" type="text" style="font-size:0.75em;" value="@Model.Settings.DomainSettings.Domain" readonly="">
                             </div>
                         }
-                        <code style="max-height: 250px; overflow-y: scroll">
+                        <code class="d-block" style="max-height: 250px; overflow-y: scroll">
                             @Html.Raw(Model.Additional.Output?.Replace("\n", "<br/>"))<br/>
                             @Html.Raw(Model.Additional.Error?.Replace("\n", "<br/>"))
                         </code>
