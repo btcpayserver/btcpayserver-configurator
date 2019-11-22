@@ -22,8 +22,8 @@
                             </div>
                         }
                         <code style="max-height: 250px; overflow-y: scroll">
-                            @Html.Raw(Model.Additional.Output.Replace("\n", "<br/>"))<br/>
-                            @Html.Raw(Model.Additional.Error.Replace("\n", "<br/>"))
+                            @Html.Raw(Model.Additional.Output?.Replace("\n", "<br/>"))<br/>
+                            @Html.Raw(Model.Additional.Error?.Replace("\n", "<br/>"))
                         </code>
                     </div>
                     @if (Model.Additional.ExitStatus != 0)

@@ -114,10 +114,11 @@ namespace BTCPayServerDockerConfigurator.Controllers
             return ssh;
         }
 
+        [HttpGet("deploy-result")]
         public IActionResult DeployResult()
         {
             var deployResult =
-                GetTempData<UpdateSettings<ConfiguratorSettings, DeployAdditionalData>>("DeployResult", true);
+                GetTempData<UpdateSettings<ConfiguratorSettings, DeployAdditionalData>>("DeployResult", false);
             if (deployResult != null)
             {
                 return View(deployResult);
