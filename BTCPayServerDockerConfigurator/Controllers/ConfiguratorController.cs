@@ -58,7 +58,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 case DeploymentType.Manual:
                     break;
                 case DeploymentType.ThisMachine:
-                    hostToCheckAgainst = new WebClient().DownloadString("http://icanhazip.com");
+                    hostToCheckAgainst = new WebClient().DownloadString("http://icanhazip.com").Trim().Replace(Environment.NewLine, "").Replace("\n", "");
                     break;
                 case DeploymentType.RemoteMachine:
                     hostToCheckAgainst = configuratorSettings.DeploymentSettings.Host;

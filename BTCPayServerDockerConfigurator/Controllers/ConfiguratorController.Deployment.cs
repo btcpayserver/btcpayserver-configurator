@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Renci.SshNet;
 
 namespace BTCPayServerDockerConfigurator.Controllers
@@ -108,6 +109,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             }
             catch (Exception e)
             {
+                _logger.LogError(e, "SSH This machine error");
                 return false;
             }
         }

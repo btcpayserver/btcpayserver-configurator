@@ -1,4 +1,9 @@
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.0-alpine AS base
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT false
+RUN apk add --no-cache icu-libs openssh-keygen
+
+ENV LC_ALL en_US.UTF-8
+ENV LANG en_US.UTF-8
 WORKDIR /app
 EXPOSE 80
 EXPOSE 443
@@ -19,4 +24,6 @@ WORKDIR /app
 COPY --from=publish /app .
 
 
-ENTRYPOINT ["dotnet", "BTCPayServerDockerConfigurator.dll"]
+COPY Dockerfiles/docker-entrypoint.sh docker-entrypoint.sh
+RUN ls
+ENTRYPOINT ["./docker-entrypoint.sh"]
