@@ -25,5 +25,5 @@ COPY --from=publish /app .
 
 
 COPY Dockerfiles/docker-entrypoint.sh docker-entrypoint.sh
-RUN ls
+RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]

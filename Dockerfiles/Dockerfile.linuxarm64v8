@@ -22,4 +22,5 @@ ENV LANG en_US.UTF-8
 EXPOSE 80
 EXPOSE 443
 COPY Dockerfiles/docker-entrypoint.sh docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
