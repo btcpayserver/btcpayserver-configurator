@@ -29,6 +29,7 @@ namespace BTCPayServerDockerConfigurator
         {
             services.AddOptions();
             services.Configure<Options>(Configuration);
+            services.AddSingleton<DeploymentService>();
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
         }
 

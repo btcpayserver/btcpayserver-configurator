@@ -7,4 +7,6 @@ $(document).ready(function () {
     $("form").on("submit", function () {
         $(this).find("button").attr("disabled", "disabled")
     });
+    
+    $(".reload-page").on("click", window.location.reload.bind(window.location))
 });

@@ -16,11 +16,13 @@ namespace BTCPayServerDockerConfigurator.Controllers
     {
         private readonly IOptions<Options> _options;
         private readonly ILogger<ConfiguratorController> _logger;
+        private readonly DeploymentService _deploymentService;
 
-        public ConfiguratorController(IOptions<Options> options, ILogger<ConfiguratorController> logger)
+        public ConfiguratorController(IOptions<Options> options, ILogger<ConfiguratorController> logger, DeploymentService deploymentService)
         {
             _options = options;
             _logger = logger;
+            _deploymentService = deploymentService;
         }
         private ConfiguratorSettings GetConfiguratorSettings()
         {

@@ -19,13 +19,11 @@ namespace BTCPayServerDockerConfigurator.Models
             return JsonSerializer.Serialize(this);
         }
 
-        public string ConstructBashFile(string downloadLink)
+        public string ConstructBashFile()
         {
             var result = new StringBuilder();
 //            result.AppendLine(SSHClientExtensions.LoginAsRoot());
-            result.AppendLine(GetAbstractedPackageManager());
             result.AppendLine(InstallPackage("git wget"));
-            DownloadFile(downloadLink);
             var gitRepo = string.IsNullOrEmpty(AdvancedSettings.BTCPayDockerRepository)
                 ? "https://github.com/btcpayserver/btcpayserver-docker" : AdvancedSettings.BTCPayDockerRepository;
             
@@ -45,7 +43,6 @@ namespace BTCPayServerDockerConfigurator.Models
                 $"if [ -d \"btcpayserver-docker\" ] && [ \"$EXISTING_BRANCH\" == \"{gitBranch}\" ] && [ \"$EXISTING_REMOTE\" == \"{gitBranch}\" ]; then echo \"existing btcpayserver-docker folder found, pulling instead of cloning.\"; git pull; fi");
             result.AppendLine(
                 $"if [ ! -d \"btcpayserver-docker\" ]; then echo \"cloning btcpayserver-docker\"; git clone -b {gitBranch} {gitRepo} btcpayserver-docker; fi");
-            result.AppendLine($"cd btcpayserver-docker");
             if (!string.IsNullOrEmpty(AdvancedSettings.CustomBTCPayImage))
             {
                 result.AppendLine($"export BTCPAY_IMAGE=\"{AdvancedSettings.CustomBTCPayImage}\"");
@@ -135,19 +132,17 @@ namespace BTCPayServerDockerConfigurator.Models
             {
                 result.AppendLine($"export BTCPAYGEN_EXCLUDE_FRAGMENTS=\"{string.Join(';', excludedFragments)}\"");
             }
-
+            
+            result.AppendLine("cd btcpayserver-docker");
+            result.AppendLine("echo \"$(. ./btcpay-setup.sh -i)\"");
             result.AppendLine(". ./btcpay-setup.sh -i");
             return result.ToString();
         }
 
-        private string GetAbstractedPackageManager()
-        {
-            return "package_manager=\"apt-get install -y\"";
-        }
 
         private string InstallPackage(string package)
         {
-            return "${package_manager} "+ package;
+            return "apt-get install -y "+ package;
         }
 
         private string DownloadFile(string url)
@@ -157,6 +152,36 @@ namespace BTCPayServerDockerConfigurator.Models
                 return string.Empty;
             }
             return $"wget {url} 2>/dev/null || curl -O  {url}";
+        }
+
+        public SSHSettings GetSshSettings(Options options)
+        {
+            SSHSettings ssh = null;
+            switch (DeploymentSettings.DeploymentType)
+            {
+                case DeploymentType.RemoteMachine:
+                {
+                    ssh = new SSHSettings()
+                    {
+                        Password = DeploymentSettings.Password,
+                        Server = DeploymentSettings.Host,
+                        Username = DeploymentSettings.Username
+                    };
+                    break;
+                }
+                case DeploymentType.ThisMachine:
+                {
+                    ssh = options.ParseSSHConfiguration(DeploymentSettings.ThisMachinePassword);
+                    break;
+                }
+            }
+
+            if (ssh == null)
+            {
+                throw new Exception("I doubt this has ever happened");
+            }
+
+            return ssh;
         }
         
     }

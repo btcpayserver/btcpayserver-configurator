@@ -4,65 +4,68 @@
     ViewData["CurrentStep"] = 8;
 }
 <div class="container">
-    @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
+
+
+    @if (!Model.Additional.InProgress)
     {
-        <div class="row mb-4">
-            <div class="col-md-6 col-sm-12 offset-md-3 ">
-                <div class="card shadow-sm ">
-                    <h3 class="card-title">Response</h3>
-                    <div class="card-body">
-                        @if (Model.Additional.ExitStatus == 0)
+        if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
+        {
+            <div class="row mb-4">
+                <div class="col-md-6 col-sm-12 offset-md-3 ">
+                    <div class="card shadow-sm ">
+                        <h3 class="card-title">Response</h3>
+                        <div class="card-body">
+                            @if (Model.Additional.ExitStatus == 0)
+                            {
+                                <iframe src="@Url.Action("GetOnionUrl")" frameborder="0" class="w-100" style="height: 50px" scrolling="no">
+
+                                </iframe>
+                                <div class="input-group form-group">
+
+                                    <input class="form-control" onclick="this.select();" type="text" style="font-size:0.75em;" value="@Model.Settings.DomainSettings.Domain" readonly="">
+                                </div>
+                            }
+                            <code class="d-block" style="max-height: 250px; overflow-y: scroll">
+                                @Html.Raw(Model.Additional.Output?.Replace("\n", "<br/>"))<br/>
+                                @Html.Raw(Model.Additional.Error?.Replace("\n", "<br/>"))
+                            </code>
+                        </div>
+                        @if (Model.Additional.ExitStatus != 0)
                         {
-                            <iframe src="@Url.Action("GetOnionUrl")" frameborder="0" class="w-100" style="height: 50px" scrolling="no">
-                                
-                            </iframe>
-                            <div class="input-group form-group">
-                                
-                                <input class="form-control" onclick="this.select();" type="text" style="font-size:0.75em;" value="@Model.Settings.DomainSettings.Domain" readonly="">
-                            </div>
+                            <form class="card-footer" asp-action="Deploy">
+                                <button type="submit" class="btn-primary btn-primary">Retry</button>
+                            </form>
                         }
-                        <code class="d-block" style="max-height: 250px; overflow-y: scroll">
-                            @Html.Raw(Model.Additional.Output?.Replace("\n", "<br/>"))<br/>
-                            @Html.Raw(Model.Additional.Error?.Replace("\n", "<br/>"))
-                        </code>
                     </div>
-                    @if (Model.Additional.ExitStatus != 0)
-                    {
-                        <form class="card-footer" asp-action="Deploy">
-                            <button type="submit" class="btn-primary btn-primary">Retry</button>
-                        </form>
-                    }
+
+                </div>
+            </div>
+        }
+        <div class="row mb-4">
+            <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
+                @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
+                {
+                    <h3 class="card-title">Executed commands</h3>
+                }
+                else
+                {
+                    <h3 class="card-title">Copy these commands to your terminal</h3>
+                }
+                <div class="card-body">
+
+                    <code>
+                        @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
+                    </code>
+
                 </div>
 
             </div>
         </div>
     }
-    <div class="row mb-4">
-        <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
-            @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
-            {
-                <h3 class="card-title">Executed commands</h3>
-            }
-            else
-            {
-                <h3 class="card-title">Copy these commands to your terminal</h3>
-            }
-            <div class="card-body">
 
-                <code>
-                    @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
-                </code>
-
-            </div>
-
-        </div>
-    </div>
 </div>
-
-@if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
+@if (!Model.Additional.InProgress && Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
 {
-    
-    
     <div class="modal" tabindex="-1" role="dialog" id="deploying-modal" data-keyboard="false" data-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -77,22 +80,57 @@
                 </div>
             </div>
         </div>
-    </div> 
+    </div>
+}
+@if (Model.Additional.InProgress)
+{
+    <div class="modal" tabindex="-1" role="dialog" id="deploying-modal" data-keyboard="false" data-backdrop="static">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Deploying BTCPay Server</h5>
+                </div>
+                <div class="modal-body">
+                    <p>We're sending the commands to the server and executing. This could take a few minutes! We'll reload this page periodically and give you updates as they become available.</p>
+
+                    <div class="progress">
+                        <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
+                    </div>
+                    @if (!string.IsNullOrEmpty(Model.Additional.Output))
+                    {
+                      
+                        <code class="d-block my-2" style="max-height: 250px; overflow-y: scroll">
+                            @Html.Raw(Model.Additional.Output?.Replace("\n", "<br/>"))
+                        </code>
+  
+                    }
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn-primary btn reload-page">Reload now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 @section Scripts
 {
     <script>
     $(document).ready(function(){
-        $("form").on("submit", function(){
-            $("#deploying-modal").modal("show");
-            window.onbeforeunload = confirmExit;
-                function confirmExit() {
-                    return "You have attempted to leave this page. The BTCPay deployment has already started and will keep on executing even if you do close this page.";
-                }
-        })
-    })
+        $("form").on("submit", showModal);
+    });
+    
+    function showModal(){
+        $("#deploying-modal").modal("show");
+    }
+    
     </script>
-}
+    @if (Model.Additional.InProgress)
+    {
+        <script>
+            window.setTimeout(window.location.reload.bind(window.location), 5000);
+            $(document).ready(showModal);
+    </script>
+    }
 
 }
-

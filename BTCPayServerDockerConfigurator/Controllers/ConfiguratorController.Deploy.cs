@@ -10,7 +10,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         [HttpGet("onion")]
         public async Task<IActionResult> GetOnionUrl()
         {
-            var ssh = GetSshSettings(GetConfiguratorSettings());
+            var ssh = GetConfiguratorSettings().GetSshSettings(_options.Value);
             using (var sshC = await ssh.ConnectAsync())
             {
                 {
@@ -26,114 +26,42 @@ namespace BTCPayServerDockerConfigurator.Controllers
         public async Task<IActionResult> Deploy()
         {
             var model = GetConfiguratorSettings();
-            var bash = model.ConstructBashFile(null);
-            var oneliner = bash
-                .Replace(Environment.NewLine, "\n")
-                .Replace("\n", " && \n")
-                .TrimEnd(" && \n", StringComparison.InvariantCultureIgnoreCase);
 
-            if (model.DeploymentSettings.DeploymentType == DeploymentType.Manual)
+            return RedirectToAction("DeployResult", new
             {
-                SetTempData("DeployResult", new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
-                {
-                    Additional = new DeployAdditionalData()
-                    {
-                        Bash = bash
-                    },
-                    Json = model.ToString(),
-                    Settings = model
-                });
+                id = await _deploymentService.StartDeployment(model)
+            });
 
-                return RedirectToAction("DeployResult");
-            }
-
-            var ssh = GetSshSettings(model);
-
-            try
-            {
-                var connection = await ssh.ConnectAsync();
-
-                var result = await connection.RunBash(oneliner.Replace("\n", ""));
-                SetTempData("DeployResult", new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
-                {
-                    Additional = new DeployAdditionalData()
-                    {
-                        Bash = bash,
-                        Error = result.Error,
-                        Output = result.Output,
-                        ExitStatus = result.ExitStatus
-                    },
-                    Json = model.ToString(),
-                    Settings = model
-                });
-            }
-            catch (Exception e)
-            {
-                SetTempData("DeployResult", new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
-                {
-                    Additional = new DeployAdditionalData()
-                    {
-                        Bash = bash,
-                        Error = e.Message,
-                        ExitStatus = -1
-                    },
-                    Json = model.ToString(),
-                    Settings = model
-                });
-            }
-
-            return RedirectToAction("DeployResult");
         }
+        
 
-        private SSHSettings GetSshSettings(ConfiguratorSettings model)
+        [HttpGet("deploy-result/{id}")]
+        public IActionResult DeployResult(string id)
         {
-            SSHSettings ssh = null;
-            switch (model.DeploymentSettings.DeploymentType)
+            var result = _deploymentService.GetDeploymentResult(id);
+            if (result == null)
             {
-                case DeploymentType.RemoteMachine when ModelState.IsValid:
-                {
-                    ssh = new SSHSettings()
-                    {
-                        Password = model.DeploymentSettings.Password,
-                        Server = model.DeploymentSettings.Host,
-                        Username = model.DeploymentSettings.Username
-                    };
-                    break;
-                }
-                case DeploymentType.ThisMachine when ModelState.IsValid:
-                {
-                    ssh = _options.Value.ParseSSHConfiguration(model.DeploymentSettings.ThisMachinePassword);
-                    break;
-                }
+                result = GetTempData<UpdateSettings<ConfiguratorSettings, DeployAdditionalData>>(id);
+            }
+            if (result == null)
+            {
+                return RedirectToAction("Summary");
             }
 
-            if (ssh == null)
+            if (!result.Additional.InProgress)
             {
-                throw new Exception("I doubt this has ever happened");
+                SetTempData(id, result);
             }
-
-            return ssh;
-        }
-
-        [HttpGet("deploy-result")]
-        public IActionResult DeployResult()
-        {
-            var deployResult =
-                GetTempData<UpdateSettings<ConfiguratorSettings, DeployAdditionalData>>("DeployResult", false);
-            if (deployResult != null)
-            {
-                return View(deployResult);
-            }
-
-            return RedirectToAction("Summary");
+            return View(result);
         }
     }
 
-    public class DeployAdditionalData : SSHClientExtensions.SSHCommandResult
+    public class DeployAdditionalData
     {
         public string Bash { get; set; }
         public int ExitStatus { get;set; }
         public string Output { get; set;  }
         public string Error { get; set;  }
+        public bool InProgress { get; set; } = false;
     }
 }

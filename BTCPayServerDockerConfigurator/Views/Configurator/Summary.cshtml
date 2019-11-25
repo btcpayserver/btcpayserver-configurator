@@ -269,8 +269,6 @@ else
 
 @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
 {
-    
-    
    <div class="modal" tabindex="-1" role="dialog" id="deploying-modal" data-keyboard="false" data-backdrop="static">
      <div class="modal-dialog" role="document">
        <div class="modal-content">
@@ -293,10 +291,6 @@ else
     $(document).ready(function(){
         $("form").on("submit", function(){
             $("#deploying-modal").modal("show");
-            // window.onbeforeunload = confirmExit;
-            //     function confirmExit() {
-            //         return "You have attempted to leave this page. The BTCPay deployment has already started and will keep on executing even if you do close this page.";
-            //     }
         })
     })
     </script>

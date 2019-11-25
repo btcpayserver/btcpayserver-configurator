@@ -20,7 +20,6 @@
 else
 {
     <span>Onion could not be loaded. Retrying in 3 seconds.</span>
-    <script>
-        setTimeout(window.location.reload, 3000);
+    <script>window.setTimeout(window.location.reload.bind(window.location), 3000);
     </script>
 }
