@@ -120,6 +120,8 @@ namespace BTCPayServerDockerConfigurator
                             Settings = configuratorSettings
                         });
                     }
+
+                    await connection.DisconnectAsync();
                 }
                 catch (Exception e)
                 {

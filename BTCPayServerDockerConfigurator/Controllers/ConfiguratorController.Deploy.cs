@@ -13,12 +13,13 @@ namespace BTCPayServerDockerConfigurator.Controllers
             var ssh = GetConfiguratorSettings().GetSshSettings(_options.Value);
             using (var sshC = await ssh.ConnectAsync())
             {
-                {
+                
                     var result =
                         await sshC.RunBash(
                             "cat /var/lib/docker/volumes/generated_tor_servicesdir/_data/BTCPayServer/hostname");
+                    await sshC.DisconnectAsync();
                     return View(result);
-                }
+                   
             }
         }
 
