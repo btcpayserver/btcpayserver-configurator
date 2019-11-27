@@ -7,7 +7,6 @@ namespace BTCPayServerDockerConfigurator.Validation
     public class RequiredIfAttribute : ValidationAttribute
     {
         private String PropertyName { get; set; }
-        private String ErrorMessage { get; set; }
         private Object DesiredValue { get; set; }
 
         public RequiredIfAttribute(String propertyName, Object desiredvalue, String errormessage)

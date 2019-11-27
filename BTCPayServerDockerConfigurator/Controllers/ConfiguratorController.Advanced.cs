@@ -26,7 +26,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         }
 
         [HttpPost("advanced")]
-        public async Task<IActionResult> AdvancedSettings(UpdateSettings<AdvancedSettings, AdvancedSettingsAdditionalData> updateSettings,
+        public IActionResult AdvancedSettings(UpdateSettings<AdvancedSettings, AdvancedSettingsAdditionalData> updateSettings,
             string command = null)
         {
             switch (command)

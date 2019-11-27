@@ -37,7 +37,7 @@ namespace BTCPayServerDockerConfigurator.Models
 //
 //            result.AppendLine($"if [\"$EXISTING_REMOTE\" != \"{gitRepo}\"] then git -C \"btcpayserver-docker\" remote add btcpay {gitRepo};  fi");
             result.AppendLine(
-                $"if [ -d \"btcpayserver-docker\" ] && [ \"$EXISTING_BRANCH\" != \"{gitBranch}\" ] && [ \"$EXISTING_REMOTE\" != \"{gitBranch}\" ]; then echo \"existing btcpayserver-docker folder found that did not match our specified fork. Moving.\"; mv \"btcpayserver-docker\" \"btcpayserver-docker_$(date +%s)\"; fi");
+                $"if [ -d \"btcpayserver-docker\" ] && [ \"$EXISTING_BRANCH\" != \"{gitBranch}\" ] && [ \"$EXISTING_REMOTE\" != \"{gitBranch}\" ]; then echo \"existing btcpayserver-docker folder found that did not match our specified fork. Moving. (Current branch: $EXISTING_BRANCH, Current remote: $EXISTING_REMOTE)\"; mv \"btcpayserver-docker\" \"btcpayserver-docker_$(date +%s)\"; fi");
             
             result.AppendLine(
                 $"if [ -d \"btcpayserver-docker\" ] && [ \"$EXISTING_BRANCH\" == \"{gitBranch}\" ] && [ \"$EXISTING_REMOTE\" == \"{gitBranch}\" ]; then echo \"existing btcpayserver-docker folder found, pulling instead of cloning.\"; git pull; fi");
@@ -134,7 +134,7 @@ namespace BTCPayServerDockerConfigurator.Models
             }
             
             result.AppendLine("cd btcpayserver-docker");
-            result.AppendLine("echo \"$(. ./btcpay-setup.sh -i)\"");
+            
             result.AppendLine(". ./btcpay-setup.sh -i");
             return result.ToString();
         }
@@ -143,15 +143,6 @@ namespace BTCPayServerDockerConfigurator.Models
         private string InstallPackage(string package)
         {
             return "apt-get install -y "+ package;
-        }
-
-        private string DownloadFile(string url)
-        {
-            if (string.IsNullOrEmpty(url))
-            {
-                return string.Empty;
-            }
-            return $"wget {url} 2>/dev/null || curl -O  {url}";
         }
 
         public SSHSettings GetSshSettings(Options options)

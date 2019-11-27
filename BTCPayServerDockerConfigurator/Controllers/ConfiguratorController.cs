@@ -78,7 +78,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
             if (!string.IsNullOrEmpty(host))
             {
-                if (!await CheckHostDNSIsCorrect(host, hostToCheckAgainst))
+                if (!CheckHostDNSIsCorrect(host, hostToCheckAgainst))
                 {
                     return errorMessage;
                 }
@@ -87,7 +87,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             return null;
         }
         
-        private async Task<bool> CheckHostDNSIsCorrect(string host, string hostToCheckAgainst = null)
+        private bool CheckHostDNSIsCorrect(string host, string hostToCheckAgainst = null)
         {
             var basicCheck = Uri.CheckHostName(host);
             if (basicCheck != UriHostNameType.Dns && basicCheck != UriHostNameType.Unknown)

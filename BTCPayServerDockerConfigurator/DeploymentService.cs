@@ -1,11 +1,14 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Controllers;
 using BTCPayServerDockerConfigurator.Models;
 using Microsoft.Extensions.Options;
+using Renci.SshNet;
 using Options = BTCPayServerDockerConfigurator.Models.Options;
 
 namespace BTCPayServerDockerConfigurator
@@ -24,7 +27,7 @@ namespace BTCPayServerDockerConfigurator
             _options = options;
         }
 
-        public async Task<string> StartDeployment(ConfiguratorSettings configuratorSettings)
+        public string StartDeployment(ConfiguratorSettings configuratorSettings)
         {
             var id = Guid.NewGuid().ToString();
             var sb = new StringBuilder();
@@ -55,8 +58,7 @@ namespace BTCPayServerDockerConfigurator
                     var doOneLiner = false;
 
 
-                    var connection = await ssh.ConnectAsync();
-
+                    using var connection = await ssh.ConnectAsync();
                     if (doOneLiner)
                     {
                         var oneliner = bash
@@ -77,51 +79,37 @@ namespace BTCPayServerDockerConfigurator
                             Json = configuratorSettings.ToString(),
                             Settings = configuratorSettings
                         });
+
                     }
                     else
                     {
+                      var shell = connection.CreateShellStream("xterm", 50, 50, 640, 480, 17640);
                         var commands = bash
                             .Replace(Environment.NewLine, "\n").Split("\n", StringSplitOptions.RemoveEmptyEntries);
 
-                        foreach (var command in commands)
-                        {
-                            sb.AppendLine(command);
-                            var result = await connection.RunBash(command);
-                            if(!string.IsNullOrEmpty(result.Output))
-                                sb.AppendLine(result.Output);
-                            if (result.ExitStatus != 0)
-                            {
-                                tcs.SetResult(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
+  
+
+                        var result = await RunCommandsInShellSequencial(commands, shell, sb);
+                        var exitcode = result.Item1 ? 0 : -1;
+
+
+                        tcs.SetResult(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
                                 {
                                     Additional = new DeployAdditionalData()
                                     {
                                         Bash = bash,
-                                        Error = result.Error,
-                                        ExitStatus = result.ExitStatus,
-                                        Output = sb.ToString().Replace(Environment.NewLine, "\n"),
+                                        Error = "",
+                                        ExitStatus = exitcode,
+                                        Output = result.Item2.Replace(Environment.NewLine, "\n"),
                                         InProgress = false
                                     },
                                     Json = configuratorSettings.ToString(),
                                     Settings = configuratorSettings
-                                });
-                            }
-                        }
-
-                        tcs.SetResult(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
-                        {
-                            Additional = new DeployAdditionalData()
-                            {
-                                Bash = bash,
-                                Output = sb.ToString().Replace(Environment.NewLine, "\n"),
-                                ExitStatus = 0,
-                                InProgress = false
-                            },
-                            Json = configuratorSettings.ToString(),
-                            Settings = configuratorSettings
-                        });
+                                });  
+                        
+                                                                   
+                        shell.Dispose();   
                     }
-
-                    await connection.DisconnectAsync();
                 }
                 catch (Exception e)
                 {
@@ -143,6 +131,40 @@ namespace BTCPayServerDockerConfigurator
             OngoingDeployments.TryAdd(id, (tcs.Task, sb));
 
             return id;
+        }
+
+        private async Task<(bool, string)> RunCommandsInShellSequencial(string[] commands, ShellStream shellStream, StringBuilder result)
+        {
+            var failed = false;
+            var cts = new TaskCompletionSource<bool>();
+            shellStream.ErrorOccurred += (sender, args) => {
+                result.AppendLine(args.Exception.Message);
+               
+                failed = true;
+                cts.SetResult(false);
+            };
+            shellStream.DataReceived += (sender, args) =>
+            {
+                var str = Encoding.UTF8.GetString(args.Data);
+                result.Append(str);
+                if(!str.Contains("echo \"eolcomment\"") && str.Contains("eolcomment"))
+                {
+                    cts.SetResult(true);
+                }
+            };
+            var y = shellStream.Read();
+            foreach (var command in commands)
+            {
+                if (failed)
+                {
+                    break;
+                }
+                shellStream.WriteLine(command);
+            }
+            
+            shellStream.WriteLine("echo \"eolcomment\"");
+           failed= !await cts.Task;
+            return (!failed, result.ToString());
         }
 
         public UpdateSettings<ConfiguratorSettings, DeployAdditionalData> GetDeploymentResult(string id)

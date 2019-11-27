@@ -22,7 +22,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
 
         [HttpPost("lightning")]
-        public async Task<IActionResult> LightningSettings(
+        public IActionResult LightningSettings(
             UpdateSettings<LightningSettings, AdditionalDataStub> updateSettings)
         {
             var configuratorSettings = string.IsNullOrEmpty(updateSettings.Json)

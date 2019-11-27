@@ -11,33 +11,29 @@ namespace BTCPayServerDockerConfigurator.Controllers
         public async Task<IActionResult> GetOnionUrl()
         {
             var ssh = GetConfiguratorSettings().GetSshSettings(_options.Value);
-            using (var sshC = await ssh.ConnectAsync())
-            {
-                
-                    var result =
-                        await sshC.RunBash(
-                            "cat /var/lib/docker/volumes/generated_tor_servicesdir/_data/BTCPayServer/hostname");
-                    await sshC.DisconnectAsync();
-                    return View(result);
-                   
-            }
+            using var sshC = await ssh.ConnectAsync();
+            var result =
+                await sshC.RunBash(
+                    "cat /var/lib/docker/volumes/generated_tor_servicesdir/_data/BTCPayServer/hostname");
+            await sshC.DisconnectAsync();
+            return View(result);
         }
 
         [HttpPost("deploy")]
-        public async Task<IActionResult> Deploy()
+        public IActionResult Deploy()
         {
             var model = GetConfiguratorSettings();
-
+            var id = _deploymentService.StartDeployment(model);
             return RedirectToAction("DeployResult", new
             {
-                id = await _deploymentService.StartDeployment(model)
+                id = id
             });
 
         }
         
 
-        [HttpGet("deploy-result/{id}")]
-        public IActionResult DeployResult(string id)
+        [HttpGet("deploy-result/{id?}")]
+        public IActionResult DeployResult(string id ="", string view = null)
         {
             var result = _deploymentService.GetDeploymentResult(id);
             if (result == null)
@@ -53,7 +49,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             {
                 SetTempData(id, result);
             }
-            return View(result);
+            return View(view?? "DeployResult",result);
         }
     }
 

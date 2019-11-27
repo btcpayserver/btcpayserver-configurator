@@ -22,7 +22,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         }
 
         [HttpPost("chain")]
-        public async Task<IActionResult> ChainSettings(UpdateSettings<ChainSettings, AdditionalDataStub> updateSettings,
+        public IActionResult ChainSettings(UpdateSettings<ChainSettings, AdditionalDataStub> updateSettings,
             string command = null)
         {
             switch (command)

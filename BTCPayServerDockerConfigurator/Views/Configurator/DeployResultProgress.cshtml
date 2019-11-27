@@ -1,0 +1,33 @@
+@model UpdateSettings<ConfiguratorSettings, BTCPayServerDockerConfigurator.Controllers.DeployAdditionalData>
+@{
+    Layout = "";
+}
+
+<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="~/css/site.css"/>
+@if (Model.Additional.InProgress)
+{
+
+    @if (!string.IsNullOrEmpty(Model.Additional.Output))
+    {
+                      
+        <code class="d-block my-2" id="output" >
+            @Html.Raw(Model.Additional.Output?.Replace("\n", "<br/>"))
+        </code>
+  
+    }
+    <script>
+            window.setTimeout(window.location.reload.bind(window.location), 5000);
+            window.onload = function(){
+                var el = document.getElementById("output");
+                el.scrollTop = el.scrollHeight;
+            }
+    </script>
+}
+else
+{
+    <script>
+    
+            top.window.location.reload();
+        </script>
+}
