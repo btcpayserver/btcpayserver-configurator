@@ -20,7 +20,7 @@
             window.setTimeout(window.location.reload.bind(window.location), 5000);
             window.onload = function(){
                 var el = document.getElementById("output");
-                el.scrollTop = el.scrollHeight;
+                el.scrollIntoView(false);
             }
     </script>
 }
