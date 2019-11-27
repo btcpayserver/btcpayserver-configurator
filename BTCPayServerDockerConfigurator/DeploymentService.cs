@@ -160,6 +160,7 @@ namespace BTCPayServerDockerConfigurator
                     break;
                 }
                 shellStream.WriteLine(command);
+                shellStream.ReadLine();
             }
             
             shellStream.WriteLine("echo \"eolcomment\"");
