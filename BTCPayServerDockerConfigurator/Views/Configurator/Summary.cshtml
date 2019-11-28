@@ -261,12 +261,26 @@ else
 <form method="post" asp-action="Deploy" class="row w-100">
     <input type="hidden" asp-for="Json"/>
 
-    <button type="submit" class="m-auto btn btn-primary btn-lg p-0 border-0 overflow-hidden justdoitbutton bg-transparent">
-        <img src="assets/doit.gif" height="100"/>
-    </button>
+    <button type="submit" class="m-auto btn btn-primary btn-lg deploy-button">Continue
+         <img src="assets/doit.gif" /></button>
+  
 </form>
 </div>
-
+<style>
+.deploy-button img{
+display: none;
+}
+    .deploy-button:hover img{
+    display:block;
+        position: fixed;
+        width:100%;
+        height:100%;
+        left: 0;
+        top:0;
+        opacity:0.2;
+        pointer-events: none;
+    }
+</style>
 @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
 {
    <div class="modal" tabindex="-1" role="dialog" id="deploying-modal" data-keyboard="false" data-backdrop="static">
