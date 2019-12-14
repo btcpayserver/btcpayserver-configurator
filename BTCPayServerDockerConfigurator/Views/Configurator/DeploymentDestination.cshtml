@@ -82,6 +82,11 @@
                         <span asp-validation-for="Settings.Password" class="text-danger"></span>
                     </div>
                     <div class="form-group">
+                        <label asp-for="Settings.RootPassword">Root password (if ssh user is not root)</label>
+                        <input type="password" class="form-control" asp-for="Settings.RootPassword" placeholder="Root Password" value="@Model.Settings.RootPassword">
+                        <span asp-validation-for="Settings.RootPassword" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
                         <input type="checkbox" class="form-check-inline" asp-for="Additional.LoadFromServer">
                         <label asp-for="Additional.LoadFromServer"></label>
                         <span asp-validation-for="Additional.LoadFromServer" class="text-danger"></span>

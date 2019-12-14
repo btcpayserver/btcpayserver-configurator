@@ -40,7 +40,8 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     {
                         Password = updateSettings.Settings.Password,
                         Server = updateSettings.Settings.Host,
-                        Username = updateSettings.Settings.Username
+                        Username = updateSettings.Settings.Username,
+                        RootPassword = updateSettings.Settings.RootPassword
                     };
 
                     if (!await TestSSH(ssh))
@@ -98,6 +99,23 @@ namespace BTCPayServerDockerConfigurator.Controllers
             {
                 using var test = await ssh.ConnectAsync();
                 if (!test.IsConnected) return false;
+
+                if (!test.RunCommand("whoami").Result.Contains("root", StringComparison.InvariantCultureIgnoreCase))
+                {
+                    if(string.IsNullOrEmpty(ssh.RootPassword))
+                    {
+                        test.RunCommand($"sudo su -");
+                    }else
+                    {
+                        test.RunCommand($"echo \"{ssh.RootPassword}\" | sudo -S sleep 1 && sudo su -");
+                    }
+
+                    if (!test.RunCommand("whoami").Result.Contains("root", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        return false;
+                    }
+                }
+                
                 await test.DisconnectAsync();
                 return true;
 

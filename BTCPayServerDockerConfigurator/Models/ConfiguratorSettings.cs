@@ -22,6 +22,13 @@ namespace BTCPayServerDockerConfigurator.Models
         public string ConstructBashFile()
         {
             var result = new StringBuilder();
+            if(string.IsNullOrEmpty(DeploymentSettings.RootPassword))
+            {
+                result.AppendLine($"sudo su -");
+            }else
+            {
+                result.AppendLine($"echo \"{DeploymentSettings.RootPassword}\" | sudo -S sleep 1 && sudo su -");
+            }
 //            result.AppendLine(SSHClientExtensions.LoginAsRoot());
             result.AppendLine(InstallPackage("git wget"));
             var gitRepo = string.IsNullOrEmpty(AdvancedSettings.BTCPayDockerRepository)
@@ -55,7 +62,7 @@ namespace BTCPayServerDockerConfigurator.Models
 
             var additionalFragments = AdvancedSettings.AdditionalFragments;
             var excludedFragments = AdvancedSettings.ExcludedFragments;
-            additionalFragments.Add("opt-add-configurator");
+//            additionalFragments.Add("opt-add-configurator");
             result.AppendLine($"export BTCPAY_IMAGE=\"{AdvancedSettings.CustomBTCPayImage}\"");
             var domain = string.IsNullOrEmpty(DomainSettings.Domain) ? "btcpay.local" : DomainSettings.Domain;
             result.AppendLine($"export BTCPAY_HOST=\"{domain}\"");

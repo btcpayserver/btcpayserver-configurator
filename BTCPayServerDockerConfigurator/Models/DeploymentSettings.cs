@@ -20,5 +20,6 @@ namespace BTCPayServerDockerConfigurator.Models
         public string Password { get; set; }
 
         public string ThisMachinePassword { get; set; }
+        public string RootPassword { get; set; }
     }
 }
