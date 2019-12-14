@@ -11,7 +11,6 @@ namespace BTCPayServerDockerConfigurator.Controllers
             var model = GetConfiguratorSettings();
             return View(new UpdateSettings<ConfiguratorSettings, AdditionalDataStub>()
             {
-
                 Settings = model
             });
         }
