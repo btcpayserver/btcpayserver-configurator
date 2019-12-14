@@ -147,16 +147,11 @@ namespace BTCPayServerDockerConfigurator
             shellStream.DataReceived += (sender, args) =>
             {
                 var str = Encoding.UTF8.GetString(args.Data);
-                if (!(str.Contains("echo \"eolcomment\"") || str.Contains("eolcomment") ||
-                    str.Contains("echo \"eolcomment\"") && str.Contains("end-of-command")))
+                if (!str.Contains("end-of-command"))
                 {
                     result.Append(str);
                 }
-                if(!str.Contains("echo \"eolcomment\"") && str.Contains("eolcomment"))
-                {
-                    cts.SetResult(true);
-                }
-                if(!str.Contains("echo \"eolcomment\"") && str.Contains("end-of-command"))
+                if(!str.Contains("echo \"end-of-command\"") && str.Contains("end-of-command"))
                 {
                     cont = true;
                 }
@@ -171,15 +166,28 @@ namespace BTCPayServerDockerConfigurator
                 }
 
                 shellStream.WriteLine(command);
+                waiter:
                 shellStream.WriteLine("echo \"end-of-command\"");
+                var counter = 0;
                 while (!cont)
                 {
+                    if (counter > 10)
+                    {
+                        goto waiter;
+                    }
                     await Task.Delay(TimeSpan.FromMilliseconds(500));
+                    counter++;
                 }
-            }
 
-            shellStream.WriteLine("echo \"eolcomment\"");
-           failed= !await cts.Task;
+                if (commands.Length == index + 1)
+                {
+                    cts.SetResult(true);
+                }
+
+                cont = false;
+            }
+            
+            failed= !await cts.Task;
             return (!failed, result.ToString());
         }
 
