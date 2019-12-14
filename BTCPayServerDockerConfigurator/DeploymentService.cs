@@ -136,6 +136,7 @@ namespace BTCPayServerDockerConfigurator
         private async Task<(bool, string)> RunCommandsInShellSequencial(string[] commands, ShellStream shellStream, StringBuilder result)
         {
             var failed = false;
+            var cont = false;
             var cts = new TaskCompletionSource<bool>();
             shellStream.ErrorOccurred += (sender, args) => {
                 result.AppendLine(args.Exception.Message);
@@ -146,23 +147,37 @@ namespace BTCPayServerDockerConfigurator
             shellStream.DataReceived += (sender, args) =>
             {
                 var str = Encoding.UTF8.GetString(args.Data);
-                result.Append(str);
+                if (!(str.Contains("echo \"eolcomment\"") || str.Contains("eolcomment") ||
+                    str.Contains("echo \"eolcomment\"") && str.Contains("end-of-command")))
+                {
+                    result.Append(str);
+                }
                 if(!str.Contains("echo \"eolcomment\"") && str.Contains("eolcomment"))
                 {
                     cts.SetResult(true);
                 }
+                if(!str.Contains("echo \"eolcomment\"") && str.Contains("end-of-command"))
+                {
+                    cont = true;
+                }
             };
             var y = shellStream.Read();
-            foreach (var command in commands)
+            for (var index = 0; index < commands.Length; index++)
             {
+                var command = commands[index];
                 if (failed)
                 {
                     break;
                 }
+
                 shellStream.WriteLine(command);
-                shellStream.ReadLine();
+                shellStream.WriteLine("echo \"end-of-command\"");
+                while (!cont)
+                {
+                    await Task.Delay(TimeSpan.FromMilliseconds(500));
+                }
             }
-            
+
             shellStream.WriteLine("echo \"eolcomment\"");
            failed= !await cts.Task;
             return (!failed, result.ToString());
