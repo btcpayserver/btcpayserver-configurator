@@ -24,6 +24,6 @@ WORKDIR /app
 COPY --from=publish /app .
 
 
-COPY Dockerfiles/docker-entrypoint.sh docker-entrypoint.sh
+COPY Dockerfiles/entrypoint.sh docker-entrypoint.sh
 RUN chmod +x docker-entrypoint.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
