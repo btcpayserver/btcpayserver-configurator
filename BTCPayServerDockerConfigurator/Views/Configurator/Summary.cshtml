@@ -1,9 +1,10 @@
+@using BTCPayServerDockerConfigurator.Models
+@model UpdateSettings<ConfiguratorSettings, AdditionalDataStub>;
 @{
     ViewData["Title"] = "Does this look right to you?";
     ViewData["CurrentStep"] = 7;
 }
 
-@model UpdateSettings<ConfiguratorSettings, AdditionalDataStub>;
 <div class="container">
 <input type="hidden" asp-for="Json"/>
 <div class="row mb-md-4">
