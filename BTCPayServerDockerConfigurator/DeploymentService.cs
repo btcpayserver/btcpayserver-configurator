@@ -51,7 +51,7 @@ namespace BTCPayServerDockerConfigurator
                     });
                 }
 
-                var ssh = configuratorSettings.GetSshSettings(_options.Value);
+                var ssh = configuratorSettings.GetSshSettings(_options.Value, TODO);
 
                 try
                 {

@@ -10,7 +10,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         [HttpGet("onion")]
         public async Task<IActionResult> GetOnionUrl()
         {
-            var ssh = GetConfiguratorSettings().GetSshSettings(_options.Value);
+            var ssh = GetConfiguratorSettings().GetSshSettings(_options.Value,  _logger);
             using var sshC = await ssh.ConnectAsync();
             var result =
                 await sshC.RunBash(

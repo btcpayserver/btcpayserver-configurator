@@ -55,7 +55,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 }
                 case DeploymentType.ThisMachine when ModelState.IsValid:
                 {
-                    var ssh = _options.Value.ParseSSHConfiguration(updateSettings.Settings.ThisMachinePassword);
+                    var ssh = _options.Value.ParseSSHConfiguration(updateSettings.Settings.ThisMachinePassword,  _logger);
                     if (!await TestSSH(ssh))
                     {
                         ModelState.AddModelError(
@@ -131,7 +131,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             Options optionsValue)
         {
             var additionalData = new DeploymentAdditionalData();
-            if (!string.IsNullOrEmpty(_options.Value.SSHConnection) &&  optionsValue.VerifyPassword(updateSettingsSettings.ThisMachinePassword))
+            if (!string.IsNullOrEmpty(_options.Value.SSHConnection) &&  optionsValue.VerifyPassword(updateSettingsSettings.ThisMachinePassword, _logger))
             {
                 additionalData.AvailableDeploymentTypes.Add(DeploymentType.ThisMachine);
             }
@@ -173,7 +173,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 }
                 case DeploymentType.ThisMachine when ModelState.IsValid:
                 {
-                    sshSettings = _options.Value.ParseSSHConfiguration(settings.ThisMachinePassword);
+                    sshSettings = _options.Value.ParseSSHConfiguration(settings.ThisMachinePassword,  _logger);
 
                     break;
                 }
