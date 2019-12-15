@@ -7,6 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Controllers;
 using BTCPayServerDockerConfigurator.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Renci.SshNet;
 using Options = BTCPayServerDockerConfigurator.Models.Options;
@@ -16,15 +17,17 @@ namespace BTCPayServerDockerConfigurator
     public class DeploymentService
     {
         private readonly IOptions<Options> _options;
+        private readonly ILogger<DeploymentService> _logger;
 
         ConcurrentDictionary<string, (Task<UpdateSettings<ConfiguratorSettings, DeployAdditionalData>>, StringBuilder)>
             OngoingDeployments =
                 new ConcurrentDictionary<string, (Task<UpdateSettings<ConfiguratorSettings, DeployAdditionalData>>,
                     StringBuilder)>();
 
-        public DeploymentService(IOptions<Options> options)
+        public DeploymentService(IOptions<Options> options, ILogger<DeploymentService> logger)
         {
             _options = options;
+            _logger = logger;
         }
 
         public string StartDeployment(ConfiguratorSettings configuratorSettings)
@@ -51,7 +54,7 @@ namespace BTCPayServerDockerConfigurator
                     });
                 }
 
-                var ssh = configuratorSettings.GetSshSettings(_options.Value, TODO);
+                var ssh = configuratorSettings.GetSshSettings(_options.Value,  _logger);
 
                 try
                 {
