@@ -55,7 +55,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         }
 
 
-        private async Task<string> CheckHost(string host, ConfiguratorSettings configuratorSettings)
+        private string CheckHost(string host, ConfiguratorSettings configuratorSettings)
         {
             string hostToCheckAgainst = null;
             switch (configuratorSettings.DeploymentSettings.DeploymentType)

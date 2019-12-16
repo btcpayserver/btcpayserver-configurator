@@ -23,7 +23,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         }
 
         [HttpPost("additional")]
-        public async Task<IActionResult> AdditionalServices(
+        public IActionResult AdditionalServices(
             UpdateSettings<AdditionalServices, AdditionalDataStub> updateSettings)
         {
             var configuratorSettings = string.IsNullOrEmpty(updateSettings.Json)
@@ -34,7 +34,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             {
                 if (updateSettings.Settings.BTCTransmuterSettings.Enabled)
                 {
-                    var error = await CheckHost(updateSettings.Settings.BTCTransmuterSettings.Host,
+                    var error = CheckHost(updateSettings.Settings.BTCTransmuterSettings.Host,
                         configuratorSettings);
                     if (!string.IsNullOrEmpty(error))
                     {
@@ -48,7 +48,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
                 if (updateSettings.Settings.LibrePatronSettings.Enabled)
                 {
-                    var error = await CheckHost(updateSettings.Settings.LibrePatronSettings.Host,
+                    var error = CheckHost(updateSettings.Settings.LibrePatronSettings.Host,
                         configuratorSettings);
                     if (!string.IsNullOrEmpty(error))
                     {
@@ -62,7 +62,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
                 if (updateSettings.Settings.WooCommerceSettings.Enabled)
                 {
-                    var error = await CheckHost(updateSettings.Settings.WooCommerceSettings.Host,
+                    var error = CheckHost(updateSettings.Settings.WooCommerceSettings.Host,
                         configuratorSettings);
                     if (!string.IsNullOrEmpty(error))
                     {

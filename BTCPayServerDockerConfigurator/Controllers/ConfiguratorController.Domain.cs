@@ -23,7 +23,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         }
 
         [HttpPost("domain")]
-        public async Task<IActionResult> DomainSettings(
+        public IActionResult DomainSettings(
             UpdateSettings<DomainSettings, AdditionalDataStub> updateSettings,
             string command = null)
         {
@@ -56,7 +56,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 ? new ConfiguratorSettings()
                 : JsonSerializer.Deserialize<ConfiguratorSettings>(updateSettings.Json);
 
-            var error = await CheckHost(updateSettings.Settings.Domain, configuratorSettings);
+            var error = CheckHost(updateSettings.Settings.Domain, configuratorSettings);
             if (!string.IsNullOrEmpty(error))
             {
                 ModelState.AddModelError(nameof(updateSettings.Settings) + "." + nameof(updateSettings.Settings.Domain),
@@ -67,7 +67,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             for (var index = 0; index < updateSettings.Settings.AdditionalDomains.Count; index++)
             {
                 var additionalDomain = updateSettings.Settings.AdditionalDomains[index];
-                error = await CheckHost(additionalDomain, configuratorSettings);
+                error = CheckHost(additionalDomain, configuratorSettings);
                 if (!string.IsNullOrEmpty(error))
                 {
                     ModelState.AddModelError(

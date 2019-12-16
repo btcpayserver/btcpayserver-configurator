@@ -170,7 +170,7 @@ namespace BTCPayServerDockerConfigurator.Models
                 }
                 case DeploymentType.ThisMachine:
                 {
-                    ssh = options.ParseSSHConfiguration(DeploymentSettings.ThisMachinePassword,  logger);
+                    ssh = options.ParseSSHConfiguration(DeploymentSettings.ThisMachinePassword);
                     break;
                 }
             }
