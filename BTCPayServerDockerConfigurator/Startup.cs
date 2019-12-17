@@ -30,7 +30,10 @@ namespace BTCPayServerDockerConfigurator
             services.AddOptions();
             services.Configure<Options>(Configuration);
             services.AddSingleton<DeploymentService>();
-            services.AddControllersWithViews().AddRazorRuntimeCompilation();
+            services.AddControllersWithViews()
+                .AddSessionStateTempDataProvider()
+                .AddRazorRuntimeCompilation();
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -58,7 +61,7 @@ namespace BTCPayServerDockerConfigurator
             app.UseStaticFiles(options.Value.RootPath);
             app.UsePathBase(options.Value.RootPath);
             app.UseRouting();
-
+            app.UseSession();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

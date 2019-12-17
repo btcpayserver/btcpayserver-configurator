@@ -76,10 +76,11 @@
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                     </div>
-                    <script>
-                    </script>
-                    <iframe  id="progress" class="w-100 " style="max-height:250px" frameborder="0" src="@Url.Action("DeployResult", new {id, view = "DeployResultProgress"})"></iframe>
-                </div>
+
+                    <code class="d-block my-2" id="output" style="max-height: 50vh;
+                                                  overflow-y: scroll;">
+                        @Html.Raw(Model.Additional.Output?.Replace("\n", "<br/>"))
+                    </code></div>
             </div>
         </div>
     </div>
@@ -95,10 +96,24 @@
     </script>
     @if (Model.Additional.InProgress)
     {
-    <script>
+        <script>
         $(document).ready(function(){
             $("#deploying-modal").modal("show");
+            update();
         });
+            
+        function update(){
+             $.ajax({url: window.location + "?json=true", success: function(result){
+                 if(!result.additional.inProgress){
+                    window.top.location.reload();
+                 }else{
+                     window.setTimeout(update, 3000);
+                 }
+                $("#output").html(result.additional.output.replace(/\n/g, '<br/>'));
+                var el = document.getElementById("output");
+                el.scrollIntoView(false);
+              }});
+        }
         
     </script>
     }
