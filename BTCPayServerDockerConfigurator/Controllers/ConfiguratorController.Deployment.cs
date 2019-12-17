@@ -276,6 +276,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
             var index = 1;
             result.ChainSettings ??= new ChainSettings();
+            result.ChainSettings.Bitcoin = false;
             while (true)
             {
                 var chain = await GetVar(preloadedEnvVars, ssh, $"BTCPAYGEN_CRYPTO{index}");

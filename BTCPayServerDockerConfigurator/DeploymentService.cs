@@ -54,13 +54,11 @@ namespace BTCPayServerDockerConfigurator
                     });
                 }
 
-                var ssh = configuratorSettings.GetSshSettings(_options.Value,  _logger);
+                var ssh = configuratorSettings.GetSshSettings(_options.Value, _logger);
 
                 try
                 {
                     var doOneLiner = false;
-
-
                     using var connection = await ssh.ConnectAsync();
                     if (doOneLiner)
                     {
@@ -82,36 +80,33 @@ namespace BTCPayServerDockerConfigurator
                             Json = configuratorSettings.ToString(),
                             Settings = configuratorSettings
                         });
-
                     }
                     else
                     {
-                      var shell = connection.CreateShellStream("xterm", 50, 50, 640, 480, 17640);
+                        var shell = connection.CreateShellStream("xterm", 50, 50, 640, 480, 17640);
                         var commands = bash
                             .Replace(Environment.NewLine, "\n").Split("\n", StringSplitOptions.RemoveEmptyEntries);
 
-  
 
                         var result = await RunCommandsInShellSequencial(commands, shell, sb);
                         var exitcode = result.Item1 ? 0 : -1;
 
 
                         tcs.SetResult(new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>()
-                                {
-                                    Additional = new DeployAdditionalData()
-                                    {
-                                        Bash = bash,
-                                        Error = "",
-                                        ExitStatus = exitcode,
-                                        Output = result.Item2.Replace(Environment.NewLine, "\n"),
-                                        InProgress = false
-                                    },
-                                    Json = configuratorSettings.ToString(),
-                                    Settings = configuratorSettings
-                                });  
-                        
-                                                                   
-                        shell.Dispose();   
+                        {
+                            Additional = new DeployAdditionalData()
+                            {
+                                Bash = bash,
+                                Error = "",
+                                ExitStatus = exitcode,
+                                Output = result.Item2.Replace(Environment.NewLine, "\n"),
+                                InProgress = false
+                            },
+                            Json = configuratorSettings.ToString(),
+                            Settings = configuratorSettings
+                        });
+
+                        shell.Dispose();
                     }
                 }
                 catch (Exception e)
@@ -136,14 +131,16 @@ namespace BTCPayServerDockerConfigurator
             return id;
         }
 
-        private async Task<(bool, string)> RunCommandsInShellSequencial(string[] commands, ShellStream shellStream, StringBuilder result)
+        private async Task<(bool, string)> RunCommandsInShellSequencial(string[] commands, ShellStream shellStream,
+            StringBuilder result)
         {
             var failed = false;
             var cont = false;
             var cts = new TaskCompletionSource<bool>();
-            shellStream.ErrorOccurred += (sender, args) => {
+            shellStream.ErrorOccurred += (sender, args) =>
+            {
                 result.AppendLine(args.Exception.Message);
-               
+
                 failed = true;
                 cts.SetResult(false);
             };
@@ -154,7 +151,8 @@ namespace BTCPayServerDockerConfigurator
                 {
                     result.Append(str);
                 }
-                if(!str.Contains("echo \"end-of-command\"") && str.Contains("end-of-command"))
+
+                if (!str.Contains("echo \"end-of-command\"") && str.Contains("end-of-command"))
                 {
                     cont = true;
                 }
@@ -178,6 +176,7 @@ namespace BTCPayServerDockerConfigurator
                     {
                         goto waiter;
                     }
+
                     await Task.Delay(TimeSpan.FromMilliseconds(500));
                     counter++;
                 }
@@ -189,8 +188,8 @@ namespace BTCPayServerDockerConfigurator
 
                 cont = false;
             }
-            
-            failed= !await cts.Task;
+
+            failed = !await cts.Task;
             return (!failed, result.ToString());
         }
 

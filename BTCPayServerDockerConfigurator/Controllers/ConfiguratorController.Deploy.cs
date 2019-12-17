@@ -33,7 +33,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         
 
         [HttpGet("deploy-result/{id?}")]
-        public IActionResult DeployResult(string id ="", string view = null)
+        public IActionResult DeployResult(string id ="", string view = null, bool json = false)
         {
             var result = _deploymentService.GetDeploymentResult(id);
             if (result == null)
@@ -48,6 +48,11 @@ namespace BTCPayServerDockerConfigurator.Controllers
             if (!result.Additional.InProgress)
             {
                 SetTempData(id, result);
+            }
+
+            if (json)
+            {
+                return Json(result);
             }
             return View(view?? "DeployResult",result);
         }
