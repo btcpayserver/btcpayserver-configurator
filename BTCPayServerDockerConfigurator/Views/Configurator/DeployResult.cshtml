@@ -21,7 +21,12 @@
                                 </iframe>
                                 <div class="input-group form-group">
 
-                                    <input class="form-control" onclick="this.select();" type="text" style="font-size:0.75em;" value="@Model.Settings.DomainSettings.Domain" readonly="">
+                                    <input class="form-control  border-right-0" onclick="this.select();" type="text" style="font-size:0.75em;" value="https://@Model.Settings.DomainSettings.Domain" readonly="">
+                                    <div class="input-group-append">
+                                        <a href="https://@Model.Settings.DomainSettings.Domain" class="input-group-text text-decoration-none  p-0 px-2">
+                                            <span class="input-group-addon">⮞</span>
+                                        </a>
+                                    </div>
                                 </div>
                             }
                             <code class="d-block" style="max-height: 250px; overflow-y: scroll">
@@ -80,7 +85,8 @@
                     <code class="d-block my-2" id="output" style="max-height: 50vh;
                                                   overflow-y: scroll;">
                         @Html.Raw(Model.Additional.Output?.Replace("\n", "<br/>"))
-                    </code></div>
+                    </code>
+                </div>
             </div>
         </div>
     </div>

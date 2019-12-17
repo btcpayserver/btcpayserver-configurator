@@ -14,7 +14,12 @@
                 <img src="/assets/Onion_Color.svg" height="16">
             </a>
         </div>
-        <input class="form-control" onclick="this.select();" type="text" style="font-size:0.75em;" value="@Model.Output" readonly="">
+        <input class="form-control border-right-0" onclick="this.select();" type="text" style="font-size:0.75em;" value="@Model.Output" readonly="">
+          <div class="input-group-append">
+                    <a href="@Model.Output" class="input-group-text text-decoration-none  p-0 px-2">
+                        <span class="input-group-addon">⮞</span>
+                    </a>
+                </div>
     </div>
 }
 else
