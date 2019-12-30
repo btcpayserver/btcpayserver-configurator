@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -29,6 +30,13 @@ namespace BTCPayServerDockerConfigurator
         {
             services.AddOptions();
             services.Configure<Options>(Configuration);
+            services.PostConfigure<Options>(async options =>
+            {
+                if (!string.IsNullOrEmpty(options.PasswordFilePath))
+                {
+                    await File.WriteAllTextAsync(options.PasswordFilePath, Guid.NewGuid().ToString());
+                }
+            });
             services.AddSingleton<DeploymentService>();
             services.AddControllersWithViews()
                 .AddSessionStateTempDataProvider()
