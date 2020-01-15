@@ -16,7 +16,7 @@ RUN dotnet publish -c Release -o out
 
 
 FROM mcr.microsoft.com/dotnet/core/aspnet:3.1.0-buster-slim-arm64v8  AS runtime
-COPY --from=builder /usr/bin/qemu-aarch64-static /usr/bin/qemu-aarch64-static
+COPY --from=build /usr/bin/qemu-aarch64-static /usr/bin/qemu-aarch64-static
 RUN apt-get update && apt-get install -y --no-install-recommends iproute2 openssh-client \
     && rm -rf /var/lib/apt/lists/* 
 WORKDIR /app
