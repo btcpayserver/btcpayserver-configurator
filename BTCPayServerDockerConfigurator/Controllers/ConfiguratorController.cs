@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BTCPayServerDockerConfigurator.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Options = BTCPayServerDockerConfigurator.Models.Options;
@@ -18,37 +19,58 @@ namespace BTCPayServerDockerConfigurator.Controllers
         private readonly ILogger<ConfiguratorController> _logger;
         private readonly DeploymentService _deploymentService;
 
-        public ConfiguratorController(IOptions<Options> options, ILogger<ConfiguratorController> logger, DeploymentService deploymentService)
+        public bool IsVerified
+        {
+            
+            get => HttpContext.Session.Keys.Contains("verified");
+            set
+            {
+                if (HttpContext.Session.Keys.Contains("verified") && !value)
+                {
+                    TempData.Remove("verified");
+                    return;
+                }
+
+                if (value)
+                {
+                    HttpContext.Session.SetString("verified", "verified");
+                }
+            }
+        }
+
+        public ConfiguratorController(IOptions<Options> options, ILogger<ConfiguratorController> logger,
+            DeploymentService deploymentService)
         {
             _options = options;
             _logger = logger;
             _deploymentService = deploymentService;
         }
+
         private ConfiguratorSettings GetConfiguratorSettings()
         {
-            return GetTempData<ConfiguratorSettings>(nameof(ConfiguratorSettings))?? new ConfiguratorSettings();
+            return GetTempData<ConfiguratorSettings>(nameof(ConfiguratorSettings)) ?? new ConfiguratorSettings();
         }
 
         private void SetConfiguratorSettings(ConfiguratorSettings settings)
         {
             SetTempData(nameof(ConfiguratorSettings), settings);
         }
-        
+
         private void SetTempData<T>(string name, T data)
         {
             if (TempData.ContainsKey(name))
                 TempData.Remove(name);
             TempData.Add(name, JsonSerializer.Serialize(data));
         }
-        
-        private T GetTempData<T>(string name, bool remove = false) where T: class
+
+        private T GetTempData<T>(string name, bool remove = false) where T : class
         {
             if (remove && !TempData.ContainsKey(name))
             {
                 return null;
             }
-            
-            var rawResult = remove? TempData[name].ToString() : TempData.Peek(name)?.ToString();
+
+            var rawResult = remove ? TempData[name].ToString() : TempData.Peek(name)?.ToString();
             return string.IsNullOrEmpty(rawResult)
                 ? null
                 : JsonSerializer.Deserialize<T>(rawResult);
@@ -63,7 +85,8 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 case DeploymentType.Manual:
                     break;
                 case DeploymentType.ThisMachine:
-                    hostToCheckAgainst = new WebClient().DownloadString("http://icanhazip.com").Trim().Replace(Environment.NewLine, "").Replace("\n", "");
+                    hostToCheckAgainst = new WebClient().DownloadString("http://icanhazip.com").Trim()
+                        .Replace(Environment.NewLine, "").Replace("\n", "");
                     break;
                 case DeploymentType.RemoteMachine:
                     hostToCheckAgainst = configuratorSettings.DeploymentSettings.Host;
@@ -86,7 +109,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
             return null;
         }
-        
+
         private bool CheckHostDNSIsCorrect(string host, string hostToCheckAgainst = null)
         {
             var basicCheck = Uri.CheckHostName(host);
@@ -112,6 +135,5 @@ namespace BTCPayServerDockerConfigurator.Controllers
             return Dns.GetHostAddresses(host).ToList().Any(address =>
                 address.ToString().Equals(hostToCheckAgainst, StringComparison.InvariantCultureIgnoreCase));
         }
-        
     }
 }

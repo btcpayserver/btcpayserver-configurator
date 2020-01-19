@@ -153,7 +153,7 @@ namespace BTCPayServerDockerConfigurator.Models
             return "apt-get install -y "+ package;
         }
 
-        public SSHSettings GetSshSettings(Options options, ILogger logger)
+        public SSHSettings GetSshSettings(Options options, bool verified)
         {
             SSHSettings ssh = null;
             switch (DeploymentSettings.DeploymentType)
@@ -170,7 +170,11 @@ namespace BTCPayServerDockerConfigurator.Models
                 }
                 case DeploymentType.ThisMachine:
                 {
-                    ssh = options.ParseSSHConfiguration(DeploymentSettings.ThisMachinePassword);
+                    if (verified)
+                    {
+                        ssh = options.ParseSSHConfiguration();
+                    }
+                    
                     break;
                 }
             }

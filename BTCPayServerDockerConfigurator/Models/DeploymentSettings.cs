@@ -18,8 +18,6 @@ namespace BTCPayServerDockerConfigurator.Models
         [RequiredIf(nameof(DeploymentType), nameof(DeploymentType.RemoteMachine),
             "Please enter the password of the remote server")]
         public string Password { get; set; }
-
-        public string ThisMachinePassword { get; set; }
         public string RootPassword { get; set; }
     }
 }

@@ -32,9 +32,9 @@ namespace BTCPayServerDockerConfigurator
             services.Configure<Options>(Configuration);
             services.PostConfigure<Options>(async options =>
             {
-                if (!string.IsNullOrEmpty(options.PasswordFilePath))
+                if (!string.IsNullOrEmpty(options.CookieFilePath))
                 {
-                    await File.WriteAllTextAsync(options.PasswordFilePath, Guid.NewGuid().ToString());
+                    await File.WriteAllTextAsync(options.CookieFilePath, Guid.NewGuid().ToString());
                 }
             });
             services.AddSingleton<DeploymentService>();

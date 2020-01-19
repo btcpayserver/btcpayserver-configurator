@@ -1,35 +1,55 @@
+using System;
 using System.IO;
-using System.Reflection.Metadata.Ecma335;
 
 namespace BTCPayServerDockerConfigurator.Models
 {
     public class Options
     {
         public string RootPath { get; set; } = "";
-        public string PasswordFilePath { get; set; }
+        public string CookieFilePath { get; set; }
         public string SSHConnection { get; set; } = null;
         public string SSHPassword { get; set; } = "";
-        public string SSHKeyFile { get; set; }= "";
-        public string SSHAuthorizedKeys { get; set; }= "";
-        public string SSHKeyFilePassword { get; set; }= "";
+        public string SSHKeyFile { get; set; } = "";
+        public string SSHAuthorizedKeys { get; set; } = "";
+        public string SSHKeyFilePassword { get; set; } = "";
 
-        public bool VerifyPassword(string password)
+        public bool VerifyAndRegeneratePassword(string password)
         {
-            if (string.IsNullOrEmpty(PasswordFilePath)) return true;
-            if (!File.Exists(PasswordFilePath))
+            var result = false;
+            if (string.IsNullOrEmpty(CookieFilePath))
             {
                 return false;
             }
-            var storedPassword = File.ReadAllText(PasswordFilePath);
-            return string.IsNullOrEmpty(storedPassword) || password == storedPassword;
-        }
-        public SSHSettings ParseSSHConfiguration(string password)
-        {
-            if (!VerifyPassword(password))
+
+            if (!File.Exists(CookieFilePath))
             {
-                return null;
+                File.WriteAllText(CookieFilePath, Guid.NewGuid().ToString());
+                return false;
             }
-            
+
+            var storedPassword = File.ReadAllText(CookieFilePath);
+            if (string.IsNullOrEmpty(storedPassword))
+            {
+                File.WriteAllText(CookieFilePath, Guid.NewGuid().ToString());
+                return false;
+            }
+
+            if (string.IsNullOrEmpty(password))
+            {
+                return false;
+            }
+
+            result = password == storedPassword;
+            if (result)
+            {
+                File.WriteAllText(CookieFilePath, Guid.NewGuid().ToString());
+            }
+
+            return result;
+        }
+
+        public SSHSettings ParseSSHConfiguration()
+        {
             var settings = new SSHSettings()
             {
                 Password = SSHPassword,
@@ -62,6 +82,7 @@ namespace BTCPayServerDockerConfigurator.Models
                     settings.Username = "root";
                 }
             }
+
             return settings;
         }
     }

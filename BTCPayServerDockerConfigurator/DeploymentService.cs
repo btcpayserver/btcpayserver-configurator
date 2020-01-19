@@ -30,7 +30,7 @@ namespace BTCPayServerDockerConfigurator
             _logger = logger;
         }
 
-        public string StartDeployment(ConfiguratorSettings configuratorSettings)
+        public string StartDeployment(ConfiguratorSettings configuratorSettings, bool verified)
         {
             var id = Guid.NewGuid().ToString();
             var sb = new StringBuilder();
@@ -54,7 +54,7 @@ namespace BTCPayServerDockerConfigurator
                     });
                 }
 
-                var ssh = configuratorSettings.GetSshSettings(_options.Value, _logger);
+                var ssh = configuratorSettings.GetSshSettings(_options.Value, verified);
 
                 try
                 {

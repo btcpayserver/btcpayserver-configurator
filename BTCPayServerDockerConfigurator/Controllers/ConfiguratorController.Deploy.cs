@@ -10,7 +10,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         [HttpGet("onion")]
         public async Task<IActionResult> GetOnionUrl()
         {
-            var ssh = GetConfiguratorSettings().GetSshSettings(_options.Value,  _logger);
+            var ssh = GetConfiguratorSettings().GetSshSettings(_options.Value, IsVerified);
             using var sshC = await ssh.ConnectAsync();
             var result =
                 await sshC.RunBash(
@@ -23,7 +23,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         public IActionResult Deploy()
         {
             var model = GetConfiguratorSettings();
-            var id = _deploymentService.StartDeployment(model);
+            var id = _deploymentService.StartDeployment(model, IsVerified);
             return RedirectToAction("DeployResult", new
             {
                 id = id
