@@ -26,11 +26,16 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 return RedirectToAction("DeploymentDestination");
             }
 
+            var additionalData = ConstructDeploymentAdditionalData();
+            if(!additionalData.AvailableDeploymentTypes.Contains(model.DeploymentSettings.DeploymentType))
+            {
+                model.DeploymentSettings.DeploymentType = DeploymentType.Manual;
+            }
             return View(new UpdateSettings<DeploymentSettings, DeploymentAdditionalData>()
             {
                 Json = JsonSerializer.Serialize(model),
                 Settings = model.DeploymentSettings,
-                Additional = ConstructDeploymentAdditionalData()
+                Additional = additionalData
             });
         }
 
@@ -38,7 +43,6 @@ namespace BTCPayServerDockerConfigurator.Controllers
         public async Task<IActionResult> DeploymentDestination(
             UpdateSettings<DeploymentSettings, DeploymentAdditionalData> updateSettings)
         {
-            
             updateSettings.Additional = ConstructDeploymentAdditionalData();
             switch (updateSettings.Settings.DeploymentType)
             {
@@ -63,17 +67,24 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 }
                 case DeploymentType.ThisMachine when ModelState.IsValid:
                 {
-                    if (!IsVerified)
-                    {
-                        return null;
-                    }
-                    var ssh = _options.Value.ParseSSHConfiguration();
-                    if (!await TestSSH(ssh))
+                    if (!IsVerified || !updateSettings.Additional.AvailableDeploymentTypes.Contains(DeploymentType.ThisMachine))
                     {
                         ModelState.AddModelError(
                             nameof(updateSettings.Settings) + "." + nameof(updateSettings.Settings.DeploymentType),
-                            "Couldn't SSH into the host. That's bad fyi.'");
+                            "The selected deployment type was not available.");
+                        updateSettings.Settings.DeploymentType = DeploymentType.Manual;
                     }
+                    else
+                    {
+                        var ssh = _options.Value.ParseSSHConfiguration();
+                        if (!await TestSSH(ssh))
+                        {
+                            ModelState.AddModelError(
+                                nameof(updateSettings.Settings) + "." + nameof(updateSettings.Settings.DeploymentType),
+                                "Couldn't SSH into the host. That's bad fyi.'");
+                        } 
+                    }
+                    
 
                     break;
                 }

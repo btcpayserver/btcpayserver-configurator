@@ -5,7 +5,7 @@ namespace BTCPayServerDockerConfigurator.Models
 {
     public class DeploymentSettings
     {
-        [Required] public DeploymentType DeploymentType { get; set; }
+        [Required] public DeploymentType DeploymentType { get; set; } = DeploymentType.ThisMachine;
 
         [RequiredIf(nameof(DeploymentType), nameof(DeploymentType.RemoteMachine),
             "Please enter the host/ip of the remote server")]
