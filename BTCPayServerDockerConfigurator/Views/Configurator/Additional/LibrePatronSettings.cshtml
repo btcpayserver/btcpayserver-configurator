@@ -1,24 +1,24 @@
 @model LibrePatronSettings
 
-        <div class="card shadow-sm ">
-            <label class="d-flex justify-content-between px-2 pb-0 mb-0 styled-checkbox-label">
+<div class="card shadow-sm ">
+    <label class="d-flex justify-content-between px-2 pb-0 mb-0 styled-checkbox-label">
 
-                <h3 class="card-title text-center pt-2">LibrePatron</h3>
+        <h3 class="card-title text-center pt-2">LibrePatron</h3>
 
-                <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
-            </label>
+        <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
+    </label>
 
-            <div class="card-body">
-                <p class="card-text">
-                    LibrePatron is A self-hosted Patreon alternative backed by BTCPay created by Jeff Vandrew Jr.
-                </p>
-                <div id="librepatron-body" style="visibility: hidden">
-                    <hr>
-                    <div class="form-group">
-                        <label asp-for="Host"></label>
-                        <input class="form-control" asp-for="Host">
-                        <span asp-validation-for="Host" class="text-danger"></span>
-                    </div>
-                </div>
+    <div class="card-body">
+        <p class="card-text">
+            LibrePatron is A self-hosted Patreon alternative backed by BTCPay created by Jeff Vandrew Jr.
+        </p>
+        <div id="librepatron-body" style="visibility: hidden">
+            <hr>
+            <div class="form-group">
+                <label asp-for="Host"></label>
+                <input class="form-control" asp-for="Host">
+                <span asp-validation-for="Host" class="text-danger"></span>
             </div>
         </div>
+    </div>
+</div>

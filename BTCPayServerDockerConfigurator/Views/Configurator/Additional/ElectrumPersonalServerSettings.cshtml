@@ -1,23 +1,23 @@
 @model ElectrumPersonalServerSettings
 
-        <div class="card shadow-sm ">
-            <label class="d-flex justify-content-between px-2 pb-0 mb-0 styled-checkbox-label">
+<div class="card shadow-sm ">
+    <label class="d-flex justify-content-between px-2 pb-0 mb-0 styled-checkbox-label">
 
-                <h3 class="card-title text-center pt-2">Electrum Personal Server</h3>
+        <h3 class="card-title text-center pt-2">Electrum Personal Server</h3>
 
-                <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
-            </label>
-            <div class="card-body">
-                <p class="card-text">
-                    <a href="https://github.com/chris-belcher/electrum-personal-server" target="_blank">Electrum Personal Server</a> or EPS is a personal version of public Electrum servers like ElectrumX.
-                </p>
-                <div id="eps-body" style="visibility: hidden">
-                    <hr>
-                    <div class="form-group">
-                        <label asp-for="Xpub"></label>
-                        <input class="form-control" asp-for="Xpub">
-                        <span asp-validation-for="Xpub" class="text-danger"></span>
-                    </div>
-                </div>
+        <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
+    </label>
+    <div class="card-body">
+        <p class="card-text">
+            <a href="https://github.com/chris-belcher/electrum-personal-server" target="_blank">Electrum Personal Server</a> or EPS is a personal version of public Electrum servers like ElectrumX.
+        </p>
+        <div id="eps-body" style="visibility: hidden">
+            <hr>
+            <div class="form-group">
+                <label asp-for="Xpub"></label>
+                <input class="form-control" asp-for="Xpub">
+                <span asp-validation-for="Xpub" class="text-danger"></span>
             </div>
         </div>
+    </div>
+</div>
