@@ -1,8 +1,4 @@
-using System;
-using System.Linq;
-using System.Net;
 using System.Text.Json;
-using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -48,6 +44,17 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 if (updateSettings.Settings.ElectrumPersonalServerSettings.Enabled)
                 {
                     //TODO: add xpub validation here
+                }
+                if (updateSettings.Settings.ElectrumXSettings.Enabled)
+                {
+                    if (configuratorSettings.ChainSettings.PruneMode != PruneMode.NoPruning)
+                    {
+                        ModelState.AddModelError(
+                            nameof(updateSettings.Settings) + "." +
+                            nameof(updateSettings.Settings.ElectrumXSettings) + "." +
+                            nameof(updateSettings.Settings.ElectrumXSettings.Enabled),
+                            "ElectrumX can only be used with a non-pruned node.");
+                    }
                 }
 
                 if (updateSettings.Settings.WooCommerceSettings.Enabled)

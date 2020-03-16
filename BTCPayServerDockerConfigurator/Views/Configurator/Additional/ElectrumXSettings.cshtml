@@ -1,0 +1,18 @@
+@model ElectrumXSettings
+
+<div class="card shadow-sm ">
+    <label class="d-flex justify-content-between px-2 pb-0 mb-0 styled-checkbox-label">
+
+        <h3 class="card-title text-center pt-2">ElectrumX Server</h3>
+
+        <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
+    </label>
+    <div class="card-body">
+        <p class="card-text">
+            A full ElectrumX server (from official source) with BTCPay, using the BTCPay server's full bitcoin node for complete privacy when using your own Electrum wallet.
+        </p>
+        <div id="electrumx-body" style="visibility: hidden">
+                <span asp-validation-for="Enabled" class="text-danger"></span>
+        </div>
+    </div>
+</div>

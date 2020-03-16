@@ -10,5 +10,8 @@ namespace BTCPayServerDockerConfigurator.Models
 
         public ElectrumPersonalServerSettings ElectrumPersonalServerSettings { get; set; } =
             new ElectrumPersonalServerSettings();
+
+        public ElectrumXSettings ElectrumXSettings { get; set; } =
+            new ElectrumXSettings();
     }
 }

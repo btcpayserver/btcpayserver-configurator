@@ -139,6 +139,11 @@ namespace BTCPayServerDockerConfigurator.Models
                 result.AppendLine($"export EPS_XPUB=\"{AdditionalServices.ElectrumPersonalServerSettings.Xpub}\"");
             }
 
+            if (AdditionalServices.ElectrumXSettings.Enabled)
+            {
+                additionalFragments.Add("opt-add-electrumx");
+            }
+
             if (additionalFragments.Any())
             {
                 result.AppendLine($"export BTCPAYGEN_ADDITIONAL_FRAGMENTS=\"{string.Join(';', additionalFragments)}\"");

@@ -286,6 +286,12 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 result.AdditionalServices.ElectrumPersonalServerSettings.Xpub =
                     await GetVar(preloadedEnvVars, ssh, "EPS_XPUB ");
             }
+            
+            if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-electrumx"))
+            {
+                result.AdvancedSettings.AdditionalFragments.Remove("opt-add-electrumx");
+                result.AdditionalServices.ElectrumXSettings.Enabled = true;
+            }
 
             if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-tor-relay"))
             {

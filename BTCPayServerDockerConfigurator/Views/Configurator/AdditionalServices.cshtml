@@ -17,6 +17,7 @@
                 <partial for="Settings.LibrePatronSettings" name="Additional/LibrePatronSettings"/>
                 <partial for="Settings.WooCommerceSettings" name="Additional/WooCommerceSettings"/>
                 <partial for="Settings.ElectrumPersonalServerSettings" name="Additional/ElectrumPersonalServerSettings"/>
+                <partial for="Settings.ElectrumXSettings" name="Additional/ElectrumXSettings"/>
         </div>
     </div>
     <div class="row w-100">
@@ -54,6 +55,11 @@
             var epsInput = $("#Settings_ElectrumPersonalServerSettings_Enabled");
             toggle(epsInput, epsBody);
             epsInput.on("change input", function(){ toggle(epsInput, epsBody)}); 
+            
+            var electrumxBody = $("#electrumx-body");
+            var electrumxInput = $("#Settings_ElectrumXSettings_Enabled");
+            toggle(electrumxInput, electrumxBody);
+            electrumxInput.on("change input", function(){ toggle(electrumxInput, electrumxBody)}); 
             
             var woocommerceBody = $("#woocommerce-body");
             var woocommerceInput = $("#Settings_WooCommerceSettings_Enabled");
