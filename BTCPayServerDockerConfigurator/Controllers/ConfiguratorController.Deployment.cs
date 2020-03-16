@@ -276,8 +276,6 @@ namespace BTCPayServerDockerConfigurator.Controllers
             {
                 result.AdvancedSettings.AdditionalFragments.Remove("opt-add-btctransmuter");
                 result.AdditionalServices.BTCTransmuterSettings.Enabled = true;
-                result.AdditionalServices.BTCTransmuterSettings.Host =
-                    await GetVar(preloadedEnvVars, ssh, "BTCTRANSMUTER_HOST");
             }
 
             if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-tor-relay"))

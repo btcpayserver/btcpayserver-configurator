@@ -32,20 +32,6 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
             if (ModelState.IsValid)
             {
-                if (updateSettings.Settings.BTCTransmuterSettings.Enabled)
-                {
-                    var error = CheckHost(updateSettings.Settings.BTCTransmuterSettings.Host,
-                        configuratorSettings);
-                    if (!string.IsNullOrEmpty(error))
-                    {
-                        ModelState.AddModelError(
-                            nameof(updateSettings.Settings) + "." +
-                            nameof(updateSettings.Settings.BTCTransmuterSettings) + "." +
-                            nameof(updateSettings.Settings.BTCTransmuterSettings.Host),
-                            error);
-                    }
-                }
-
                 if (updateSettings.Settings.LibrePatronSettings.Enabled)
                 {
                     var error = CheckHost(updateSettings.Settings.LibrePatronSettings.Host,
