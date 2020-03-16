@@ -63,7 +63,6 @@ namespace BTCPayServerDockerConfigurator.Models
 
             var additionalFragments = AdvancedSettings.AdditionalFragments;
             var excludedFragments = AdvancedSettings.ExcludedFragments;
-//            additionalFragments.Add("opt-add-configurator");
             result.AppendLine($"export BTCPAY_IMAGE=\"{AdvancedSettings.CustomBTCPayImage}\"");
             var domain = string.IsNullOrEmpty(DomainSettings.Domain) ? "btcpay.local" : DomainSettings.Domain;
             result.AppendLine($"export BTCPAY_HOST=\"{domain}\"");
@@ -125,6 +124,10 @@ namespace BTCPayServerDockerConfigurator.Models
             {
                 additionalFragments.Add("opt-add-woocommerce");
                 result.AppendLine($"export WOOCOMMERCE_HOST=\"{AdditionalServices.WooCommerceSettings.Host}\"");
+            }
+            if (AdditionalServices.ConfiguratorAddonSettings.Enabled)
+            {
+                additionalFragments.Add("opt-add-configurator");
             }
 
             if (additionalFragments.Any())

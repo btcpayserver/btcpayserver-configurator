@@ -1,0 +1,16 @@
+@model ConfiguratorAddonSettings
+
+        <div class="card shadow-sm ">
+            <label class="d-flex justify-content-between px-2 pb-0 mb-0 styled-checkbox-label">
+                <h3 class="card-title text-center pt-2  pb-0 mb-0">BTCPay Server Configurator</h3>
+                <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
+            </label>
+
+            <div class="card-body">
+                <p class="card-text">
+                    This configurator app will be separately installed alongside your BTCPay Server. You'll be able to modify your deployment settings along with deploying new instances.  
+                </p>
+                <div id="configurator-body" style="visibility: hidden">
+                </div>
+            </div>
+        </div>

@@ -259,11 +259,6 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     await GetVar(preloadedEnvVars, ssh, "LIBREPATRON_HOST");
             }
 
-            if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-configurator"))
-            {
-                result.AdvancedSettings.AdditionalFragments.Remove("opt-add-configurator");
-            }
-
             if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-woocommerce"))
             {
                 result.AdvancedSettings.AdditionalFragments.Remove("opt-add-woocommerce");
@@ -276,6 +271,12 @@ namespace BTCPayServerDockerConfigurator.Controllers
             {
                 result.AdvancedSettings.AdditionalFragments.Remove("opt-add-btctransmuter");
                 result.AdditionalServices.BTCTransmuterSettings.Enabled = true;
+            }
+
+            if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-configurator"))
+            {
+                result.AdvancedSettings.AdditionalFragments.Remove("opt-add-configurator");
+                result.AdditionalServices.ConfiguratorAddonSettings.Enabled = true;
             }
 
             if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-tor-relay"))

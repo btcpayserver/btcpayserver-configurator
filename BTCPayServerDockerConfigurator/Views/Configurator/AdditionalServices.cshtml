@@ -35,6 +35,11 @@
             toggle(transmuterInput, transmuterBody);
             transmuterInput.on("change input", function(){ toggle(transmuterInput, transmuterBody)});
             
+            var configuratorBody = $("#configurator-body");
+            var configuratorInput = $("#Settings_ConfiguratorAddonSettings_Enabled");
+            toggle(configuratorInput, configuratorBody);
+            configuratorInput.on("change input", function(){ toggle(configuratorInput, configuratorBody)});
+            
             var librepatronBody = $("#librepatron-body");
             var librepatronInput = $("#Settings_LibrePatronSettings_Enabled");
             toggle(librepatronInput, librepatronBody);
