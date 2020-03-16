@@ -9,11 +9,15 @@
     <div class="row mb-md-4">
         <h2 class=" text-center w-100">@ViewData["Title"]</h2>
     </div>
-    
-    <partial for="Settings.TorRelaySettings" name="Additional/TorRelaySettings"/>
-    <partial for="Settings.BTCTransmuterSettings" name="Additional/BTCTransmuterSettings"/>
-    <partial for="Settings.LibrePatronSettings" name="Additional/LibrePatronSettings"/>
-    <partial for="Settings.WooCommerceSettings" name="Additional/WooCommerceSettings"/>
+    <div class="row w-100">
+        <div class="card-columns">
+                <partial for="Settings.ConfiguratorAddonSettings" name="Additional/ConfiguratorSettings"/>
+                <partial for="Settings.TorRelaySettings" name="Additional/TorRelaySettings"/>
+                <partial for="Settings.BTCTransmuterSettings" name="Additional/BTCTransmuterSettings"/>
+                <partial for="Settings.LibrePatronSettings" name="Additional/LibrePatronSettings"/>
+                <partial for="Settings.WooCommerceSettings" name="Additional/WooCommerceSettings"/>
+        </div>
+    </div>
     <div class="row w-100">
         <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
     </div>
@@ -53,9 +57,9 @@
         
          function toggle(input, el){
             if(input.prop('checked')){              
-                el.show();
+                el.css("visibility", "visible");
             }else{
-                  el.hide();
+                el.css("visibility", "hidden");
             }
          }
     
