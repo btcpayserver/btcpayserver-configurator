@@ -5,10 +5,10 @@ namespace BTCPayServerDockerConfigurator.Models
 {
     public class TorRelaySettings
     {
-        [RequiredIf(nameof(Enabled), "true", "Required")]
+        [RequiredIf(nameof(Enabled), "True", "Required")]
         [Display(Name = "Relay nickname")]
         public string Nickname { get; set; }
-        [RequiredIf(nameof(Enabled), "true", "Required")]
+        [RequiredIf(nameof(Enabled), "True", "Required")]
         [EmailAddress]
         [Display(Name = "Tor contact email")]
         public string Email { get; set; }
