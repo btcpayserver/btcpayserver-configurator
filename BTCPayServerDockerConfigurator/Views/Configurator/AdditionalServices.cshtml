@@ -16,6 +16,7 @@
                 <partial for="Settings.BTCTransmuterSettings" name="Additional/BTCTransmuterSettings"/>
                 <partial for="Settings.LibrePatronSettings" name="Additional/LibrePatronSettings"/>
                 <partial for="Settings.WooCommerceSettings" name="Additional/WooCommerceSettings"/>
+                <partial for="Settings.ElectrumPersonalServerSettings" name="Additional/ElectrumPersonalServerSettings"/>
         </div>
     </div>
     <div class="row w-100">
@@ -47,7 +48,12 @@
             var librepatronBody = $("#librepatron-body");
             var librepatronInput = $("#Settings_LibrePatronSettings_Enabled");
             toggle(librepatronInput, librepatronBody);
-            librepatronInput.on("change input", function(){ toggle(librepatronInput, librepatronBody)}); 
+            librepatronInput.on("change input", function(){ toggle(librepatronInput, librepatronBody)});            
+            
+            var epsBody = $("#eps-body");
+            var epsInput = $("#Settings_ElectrumPersonalServerSettings_Enabled");
+            toggle(epsInput, epsBody);
+            epsInput.on("change input", function(){ toggle(epsInput, epsBody)}); 
             
             var woocommerceBody = $("#woocommerce-body");
             var woocommerceInput = $("#Settings_WooCommerceSettings_Enabled");

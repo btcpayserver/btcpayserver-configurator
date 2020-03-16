@@ -7,5 +7,8 @@ namespace BTCPayServerDockerConfigurator.Models
         public ConfiguratorAddonSettings ConfiguratorAddonSettings { get; set; } = new ConfiguratorAddonSettings();
         public WooCommerceSettings WooCommerceSettings { get; set; } = new WooCommerceSettings();
         public TorRelaySettings TorRelaySettings { get; set; } = new TorRelaySettings();
+
+        public ElectrumPersonalServerSettings ElectrumPersonalServerSettings { get; set; } =
+            new ElectrumPersonalServerSettings();
     }
 }

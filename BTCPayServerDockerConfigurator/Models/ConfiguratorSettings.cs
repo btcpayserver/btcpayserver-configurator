@@ -133,6 +133,11 @@ namespace BTCPayServerDockerConfigurator.Models
             {
                 additionalFragments.Add("opt-add-configurator");
             }
+            if (AdditionalServices.ElectrumPersonalServerSettings.Enabled)
+            {
+                additionalFragments.Add("opt-add-electrum-ps");
+                result.AppendLine($"export EPS_XPUB=\"{AdditionalServices.ElectrumPersonalServerSettings.Xpub}\"");
+            }
 
             if (additionalFragments.Any())
             {

@@ -45,6 +45,10 @@ namespace BTCPayServerDockerConfigurator.Controllers
                             error);
                     }
                 }
+                if (updateSettings.Settings.ElectrumPersonalServerSettings.Enabled)
+                {
+                    //TODO: add xpub validation here
+                }
 
                 if (updateSettings.Settings.WooCommerceSettings.Enabled)
                 {

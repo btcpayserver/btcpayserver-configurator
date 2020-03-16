@@ -278,6 +278,14 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 result.AdvancedSettings.AdditionalFragments.Remove("opt-add-configurator");
                 result.AdditionalServices.ConfiguratorAddonSettings.Enabled = true;
             }
+            
+            if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-electrum-ps"))
+            {
+                result.AdvancedSettings.AdditionalFragments.Remove("opt-add-electrum-ps");
+                result.AdditionalServices.ElectrumPersonalServerSettings.Enabled = true;
+                result.AdditionalServices.ElectrumPersonalServerSettings.Xpub =
+                    await GetVar(preloadedEnvVars, ssh, "EPS_XPUB ");
+            }
 
             if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-tor-relay"))
             {
