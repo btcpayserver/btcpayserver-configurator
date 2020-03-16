@@ -125,6 +125,10 @@ namespace BTCPayServerDockerConfigurator.Models
                 additionalFragments.Add("opt-add-woocommerce");
                 result.AppendLine($"export WOOCOMMERCE_HOST=\"{AdditionalServices.WooCommerceSettings.Host}\"");
             }
+            if (AdditionalServices.BTCTransmuterSettings.Enabled)
+            {
+                additionalFragments.Add("opt-add-btctransmuter");
+            }
             if (AdditionalServices.ConfiguratorAddonSettings.Enabled)
             {
                 additionalFragments.Add("opt-add-configurator");
