@@ -4,8 +4,10 @@
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>@ViewData["Title"] - BTCPayServer Docker Configurator</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css"/>
+    <link rel="stylesheet" href="~/css/btcpayserver-bootstrap.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/btcpayserver-variables.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/btcpayserver-main.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 
     @functions{
 
@@ -31,9 +33,9 @@
     }
 
 </head>
-<body class="bg-light">
-<header class="bg-dark mb-md-4">
-    <div class="container p-md-2 text-white">
+<body>
+<header class="btcpay-header mb-md-4">
+    <div class="container p-md-2">
         <h1 class="text-center w-100">BTCPay Server Configurator</h1>
         <div class="wizard">
             <div class="wizard-inner">
