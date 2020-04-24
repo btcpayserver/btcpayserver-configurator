@@ -10,10 +10,10 @@
         if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
         {
             <div class="row mb-4">
-                <div class="col-md-6 col-sm-12 offset-md-3 ">
-                    <div class="card shadow-sm ">
-                        <h3 class="card-title">Response</h3>
+                <div class="col-md-6 col-sm-12 offset-md-3">
+                    <div class="card shadow-sm">
                         <div class="card-body">
+                            <h3 class="card-title">Response</h3>
                             @if (Model.Additional.ExitStatus == 0)
                             {
                                 <iframe src="@Url.Action("GetOnionUrl")" frameborder="0" class="w-100" style="height: 50px" scrolling="no">
@@ -46,21 +46,23 @@
             </div>
         }
         <div class="row mb-4">
-            <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm ">
-                @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
-                {
-                    <h3 class="card-title">Executed commands</h3>
-                }
-                else
-                {
-                    <h3 class="card-title">Copy these commands to your terminal</h3>
-                }
-                <div class="card-body">
+            <div class="col-md-6 col-sm-12 offset-md-3">
+                <div class="card shadow-sm">
+                    <div class="card-body">
+                        @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
+                        {
+                            <h3 class="card-title">Executed commands</h3>
+                        }
+                        else
+                        {
+                            <h3 class="card-title">Copy these commands to your terminal</h3>
+                        }
 
-                    <code>
-                        @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
-                    </code>
+                        <code>
+                            @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
+                        </code>
 
+                    </div>
                 </div>
 
             </div>
@@ -98,7 +100,7 @@
     $(document).ready(function(){
         $("form").on("submit", function(){ $("#deploying-modal").modal("show");});
     });
-    
+
     </script>
     @if (Model.Additional.InProgress)
     {
@@ -107,7 +109,7 @@
             $("#deploying-modal").modal("show");
             update();
         });
-            
+
         function update(){
              $.ajax({url: window.location + "?json=true", success: function(result){
                  if(!result.additional.inProgress){
@@ -120,7 +122,7 @@
                 el.scrollIntoView(false);
               }});
         }
-        
+
     </script>
     }
 

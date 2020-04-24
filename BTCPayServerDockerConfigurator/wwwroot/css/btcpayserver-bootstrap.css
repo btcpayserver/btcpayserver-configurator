@@ -1,15 +1,8 @@
-/* MODIFIED BOOTSTRAP 4
+/* MODIFIED BOOTSTRAP 4 – Custom BTCPay Server version.
+ *
  * This file overrides the bootstrap variables with CSS custom properties
  * that get defined in the root.scss file. Every variable we want to edit
  * we need to set to a `--btcpay-` custom property and set it in the root.
- *
- * The update_generated_bootstrap_css.js script replaces the colors in the
- * resulting Bootstrap build that need to be actual color values to work
- * with the modifier functions.
- */
-/*
- * Skip the _root import -> we generate a separate file from that, so that we can
- * easily swap the variables and have separate files for separate themes.
  */
 *,
 *::before,

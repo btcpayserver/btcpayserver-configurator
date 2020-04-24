@@ -6,17 +6,17 @@
 <form class="container" method="post" asp-action="DeploymentDestination">
     @* <div asp-validation-summary="All" class="text-danger"></div> *@
     <input type="hidden" asp-for="Json" value="@Model.Json"/>
-    <div class="row mb-md-4">
-        <h2 class=" text-center w-100">@ViewData["Title"]</h2>
-    </div>
     <div class="row mb-4">
+        <h2 class="text-center w-100">@ViewData["Title"]</h2>
+    </div>
+    <div class="row mb-5">
         @if (Model.Additional.AvailableDeploymentTypes.Contains(DeploymentType.ThisMachine))
         {
             <div class="col-md-@(12 / Model.Additional.AvailableDeploymentTypes.Count)">
                 <label class="card-input-element-label">
                     <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.ThisMachine" class="card-input-element d-none"/>
                     <div class="card shadow-sm  w-100  h-100">
-                        <div class="card-img-top bg-light" style="background-image: url(assets/machine.svg); "></div>
+                        <div class="card-img-top" style="background-image: url(assets/machine.svg);"></div>
                         <div class="card-body">
                             <h3 class="card-title text-center">This machine</h3>
                             <p class="card-text text-center">
@@ -33,7 +33,7 @@
                 <label class="card-input-element-label">
                     <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.RemoteMachine" class="card-input-element d-none"/>
                     <div class="card shadow-sm w-100  h-100">
-                        <div class="card-img-top bg-light" style="background-image: url(assets/remote.svg);"></div>
+                        <div class="card-img-top" style="background-image: url(assets/remote.svg);"></div>
                         <div class="card-body">
                             <h3 class="card-title text-center">A remote machine</h3>
                             <p class="card-text">A remote machine that you can provide the SSH connectivity details to so that the configurator automagically sets it up for you</p>
@@ -48,7 +48,7 @@
                 <label class="card-input-element-label">
                     <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.Manual" class="card-input-element d-none"/>
                     <div class="card shadow-sm w-100  h-100">
-                        <div class="card-img-top bg-light" style="background-image: url(assets/shell.png);"></div>
+                        <div class="card-img-top" style="background-image: url(assets/shell.png);"></div>
                         <div class="card-body">
                             <h3 class="card-title text-center">Manual</h3>
                             <p class="card-text">We'll generate a bash script that you run on the server without ever providing us access.</p>
@@ -60,11 +60,11 @@
         }
         <span asp-validation-for="Settings.DeploymentType" class="text-danger w-100 text-center"></span>
     </div>
-    <div class="row mb-4" style="display: none" id="remote-machine-form">
-        <div class="col-md-6 col-sm-12 offset-md-3 ">
-            <div class="card shadow-sm ">
-                <h3 class="card-title text-center pt-2">Remote Machine SSH Details</h3>
+    <div class="row mb-5" style="display: none" id="remote-machine-form">
+        <div class="col-md-6 col-sm-12 offset-md-3">
+            <div class="card shadow-sm">
                 <div class="card-body">
+                    <h3 class="card-title text-center pt-2">Remote Machine SSH Details</h3>
                     <div class="form-group">
                         <label asp-for="Settings.Host"></label>
                         <input class="form-control" asp-for="Settings.Host">
@@ -108,7 +108,7 @@
         toggleForm();
       $("label").on("click", toggleForm);
     });
-    
+
     function toggleForm(){
          var selectedDeploymentType = $('input[name=Settings\\.DeploymentType]:checked').val();
                if(selectedDeploymentType === "@nameof(DeploymentType.RemoteMachine)"){

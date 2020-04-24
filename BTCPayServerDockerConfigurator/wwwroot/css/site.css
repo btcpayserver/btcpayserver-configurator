@@ -19,26 +19,6 @@ html {
     }
 }
 
-/*
-UNUSED?
-
-.border-top {
-    border-top: 1px solid #e5e5e5;
-}
-
-.border-bottom {
-    border-bottom: 1px solid #e5e5e5;
-}
-
-.box-shadow {
-    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
-}
-
-button.accept-policy {
-    font-size: 1rem;
-    line-height: inherit;
-} */
-
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
@@ -51,19 +31,11 @@ body {
     margin-bottom: 60px;
 }
 
-/*
-UNUSED?
-
-.footer {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    white-space: nowrap;
-    line-height: 60px;
-}
-*/
-
 /*cards as an input element*/
+
+label {
+    cursor: pointer;
+}
 
 label.card-input-element-label {
     width: 100%;
@@ -86,10 +58,20 @@ label.card-input-element-label {
     transition: border .3s;
 }
 
-label {
-    cursor: pointer;
+.card-input-element-label {
+    height: 100%;
+    margin-bottom: 0;
 }
 
+.card-input-element-label .card-img-top {
+    position: relative;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    width: 100%;
+    height: 150px;
+    margin-top: 2rem;
+}
 
 .card-input-element:checked + .card::after {
     content: '✓';
@@ -103,9 +85,35 @@ label {
     -webkit-animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
     position: absolute;
-    right: 5px;
-    top: 0;
+    right: 2rem;
+    top: .5rem;
     text-align: center;
+}
+
+.card-body {
+  padding: 2rem;
+}
+
+.services {
+  display: grid;
+  grid-gap: 30px;
+
+}
+
+@media (max-width: 767px) {
+  .services {
+    grid-template-columns: repeat(1, 1fr);
+  }
+}
+@media (min-width: 768px) and (max-width: 991px) {
+  .services {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+@media (min-width: 992px) {
+  .services {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @-webkit-keyframes fadeInCheckbox {
@@ -138,6 +146,10 @@ label {
     background-color: var(--btcpay-border-color-medium);
 }
 
+.styled-checkbox-label h3 {
+    margin-left: 2rem;
+}
+
 
 .justdoitbutton:hover {
     -webkit-filter: brightness(70%);
@@ -148,11 +160,6 @@ label {
     transition: all 1s ease;
 }
 
-
-.wizard {
-    margin-top: 20px;
-}
-
 .wizard .nav {
     position: relative;
     z-index: 1
@@ -160,7 +167,6 @@ label {
 
 .wizard > div.wizard-inner {
     position: relative;
-
 }
 
 .connecting-line {
@@ -182,19 +188,4 @@ label {
     text-align: center;
     padding: 0;
     border-radius: 50%;
-}
-
-/**/
-
-.card-input-element-label{
-    height: 100%;
-}
-
-.card-input-element-label .card-img-top {
-    position: relative;
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-position: center;
-    width: 100%;
-    height: 225px;
 }

@@ -6,93 +6,96 @@
 <form class="container" method="post" asp-action="AdvancedSettings">
     @* <div asp-validation-summary="All" class="text-danger"></div> *@
     <input type="hidden" asp-for="Json"/>
-    <div class="row mb-md-4">
+    <div class="row mb-4">
         <h2 class=" text-center w-100">@ViewData["Title"]</h2>
     </div>
 
     @if (!Model.Additional.ShowSettings)
     {
         <div class="row mb-4">
-            <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm">
-                <div class="card-body w-100 text-center">
-                    <button type="submit" class="btn btn-primary ">
-                        Continue
-                    </button>
-                    <br/>
-                    <br/>
-                     <label class="btn btn-link h2 w-100 text-center">
-                                        <input type="submit" name="command" value="show" class="d-none"/>
-                                        Show me the advanced settings.
-                                    </label>
-                </div>
+            <div class="col-md-6 col-sm-12 offset-md-3">
+              <div class="card shadow-sm">
+                  <div class="card-body w-100 text-center">
+                      <button type="submit" class="btn btn-primary ">
+                          Continue
+                      </button>
+                      <br/>
+                      <br/>
+                      <label class="btn btn-link h2 w-100 text-center">
+                          <input type="submit" name="command" value="show" class="d-none"/>
+                          Show me the advanced settings.
+                      </label>
+                  </div>
+              </div>
             </div>
         </div>
     }
 
     <div class="row mb-4 @(Model.Additional.ShowSettings ? string.Empty : "invisible")">
-        <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm pt-4">
-            <h3 class="card-title">Additional fragments</h3>
-            <ul class="list-group list-group-flush" style="list-style-type: none">
-                @for (var index = 0; index < Model.Settings.AdditionalFragments.Count; index++)
-                {
-                    <li class="list-group-item justify-content-between align-items-center">
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <input class="form-control" asp-for="Settings.AdditionalFragments[index]" placeholder="Fragment">
-                                <div class="input-group-append">
-                                    <label class="btn btn-outline-secondary">
-                                        Remove
-                                        <input type="submit" name="command" value="@($"remove-additional:{index}")" class="d-none"/>
-                                    </label>
+        <div class="col-md-6 col-sm-12 offset-md-3 pt-4">
+            <div class="card shadow-sm">
+                <h3 class="card-title text-center m-3">Additional fragments</h3>
+                <ul class="list-group list-group-flush" style="list-style-type: none">
+                    @for (var index = 0; index < Model.Settings.AdditionalFragments.Count; index++)
+                    {
+                        <li class="list-group-item justify-content-between align-items-center">
+                            <div class="form-group">
+                                <div class="input-group m-2 pr-3">
+                                    <input class="form-control" asp-for="Settings.AdditionalFragments[index]" placeholder="Fragment">
+                                    <div class="input-group-append">
+                                        <label class="btn btn-outline-secondary">
+                                            Remove
+                                            <input type="submit" name="command" value="@($"remove-additional:{index}")" class="d-none"/>
+                                        </label>
+                                    </div>
                                 </div>
+                                <span asp-validation-for="Settings.AdditionalFragments[index]" class="text-danger"></span>
                             </div>
-                            <span asp-validation-for="Settings.AdditionalFragments[index]" class="text-danger"></span>
-                        </div>
-                    </li>
-                }
-                <label class="list-group-item-action text-center">
-                    <input type="submit" name="command" value="add-additional" class="d-none"/>
-                    Add additional fragment
-                </label>
-            </ul>
-
+                        </li>
+                    }
+                    <label class="list-group-item-action text-center m-0 p-3">
+                        <input type="submit" name="command" value="add-additional" class="d-none"/>
+                        Add additional fragment
+                    </label>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="row mb-4 @(Model.Additional.ShowSettings ? string.Empty : "invisible")">
-        <div class="col-md-6 col-sm-12 offset-md-3 card shadow-sm pt-4">
-            <h3 class="card-title">Excluded fragments</h3>
-            <ul class="list-group list-group-flush" style="list-style-type: none">
-                @for (var index = 0; index < Model.Settings.ExcludedFragments.Count; index++)
-                {
-                    <li class="list-group-item justify-content-between align-items-center">
-                        <div class="form-group">
-                            <div class="input-group mb-3">
-                                <input class="form-control" asp-for="Settings.ExcludedFragments[index]" placeholder="Fragment">
-                                <div class="input-group-append">
-                                    <label class="btn btn-outline-secondary">
-                                        Remove
-                                        <input type="submit" name="command" value="@($"remove-excluded:{index}")" class="d-none"/>
-                                    </label>
+        <div class="col-md-6 col-sm-12 offset-md-3 pt-4">
+            <div class="card shadow-sm">
+                <h3 class="card-title text-center m-3">Excluded fragments</h3>
+                <ul class="list-group list-group-flush" style="list-style-type: none">
+                    @for (var index = 0; index < Model.Settings.ExcludedFragments.Count; index++)
+                    {
+                        <li class="list-group-item justify-content-between align-items-center">
+                            <div class="form-group">
+                                <div class="input-group m-2 pr-3">
+                                    <input class="form-control" asp-for="Settings.ExcludedFragments[index]" placeholder="Fragment">
+                                    <div class="input-group-append">
+                                        <label class="btn btn-outline-secondary">
+                                            Remove
+                                            <input type="submit" name="command" value="@($"remove-excluded:{index}")" class="d-none"/>
+                                        </label>
+                                    </div>
                                 </div>
+                                <span asp-validation-for="Settings.ExcludedFragments[index]" class="text-danger"></span>
                             </div>
-                            <span asp-validation-for="Settings.ExcludedFragments[index]" class="text-danger"></span>
-                        </div>
-                    </li>
-                }
-                <label class="list-group-item-action text-center">
-                    <input type="submit" name="command" value="add-excluded" class="d-none"/>
-                    Add excluded fragment
-                </label>
-
-            </ul>
-
+                        </li>
+                    }
+                    <label class="list-group-item-action text-center m-0 p-3">
+                        <input type="submit" name="command" value="add-excluded" class="d-none"/>
+                        Add excluded fragment
+                    </label>
+                </ul>
+            </div>
         </div>
     </div>
     <div class="row mb-4 @(Model.Additional.ShowSettings ? string.Empty : "invisible")">
-        <div class="col-md-6 col-sm-12 offset-md-3 ">
-            <div class="card shadow-sm ">
-                <h3 class="card-title text-center pt-2">Fork settings</h3>
+        <div class="col-md-6 col-sm-12 offset-md-3">
+            <div class="card shadow-sm">
                 <div class="card-body">
+                    <h3 class="card-title text-center">Fork settings</h3>
                     <div class="form-group">
                         <label asp-for="Settings.BTCPayDockerRepository"></label>
                         <input class="form-control" asp-for="Settings.BTCPayDockerRepository">

@@ -5,29 +5,27 @@
 @model UpdateSettings<LightningSettings, AdditionalDataStub>;
 <form class="container" method="post">
     <input type="hidden" asp-for="Json"/>
-    <div class="row mb-md-4">
+    <div class="row mb-4">
         <h2 class=" text-center w-100">@ViewData["Title"]</h2>
     </div>
-    <div class="row mb-4">
-
-        <div class="col-md-4">
+    <div class="row">
+        <div class="col-md-4 mb-4">
             <label class="card-input-element-label">
                 <input type="radio" asp-for="Settings.Implementation" value="clightning" class="card-input-element d-none"/>
                 <div class="card dark shadow-sm w-100  h-100 ">
-                    <div class="card-img-top bg-dark" style="background-image: url(assets/clightning.png);"></div>
+                    <div class="card-img-top" style="background-image: url(assets/clightning.png);"></div>
                     <div class="card-body">
                         <h3 class="card-title text-center">C-Lightning</h3>
                         <p class="card-text text-center">By Blockstream<br/><br/></p>
-
                     </div>
                 </div>
             </label>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 mb-4">
             <label class="card-input-element-label">
                 <input type="radio" asp-for="Settings.Implementation" value="eclair" class="card-input-element d-none"/>
                 <div class="card shadow-sm w-100  h-100">
-                    <div class="card-img-top bg-light" style="background-image: url(assets/eclair.svg);"></div>
+                    <div class="card-img-top" style="background-image: url(assets/eclair.svg); background-size: 60%;"></div>
                     <div class="card-body">
                         <h3 class="card-title text-center">Eclair</h3>
                         <p class="card-text text-center">by ACINQ<br/><br/></p>
@@ -35,11 +33,11 @@
                 </div>
             </label>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4 mb-4">
             <label class="card-input-element-label">
                 <input type="radio" asp-for="Settings.Implementation" value="lnd" class="card-input-element d-none"/>
                 <div class="card shadow-sm  w-100  h-100">
-                    <div class="card-img-top bg-light" style="background-image: url(assets/lnd.png);"></div>
+                    <div class="card-img-top" style="background-image: url(assets/lnd.png);"></div>
                     <div class="card-body">
                         <h3 class="card-title text-center">LND</h3>
                         <p class="card-text text-center">
@@ -50,11 +48,13 @@
                 </div>
             </label>
         </div>
-        <div class="col-md-4 offset-md-4">
+    </div>
+    <div class="row">
+        <div class="col-md-4 offset-md-4 mb-4">
             <label class="card-input-element-label">
                 <input type="radio" asp-for="Settings.Implementation" value="none" class="card-input-element d-none"/>
                 <div class="card dark shadow-sm w-100  h-100 ">
-                    <div class="card-img-top bg-dark" style="background-image: url(assets/sad.svg);"></div>
+                    <div class="card-img-top" style="background-image: url(assets/sad.svg);"></div>
                     <div class="card-body">
                         <h3 class="card-title text-center">None</h3>
                         <p class="card-text text-center">You're missing out.<br/><br/></p>
