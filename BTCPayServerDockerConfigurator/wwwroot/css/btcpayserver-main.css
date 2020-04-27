@@ -762,7 +762,7 @@ sans-serif;
 }
 
 .btcpay-theme--dark body, [data-btcpay-theme="dark"] body {
-    color: #fff;
+    color: #ffffff;
     color: var(--btcpay-color-white);
     background-color: #292929;
     background-color: var(--btcpay-color-neutral-900)
@@ -771,7 +771,7 @@ sans-serif;
 @media (prefers-color-scheme: dark) {
 
 :root:not(.btcpay-theme--light):not([data-btcpay-theme="light"]) body {
-      color: #fff;
+      color: #ffffff;
       color: var(--btcpay-color-white);
       background-color: #292929;
       background-color: var(--btcpay-color-neutral-900)
@@ -799,13 +799,13 @@ monospace;
 }
 
 a {
-  color: #51B13E;
+  color: #51b13e;
   color: var(--btcpay-color-primary);
 }
 
 a:focus,
 a:hover {
-  color: #1E7A44;
+  color: #1e7a44;
   color: var(--btcpay-color-primary-accent);
 }
 
@@ -814,12 +814,12 @@ a:hover {
 .btcpay-header {
   color: #292929;
   color: var(--btcpay-color-neutral-900);
-  background-color: #fff;
+  background-color: #ffffff;
   background-color: var(--btcpay-color-white)
 }
 
 .btcpay-theme--dark .btcpay-header, [data-btcpay-theme="dark"] .btcpay-header {
-    color: #fff;
+    color: #ffffff;
     color: var(--btcpay-color-white);
     background-color: #222;
     background-color: var(--btcpay-color-neutral-950)
@@ -828,7 +828,7 @@ a:hover {
 @media (prefers-color-scheme: dark) {
 
 :root:not(.btcpay-theme--light):not([data-btcpay-theme="light"]) .btcpay-header {
-      color: #fff;
+      color: #ffffff;
       color: var(--btcpay-color-white);
       background-color: #222;
       background-color: var(--btcpay-color-neutral-950)
