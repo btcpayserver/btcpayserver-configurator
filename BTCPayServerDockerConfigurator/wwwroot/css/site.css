@@ -7,6 +7,12 @@ a.navbar-brand {
     word-break: break-all;
 }
 
+.btcpay-theme-switch {
+  position: absolute;
+  right: 1rem;
+  top: 1rem;
+}
+
 /* Sticky footer styles
 -------------------------------------------------- */
 html {
