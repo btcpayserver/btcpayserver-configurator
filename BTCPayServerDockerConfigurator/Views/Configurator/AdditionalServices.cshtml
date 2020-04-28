@@ -6,18 +6,18 @@
 <form class="container" method="post" asp-action="AdditionalServices">
     @* <div asp-validation-summary="All" class="text-danger"></div> *@
     <input type="hidden" asp-for="Json"/>
-    <div class="row mb-md-4">
+    <div class="row mb-4">
         <h2 class=" text-center w-100">@ViewData["Title"]</h2>
     </div>
     <div class="row w-100">
-        <div class="card-columns">
-                <partial for="Settings.ConfiguratorAddonSettings" name="Additional/ConfiguratorSettings"/>
-                <partial for="Settings.TorRelaySettings" name="Additional/TorRelaySettings"/>
-                <partial for="Settings.BTCTransmuterSettings" name="Additional/BTCTransmuterSettings"/>
-                <partial for="Settings.LibrePatronSettings" name="Additional/LibrePatronSettings"/>
-                <partial for="Settings.WooCommerceSettings" name="Additional/WooCommerceSettings"/>
-                <partial for="Settings.ElectrumPersonalServerSettings" name="Additional/ElectrumPersonalServerSettings"/>
-                <partial for="Settings.ElectrumXSettings" name="Additional/ElectrumXSettings"/>
+        <div class="card-columns services">
+          <partial for="Settings.ConfiguratorAddonSettings" name="Additional/ConfiguratorSettings"/>
+          <partial for="Settings.TorRelaySettings" name="Additional/TorRelaySettings"/>
+          <partial for="Settings.BTCTransmuterSettings" name="Additional/BTCTransmuterSettings"/>
+          <partial for="Settings.LibrePatronSettings" name="Additional/LibrePatronSettings"/>
+          <partial for="Settings.WooCommerceSettings" name="Additional/WooCommerceSettings"/>
+          <partial for="Settings.ElectrumPersonalServerSettings" name="Additional/ElectrumPersonalServerSettings"/>
+          <partial for="Settings.ElectrumXSettings" name="Additional/ElectrumXSettings"/>
         </div>
     </div>
     <div class="row w-100">
@@ -29,51 +29,51 @@
 @section Scripts
 {
     <script>
-    
+
          $(document).ready(function(){
             var torBody = $("#tor-relay-body");
             var torInput = $("#Settings_TorRelaySettings_Enabled");
             toggle(torInput, torBody);
             torInput.on("change input", function(){ toggle(torInput, torBody)});
-            
+
             var transmuterBody = $("#transmuter-body");
             var transmuterInput = $("#Settings_BTCTransmuterSettings_Enabled");
             toggle(transmuterInput, transmuterBody);
             transmuterInput.on("change input", function(){ toggle(transmuterInput, transmuterBody)});
-            
+
             var configuratorBody = $("#configurator-body");
             var configuratorInput = $("#Settings_ConfiguratorAddonSettings_Enabled");
             toggle(configuratorInput, configuratorBody);
             configuratorInput.on("change input", function(){ toggle(configuratorInput, configuratorBody)});
-            
+
             var librepatronBody = $("#librepatron-body");
             var librepatronInput = $("#Settings_LibrePatronSettings_Enabled");
             toggle(librepatronInput, librepatronBody);
-            librepatronInput.on("change input", function(){ toggle(librepatronInput, librepatronBody)});            
-            
+            librepatronInput.on("change input", function(){ toggle(librepatronInput, librepatronBody)});
+
             var epsBody = $("#eps-body");
             var epsInput = $("#Settings_ElectrumPersonalServerSettings_Enabled");
             toggle(epsInput, epsBody);
-            epsInput.on("change input", function(){ toggle(epsInput, epsBody)}); 
-            
+            epsInput.on("change input", function(){ toggle(epsInput, epsBody)});
+
             var electrumxBody = $("#electrumx-body");
             var electrumxInput = $("#Settings_ElectrumXSettings_Enabled");
             toggle(electrumxInput, electrumxBody);
-            electrumxInput.on("change input", function(){ toggle(electrumxInput, electrumxBody)}); 
-            
+            electrumxInput.on("change input", function(){ toggle(electrumxInput, electrumxBody)});
+
             var woocommerceBody = $("#woocommerce-body");
             var woocommerceInput = $("#Settings_WooCommerceSettings_Enabled");
             toggle(woocommerceInput, woocommerceBody);
-            woocommerceInput.on("change input", function(){ toggle(woocommerceInput, woocommerceBody)});            
+            woocommerceInput.on("change input", function(){ toggle(woocommerceInput, woocommerceBody)});
          });
-        
+
          function toggle(input, el){
-            if(input.prop('checked')){              
+            if(input.prop('checked')){
                 el.css("visibility", "visible");
             }else{
                 el.css("visibility", "hidden");
             }
          }
-    
+
     </script>
 }
