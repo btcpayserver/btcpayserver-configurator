@@ -18,7 +18,7 @@
                         <input class="form-control" asp-for="Settings.Domain">
                         <span asp-validation-for="Settings.Domain" class="text-danger"></span>
                     </div>
-                    <p class="text-muted">If you don't have a domain to use, you'll still be able to access BTCPay and other related services via TOR. <a href="https://docs.btcpayserver.org/features/dynamicdns" target="_blank">There's also built-in support for dynamic DNS providers.</a></p>
+                    <p class="text-muted">If you don't have a domain to use, you'll still be able to access BTCPay and other related services via TOR. <a href="https://docs.btcpayserver.org/deployment/advanced-deployment/dynamicdns" target="_blank">There's also built-in support for dynamic DNS providers.</a></p>
 
                     <ul class="list-group list-group-flush" style="list-style-type: none">
                         @for (var index = 0; index < Model.Settings.AdditionalDomains.Count; index++)
