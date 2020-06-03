@@ -44,9 +44,10 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
             if (!updateSettings.Settings.Bitcoin && !updateSettings.Settings.AltChains.Any())
             {
-                ModelState.AddModelError(
-                    nameof(updateSettings.Settings) + "." + nameof(updateSettings.Settings.Bitcoin),
-                    "You need to set up at least one chain");
+                updateSettings.Settings.Bitcoin = true;
+                // ModelState.AddModelError(
+                //     nameof(updateSettings.Settings) + "." + nameof(updateSettings.Settings.Bitcoin),
+                //     "You need to set up at least one chain");
             }
 
             if (!ModelState.IsValid)
