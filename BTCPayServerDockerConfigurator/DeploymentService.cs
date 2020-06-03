@@ -135,7 +135,7 @@ namespace BTCPayServerDockerConfigurator
             StringBuilder result)
         {
             var failed = false;
-            var cont = false;
+            var finished = false;
             var cts = new TaskCompletionSource<bool>();
             shellStream.ErrorOccurred += (sender, args) =>
             {
@@ -152,9 +152,9 @@ namespace BTCPayServerDockerConfigurator
                     result.Append(str);
                 }
 
-                if (!str.Contains("echo \"end-of-command\"") && str.Contains("end-of-command"))
+                if (str.Contains("end-of-command 2"))
                 {
-                    cont = true;
+                    finished = true;
                 }
             };
             var y = shellStream.Read();
@@ -168,9 +168,9 @@ namespace BTCPayServerDockerConfigurator
 
                 shellStream.WriteLine(command);
                 waiter:
-                shellStream.WriteLine("echo \"end-of-command\"");
+                shellStream.WriteLine("echo \"end-of-command $(expr 1 + 1)\"");
                 var counter = 0;
-                while (!cont)
+                while (!finished)
                 {
                     if (counter > 10)
                     {
@@ -186,7 +186,7 @@ namespace BTCPayServerDockerConfigurator
                     cts.SetResult(true);
                 }
 
-                cont = false;
+                finished = false;
             }
 
             failed = !await cts.Task;
