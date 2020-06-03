@@ -2,7 +2,6 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
-using Microsoft.Extensions.Logging;
 
 namespace BTCPayServerDockerConfigurator.Models
 {
@@ -162,7 +161,7 @@ namespace BTCPayServerDockerConfigurator.Models
 
         private string InstallPackage(string package)
         {
-            return "apt-get install -y "+ package;
+            return "apt-get update && apt-get install -y "+ package;
         }
 
         public SSHSettings GetSshSettings(Options options, bool verified)
