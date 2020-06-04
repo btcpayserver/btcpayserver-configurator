@@ -44,7 +44,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     };
                     updateSettings.Settings.AdditionalFragments.Add("");
                     return View(updateSettings);
-                case string commandx
+                case { } commandx
                     when commandx.StartsWith("remove-additional", StringComparison.InvariantCultureIgnoreCase):
                 {
                     updateSettings.Additional = new AdvancedSettingsAdditionalData()
@@ -62,7 +62,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     };
                     updateSettings.Settings.ExcludedFragments.Add("");
                     return View(updateSettings);
-                case string commandx
+                case { } commandx
                     when commandx.StartsWith("remove-excluded", StringComparison.InvariantCultureIgnoreCase):
                 {
                     updateSettings.Additional = new AdvancedSettingsAdditionalData()
