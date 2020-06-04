@@ -12,13 +12,13 @@
     <div class="row w-100">
         <div class="card-columns services">
           <partial for="Settings.ConfiguratorAddonSettings" name="Additional/ConfiguratorSettings"/>
-          <partial for="Settings.TorRelaySettings" name="Additional/TorRelaySettings"/>
           <partial for="Settings.BTCTransmuterSettings" name="Additional/BTCTransmuterSettings"/>
+          <partial for="Settings.ThunderHubSettings" name="Additional/ThunderHubSettings"/>
           <partial for="Settings.LibrePatronSettings" name="Additional/LibrePatronSettings"/>
           <partial for="Settings.WooCommerceSettings" name="Additional/WooCommerceSettings"/>
           <partial for="Settings.ElectrumPersonalServerSettings" name="Additional/ElectrumPersonalServerSettings"/>
           <partial for="Settings.ElectrumXSettings" name="Additional/ElectrumXSettings"/>
-          <partial for="Settings.ThunderHubSettings" name="Additional/ThunderHubSettings"/>
+          <partial for="Settings.TorRelaySettings" name="Additional/TorRelaySettings"/>
         </div>
     </div>
     <div class="row w-100">
@@ -26,59 +26,43 @@
     </div>
 </form>
 
+<style>
+    .services .card.service .service-form {
+        max-height: 0;
+        opacity:0;
+            overflow-y:hidden;
+        -webkit-transition: max-height 0.3s ease-out, opacity 0.1s ;
+        -moz-transition: max-height 0.3s  ease-out, opacity 0.1s;
+        -o-transition: max-height 0.3s ease-out, opacity 0.1s;
+        transition: max-height 0.3s ease-out, opacity 0.1s;
+    }
+    
+    .services .card.service.enabled .service-form {
+        max-height: 500px;
+        overflow-y:auto;
+        opacity:1;
+    }
+</style>
 
 @section Scripts
 {
     <script>
-
-         $(document).ready(function(){
-            var torBody = $("#tor-relay-body");
-            var torInput = $("#Settings_TorRelaySettings_Enabled");
-            toggle(torInput, torBody);
-            torInput.on("change input", function(){ toggle(torInput, torBody)});
-
-            var transmuterBody = $("#transmuter-body");
-            var transmuterInput = $("#Settings_BTCTransmuterSettings_Enabled");
-            toggle(transmuterInput, transmuterBody);
-            transmuterInput.on("change input", function(){ toggle(transmuterInput, transmuterBody)});
-
-            var configuratorBody = $("#configurator-body");
-            var configuratorInput = $("#Settings_ConfiguratorAddonSettings_Enabled");
-            toggle(configuratorInput, configuratorBody);
-            configuratorInput.on("change input", function(){ toggle(configuratorInput, configuratorBody)});
-
-            var librepatronBody = $("#librepatron-body");
-            var librepatronInput = $("#Settings_LibrePatronSettings_Enabled");
-            toggle(librepatronInput, librepatronBody);
-            librepatronInput.on("change input", function(){ toggle(librepatronInput, librepatronBody)});
-
-            var epsBody = $("#eps-body");
-            var epsInput = $("#Settings_ElectrumPersonalServerSettings_Enabled");
-            toggle(epsInput, epsBody);
-            epsInput.on("change input", function(){ toggle(epsInput, epsBody)});
-
-            var electrumxBody = $("#electrumx-body");
-            var electrumxInput = $("#Settings_ElectrumXSettings_Enabled");
-            toggle(electrumxInput, electrumxBody);
-            electrumxInput.on("change input", function(){ toggle(electrumxInput, electrumxBody)});
-
-            var thunderhubBody = $("#thunderhub-body");
-            var thunderhubInput = $("#Settings_ThunderHubSettings_Enabled");
-            toggle(thunderhubInput, thunderhubBody);
-            thunderhubInput.on("change input", function(){ toggle(thunderhubInput, thunderhubBody)});
-
-            var woocommerceBody = $("#woocommerce-body");
-            var woocommerceInput = $("#Settings_WooCommerceSettings_Enabled");
-            toggle(woocommerceInput, woocommerceBody);
-            woocommerceInput.on("change input", function(){ toggle(woocommerceInput, woocommerceBody)});
+         $(document).ready(function(){      
+             $(".services input[type=\"checkbox\"]").on("change input", function(){ 
+                if(!$(this).attr("name").toString().endsWith(".Enabled")){
+                    return;
+                }  
+                toggle.call($(this));
+             }).each(toggle);
          });
 
-         function toggle(input, el){
-            if(input.prop('checked')){
-                el.css("visibility", "visible");
-            }else{
-                el.css("visibility", "hidden");
-            }
+         function toggle(){
+            var card = $(this).parents(".service").first();
+                if($(this).prop("checked")){
+                   card.addClass("enabled")
+                }else{
+                    card.removeClass("enabled")
+                }
          }
 
     </script>

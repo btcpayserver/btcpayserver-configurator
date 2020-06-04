@@ -1,6 +1,6 @@
 @model ElectrumPersonalServerSettings
 
-<div class="card shadow-sm ">
+<div class="card service shadow-sm ">
     <label class="d-flex justify-content-between styled-checkbox-label">
         <h3 class="card-title  my-3">Electrum Personal Server</h3>
         <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
@@ -9,7 +9,7 @@
         <p class="card-text">
             <a href="https://github.com/chris-belcher/electrum-personal-server" target="_blank">Electrum Personal Server</a> or EPS is a personal version of public Electrum servers like ElectrumX.
         </p>
-        <div id="eps-body" style="visibility: hidden">
+        <div id="eps-body" class="service-form" >
             <hr>
             <div class="form-group">
                 <label asp-for="Xpub"></label>

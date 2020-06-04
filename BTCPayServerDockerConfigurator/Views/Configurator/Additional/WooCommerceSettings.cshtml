@@ -1,6 +1,6 @@
 @model WooCommerceSettings
 
-<div class="card shadow-sm ">
+<div class="card service shadow-sm ">
     <label class="d-flex justify-content-between styled-checkbox-label">
         <h3 class="card-title  my-3">WooCommerce</h3>
         <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
@@ -9,7 +9,7 @@
         <p class="card-text">
             WooCommerce is an open-source e-commerce plugin for WordPress. This will install Wordpress + Woocommerce plugin + BTCPay plugin.
         </p>
-        <div id="woocommerce-body" style="visibility: hidden">
+        <div id="woocommerce-body" class="service-form" >
             <hr>
             <div class="form-group">
                 <label asp-for="Host"></label>

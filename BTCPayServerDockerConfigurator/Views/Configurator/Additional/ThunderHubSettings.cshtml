@@ -1,6 +1,6 @@
 @model ThunderHubSettings
 
-<div class="card shadow-sm ">
+<div class="card service shadow-sm ">
     <label class="d-flex justify-content-between styled-checkbox-label">
         <h3 class="card-title  my-3">ThunderHub</h3>
         <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
@@ -9,7 +9,7 @@
         <p class="card-text">
             LND Lightning Node Manager in your Browser.
         </p>
-        <div id="thunderhub-body" style="visibility: hidden">
+        <div id="thunderhub-body" class="service-form" >
                 <span asp-validation-for="Enabled" class="text-danger"></span>
         </div>
     </div>

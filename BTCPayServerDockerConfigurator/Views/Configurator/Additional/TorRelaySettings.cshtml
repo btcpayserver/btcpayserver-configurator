@@ -1,6 +1,6 @@
 @model TorRelaySettings
 
-<div class="card shadow-sm ">
+<div class="card service shadow-sm ">
     <label class="d-flex justify-content-between styled-checkbox-label">
         <h3 class="card-title  my-3">Tor Relay</h3>
         <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
@@ -9,7 +9,7 @@
         <p class="card-text">
             Tor relays are also referred to as "routers" or "nodes." They receive traffic on the Tor network and pass it along. This sets up a non-exit tor relay alongside your BTCPay. <br/><a href="https://www.eff.org/torchallenge/faq.html" target="_parent">Please read the legal implications of running a tor relay</a> and <a href="https://trac.torproject.org/projects/tor/wiki/TorRelayGuide#RelayRequirements" target="_blank">what resources are used to operate the relay.</a>
         </p>
-        <div id="tor-relay-body" style="visibility: hidden">
+        <div id="tor-relay-body" class="service-form" >
             <hr>
             <div class="form-group">
                 <label asp-for="Email"></label>
