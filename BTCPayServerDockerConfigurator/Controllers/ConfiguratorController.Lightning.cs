@@ -1,6 +1,5 @@
 using System;
 using System.Text.Json;
-using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Models;
 using Microsoft.AspNetCore.Mvc;
 

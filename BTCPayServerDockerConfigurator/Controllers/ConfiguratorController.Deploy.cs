@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Models;
 using Microsoft.AspNetCore.Mvc;
