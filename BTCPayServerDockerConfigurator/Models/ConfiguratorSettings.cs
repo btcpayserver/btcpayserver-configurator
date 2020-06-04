@@ -143,6 +143,11 @@ namespace BTCPayServerDockerConfigurator.Models
                 additionalFragments.Add("opt-add-electrumx");
             }
 
+            if (AdditionalServices.ThunderHubSettings.Enabled)
+            {
+                additionalFragments.Add("opt-add-thunderhub");
+            }
+
             if (additionalFragments.Any())
             {
                 result.AppendLine($"export BTCPAYGEN_ADDITIONAL_FRAGMENTS=\"{string.Join(';', additionalFragments)}\"");

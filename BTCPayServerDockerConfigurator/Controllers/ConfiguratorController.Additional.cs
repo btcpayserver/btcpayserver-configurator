@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using BTCPayServerDockerConfigurator.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -68,6 +69,18 @@ namespace BTCPayServerDockerConfigurator.Controllers
                             nameof(updateSettings.Settings.WooCommerceSettings) + "." +
                             nameof(updateSettings.Settings.WooCommerceSettings.Host),
                             error);
+                    }
+                }
+
+                if (updateSettings.Settings.ThunderHubSettings.Enabled)
+                {
+                    if(!configuratorSettings.LightningSettings.Implementation.Equals("lnd", StringComparison.InvariantCultureIgnoreCase))
+                    {
+                        ModelState.AddModelError(
+                            nameof(updateSettings.Settings) + "." +
+                            nameof(updateSettings.Settings.ThunderHubSettings) + "." +
+                            nameof(updateSettings.Settings.ThunderHubSettings.Enabled),
+                            "ThunderHub currently only supports LND");
                     }
                 }
             }

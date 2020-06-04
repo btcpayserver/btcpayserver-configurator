@@ -293,6 +293,12 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 result.AdditionalServices.ElectrumXSettings.Enabled = true;
             }
 
+            if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-thunderhub"))
+            {
+                result.AdvancedSettings.AdditionalFragments.Remove("opt-add-thunderhub");
+                result.AdditionalServices.ThunderHubSettings.Enabled = true;
+            }
+
             if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-tor-relay"))
             {
                 result.AdvancedSettings.AdditionalFragments.Remove("opt-add-tor-relay");

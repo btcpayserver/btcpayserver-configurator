@@ -13,5 +13,8 @@ namespace BTCPayServerDockerConfigurator.Models
 
         public ElectrumXSettings ElectrumXSettings { get; set; } =
             new ElectrumXSettings();
+
+        public ThunderHubSettings ThunderHubSettings { get; set; } =
+            new ThunderHubSettings();
     }
 }

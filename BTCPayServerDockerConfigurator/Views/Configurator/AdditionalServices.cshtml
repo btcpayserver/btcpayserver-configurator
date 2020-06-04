@@ -18,6 +18,7 @@
           <partial for="Settings.WooCommerceSettings" name="Additional/WooCommerceSettings"/>
           <partial for="Settings.ElectrumPersonalServerSettings" name="Additional/ElectrumPersonalServerSettings"/>
           <partial for="Settings.ElectrumXSettings" name="Additional/ElectrumXSettings"/>
+          <partial for="Settings.ThunderHubSettings" name="Additional/ThunderHubSettings"/>
         </div>
     </div>
     <div class="row w-100">
@@ -60,6 +61,11 @@
             var electrumxInput = $("#Settings_ElectrumXSettings_Enabled");
             toggle(electrumxInput, electrumxBody);
             electrumxInput.on("change input", function(){ toggle(electrumxInput, electrumxBody)});
+
+            var thunderhubBody = $("#thunderhub-body");
+            var thunderhubInput = $("#Settings_ThunderHubSettings_Enabled");
+            toggle(thunderhubInput, thunderhubBody);
+            thunderhubInput.on("change input", function(){ toggle(thunderhubInput, thunderhubBody)});
 
             var woocommerceBody = $("#woocommerce-body");
             var woocommerceInput = $("#Settings_WooCommerceSettings_Enabled");
