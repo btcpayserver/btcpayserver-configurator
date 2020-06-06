@@ -235,7 +235,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             var repo = await
                 ssh.RunBash(
                     "if [ -d \"btcpayserver-docker\" ]; then git -C \"btcpayserver-docker\" ls-remote --get-url;  fi");
-            if (branch.ExitStatus == 0)
+            if (repo.ExitStatus == 0)
             {
                 result.AdvancedSettings.BTCPayDockerRepository = repo.Output;
             }
@@ -371,6 +371,8 @@ namespace BTCPayServerDockerConfigurator.Controllers
                 (await GetVar(preloadedEnvVars, ssh, "BTCPAY_ADDITIONAL_HOSTS"))
                 .Split(',', StringSplitOptions.RemoveEmptyEntries).ToList();
 
+            result.ServerData = await ServerData.Load(ssh);
+            
             return result;
         }
     }

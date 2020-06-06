@@ -13,7 +13,9 @@ namespace BTCPayServerDockerConfigurator.Models
         public AdvancedSettings AdvancedSettings { get; set; } = new AdvancedSettings();
         public ChainSettings ChainSettings { get; set; } = new ChainSettings();
         public AdditionalServices AdditionalServices { get; set; } = new AdditionalServices();
+        public ServerData ServerData { get; set; } = new ServerData();
 
+        
         public override string ToString()
         {
             return JsonSerializer.Serialize(this);
