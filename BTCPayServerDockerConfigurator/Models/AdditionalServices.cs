@@ -16,5 +16,7 @@ namespace BTCPayServerDockerConfigurator.Models
 
         public ThunderHubSettings ThunderHubSettings { get; set; } =
             new ThunderHubSettings();
+        public PiHoleSettings PiHoleSettings { get; set; } =
+            new PiHoleSettings();
     }
 }

@@ -1,0 +1,25 @@
+@model PiHoleSettings
+
+<div class="card service shadow-sm ">
+    <label class="d-flex justify-content-between styled-checkbox-label">
+        <h3 class="card-title  my-3">Pi-Hole</h3>
+        <input class="styled-checkbox" type="checkbox" asp-for="Enabled"/>
+    </label>
+
+    <div class="card-body">
+        <p class="card-text">
+            <a href="https://pi-hole.net/" target="_parent">Pi-Hole</a> is a black hole for internet advertisement. It works as a DNS server which blacklist domains tied to advertisement.
+            Note that BTCPay Server pi-hole integration is meant to be used in a local network. Please do not try to use this option on a VPS.
+            <br/><a href="https://docs.btcpayserver.org/Docker/pihole/" target="_blank">More information on how to use Pi-Hole can be found here.</a>
+        </p>
+        <div class="service-form">
+            <span asp-validation-for="Enabled" class="text-danger"></span>
+            <hr>
+            <div class="form-group">
+                <label asp-for="ServerIp"></label>
+                <input class="form-control" asp-for="ServerIp">
+                <span asp-validation-for="ServerIp" class="text-danger"></span>
+            </div>
+        </div>
+    </div>
+</div>

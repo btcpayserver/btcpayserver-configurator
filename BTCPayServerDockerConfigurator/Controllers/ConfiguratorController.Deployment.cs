@@ -309,6 +309,14 @@ namespace BTCPayServerDockerConfigurator.Controllers
                     await GetVar(preloadedEnvVars, ssh, "TOR_RELAY_EMAIL");
             }
 
+            if (result.AdvancedSettings.AdditionalFragments.Contains("opt-add-pihole"))
+            {
+                result.AdvancedSettings.AdditionalFragments.Remove("opt-add-pihole");
+                result.AdditionalServices.PiHoleSettings.Enabled = true;
+                result.AdditionalServices.PiHoleSettings.ServerIp =
+                    await GetVar(preloadedEnvVars, ssh, "PIHOLE_SERVERIP");
+            }
+
             result.LightningSettings ??= new LightningSettings();
             result.LightningSettings.Implementation = await GetVar(preloadedEnvVars, ssh, "BTCPAYGEN_LIGHTNING");
             if (string.IsNullOrEmpty(result.LightningSettings.Implementation))

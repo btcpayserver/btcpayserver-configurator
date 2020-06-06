@@ -150,6 +150,12 @@ namespace BTCPayServerDockerConfigurator.Models
                 additionalFragments.Add("opt-add-thunderhub");
             }
 
+            if (AdditionalServices.PiHoleSettings.Enabled)
+            {
+                additionalFragments.Add("opt-add-pihole");
+                result.AppendLine($"export PIHOLE_SERVERIP=\"{AdditionalServices.PiHoleSettings.ServerIp}\"");
+            }
+
             if (additionalFragments.Any())
             {
                 result.AppendLine($"export BTCPAYGEN_ADDITIONAL_FRAGMENTS=\"{string.Join(';', additionalFragments)}\"");
