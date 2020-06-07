@@ -121,21 +121,28 @@
     </th>
 </tr>
 </thead>
-
-<tr>
-    <td>
-        BTC Transmuter
-    </td>
-    <td>
-        @(Model.Settings.AdditionalServices.BTCTransmuterSettings.Enabled ? "Enabled" : "Not enabled")
-    </td>
-</tr>
 <tr>
     <td>
         BTCPay Configurator
     </td>
     <td>
         @(Model.Settings.AdditionalServices.ConfiguratorAddonSettings.Enabled ? "Enabled" : "Not enabled")
+    </td>
+</tr>
+<tr>
+    <td>
+        ThunderHub
+    </td>
+    <td>
+        @(Model.Settings.AdditionalServices.ThunderHubSettings.Enabled ? "Enabled" : "Not enabled")
+    </td>
+</tr>
+<tr>
+    <td>
+        Libre Patron
+    </td>
+    <td>
+        @(Model.Settings.AdditionalServices.LibrePatronSettings.Enabled ? "Enabled" : "Not enabled")
     </td>
 </tr>
 <tr>
@@ -178,6 +185,33 @@
 }
 <tr>
     <td>
+        Electreum Personal Server
+    </td>
+    <td>
+        @(Model.Settings.AdditionalServices.ElectrumPersonalServerSettings.Enabled ? "Enabled" : "Not enabled")
+    </td>
+</tr>
+@if (Model.Settings.AdditionalServices.ElectrumPersonalServerSettings.Enabled)
+{
+    <tr>
+        <td>
+            Electrum Personal Server Tracked xpub
+        </td>
+        <td>
+            @Model.Settings.AdditionalServices.ElectrumPersonalServerSettings.Xpub
+        </td>
+    </tr>
+}
+<tr>
+    <td>
+        ElectreumX
+    </td>
+    <td>
+        @(Model.Settings.AdditionalServices.ElectrumXSettings.Enabled ? "Enabled" : "Not enabled")
+    </td>
+</tr>
+<tr>
+    <td>
         Tor Relay
     </td>
     <td>
@@ -204,6 +238,25 @@
     </tr>
 }
 
+<tr>
+    <td>
+        Pi-Hole
+    </td>
+    <td>
+        @(Model.Settings.AdditionalServices.PiHoleSettings.Enabled ? "Enabled" : "Not enabled")
+    </td>
+</tr>
+@if (Model.Settings.AdditionalServices.PiHoleSettings.Enabled && !string.IsNullOrEmpty(Model.Settings.AdditionalServices.PiHoleSettings.ServerIp))
+{
+    <tr>
+        <td>
+            Pi-Hole Server IP
+        </td>
+        <td>
+            @Model.Settings.AdditionalServices.PiHoleSettings.ServerIp
+        </td>
+    </tr>
+}
 <thead>
 <tr>
     <th colspan="2">
