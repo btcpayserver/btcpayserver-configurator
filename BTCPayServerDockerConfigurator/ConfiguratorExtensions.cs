@@ -11,6 +11,7 @@ namespace BTCPayServerDockerConfigurator
         public static IMvcBuilder AddConfigurator(this IMvcBuilder mvcBuilder, IServiceCollection services, IConfiguration Configuration)
         {
             services.AddOptions();
+            services.AddSingleton<DeploymentService>();
             services.Configure<ConfiguratorOptions>(Configuration);
             services.PostConfigure<ConfiguratorOptions>(async options =>
             {

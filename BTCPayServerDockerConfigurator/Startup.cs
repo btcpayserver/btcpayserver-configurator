@@ -1,13 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using System.Text.Json;
-using System.Threading.Tasks;
 using BTCPayServerDockerConfigurator.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -29,7 +23,6 @@ namespace BTCPayServerDockerConfigurator
         public void ConfigureServices(IServiceCollection services)
         {
 
-            services.AddSingleton<DeploymentService>();
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
                 .AddConfigurator(services, Configuration);
