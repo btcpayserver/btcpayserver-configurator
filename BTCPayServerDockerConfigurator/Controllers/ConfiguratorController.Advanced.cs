@@ -31,6 +31,25 @@ namespace BTCPayServerDockerConfigurator.Controllers
         {
             switch (command)
             {
+                case { } x when x.StartsWith("fragmentset"):
+                    var parts = x.Replace("fragmentset", "").Split(",");
+                    foreach (var part in parts)
+                    {
+                        var add = part.StartsWith('+');
+                        var fragment = part.TrimStart('+', '-');
+                        if (add && !updateSettings.Settings.AdditionalFragments.Contains(fragment))
+                        {
+                            updateSettings.Settings.AdditionalFragments.Add(fragment);
+                        }
+                        else if (!add && updateSettings.Settings.AdditionalFragments.Contains(fragment))
+                        {
+                            updateSettings.Settings.AdditionalFragments.Remove(fragment);
+                        }
+                    }
+
+                    updateSettings.Additional ??= new AdvancedSettingsAdditionalData();
+                    updateSettings.Additional.ShowSettings = true;
+                    return View(updateSettings);
                 case "show":
                     updateSettings.Additional = new AdvancedSettingsAdditionalData()
                     {

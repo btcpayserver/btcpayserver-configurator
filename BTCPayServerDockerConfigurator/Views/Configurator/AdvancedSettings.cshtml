@@ -1,7 +1,28 @@
 @{
     ViewData["Title"] = "Geeky settings?";
     ViewData["CurrentStep"] = 6;
+    var moreMemory = Model.Settings.AdditionalFragments.Contains("opt-more-memory");
+    var saveMemory = Model.Settings.AdditionalFragments.Contains("opt-save-memory");
+    var sd = JsonSerializer.Deserialize<ConfiguratorSettings>(Model.Json).ServerData;
+    string memorySuggestion = "";
+    string fragmentSetSuggestion= "";
+    decimal? ramGB = null;
+    if (sd?.MemoryBytes is {})
+    {
+        ramGB =((sd.MemoryBytes.Value / 1000m) / 1024m) / 1024m;
+        if (ramGB.Value < 1.9m && !saveMemory)
+        {
+            memorySuggestion = "opt-save-memory";
+            fragmentSetSuggestion = $"fragmentset+opt-save-memory,-opt-more-memory";
+        }else if(ramGB.Value > 3.9m && !moreMemory)
+        {
+            memorySuggestion = "opt-more-memory";
+            fragmentSetSuggestion = $"fragmentset-opt-save-memory,+opt-more-memory";
+        }
+    }
+    
 }
+@using System.Text.Json
 @model UpdateSettings<AdvancedSettings, AdvancedSettingsAdditionalData>;
 <form class="container" method="post" asp-action="AdvancedSettings">
     @* <div asp-validation-summary="All" class="text-danger"></div> *@
@@ -10,6 +31,19 @@
         <h2 class=" text-center w-100">@ViewData["Title"]</h2>
     </div>
 
+    @if (!string.IsNullOrEmpty(memorySuggestion))
+    {
+        <div class="row mb-4">
+        <div class="alert alert-info m-auto text-center">
+            We've detected that your server has @ramGB.Value.ToString("0.00") GB RAM. We recommend that you use the <kbd>@memorySuggestion</kbd> fragment.<br/>
+            <label class="btn btn-link h2 w-100 text-center">
+                <input type="submit" name="command" value="@fragmentSetSuggestion" class="d-none"/>
+                Set now
+            </label>
+        </div>
+        </div>
+    }
+    
     @if (!Model.Additional.ShowSettings)
     {
         <div class="row mb-4">
