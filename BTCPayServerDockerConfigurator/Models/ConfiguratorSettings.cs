@@ -177,7 +177,7 @@ namespace BTCPayServerDockerConfigurator.Models
             return "apt-get update && apt-get install -y "+ package;
         }
 
-        public SSHSettings GetSshSettings(Options options, bool verified)
+        public SSHSettings GetSshSettings(ConfiguratorOptions configuratorOptions, bool verified)
         {
             SSHSettings ssh = null;
             switch (DeploymentSettings.DeploymentType)
@@ -196,7 +196,7 @@ namespace BTCPayServerDockerConfigurator.Models
                 {
                     if (verified)
                     {
-                        ssh = options.ParseSSHConfiguration();
+                        ssh = configuratorOptions.ParseSSHConfiguration();
                     }
                     
                     break;

@@ -3,7 +3,7 @@ using System.IO;
 
 namespace BTCPayServerDockerConfigurator.Models
 {
-    public class Options
+    public class ConfiguratorOptions
     {
         public string RootPath { get; set; } = "";
         public string CookieFilePath { get; set; }

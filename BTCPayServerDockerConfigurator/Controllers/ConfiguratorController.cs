@@ -7,14 +7,13 @@ using BTCPayServerDockerConfigurator.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Options = BTCPayServerDockerConfigurator.Models.Options;
 
 namespace BTCPayServerDockerConfigurator.Controllers
 {
     [Route("")]
     public partial class ConfiguratorController : Controller
     {
-        private readonly IOptions<Options> _options;
+        private readonly IOptions<ConfiguratorOptions> _options;
         private readonly ILogger<ConfiguratorController> _logger;
         private readonly DeploymentService _deploymentService;
 
@@ -37,7 +36,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             }
         }
 
-        public ConfiguratorController(IOptions<Options> options, ILogger<ConfiguratorController> logger,
+        public ConfiguratorController(IOptions<ConfiguratorOptions> options, ILogger<ConfiguratorController> logger,
             DeploymentService deploymentService)
         {
             _options = options;
