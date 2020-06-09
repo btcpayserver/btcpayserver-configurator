@@ -33,7 +33,7 @@ namespace BTCPayServerDockerConfigurator.Models
                 ssh.RunBash(FetchMemoryCommand);
             if (cmd.ExitStatus == 0 && int.TryParse(cmd.Output, out var memKb ))
             {
-                result.MemoryBytes = Convert.ToInt64(memKb * 1000);
+                result.MemoryBytes = Convert.ToInt64(memKb)  * 1000;
             }
             
             cmd = await
