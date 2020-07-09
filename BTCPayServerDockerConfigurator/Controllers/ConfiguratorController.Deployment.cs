@@ -18,7 +18,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
         {
             var model = GetConfiguratorSettings();
 
-            if (password != null || string.IsNullOrEmpty( _options.Value.CookieFilePath))
+            if (password != null)
             {
                 IsVerified =
                     _options.Value.VerifyAndRegeneratePassword(password);
