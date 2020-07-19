@@ -226,7 +226,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
             }
             var branch = await
                 ssh.RunBash(
-                    "if [ -d \"btcpayserver-docker\" ]; then git -C \"btcpayserver-docker\" branch | grep \\* | cut -d \" \"  -f2; fi");
+                    "if [ -d \"btcpayserver-docker\" ]; then  git -C \"btcpayserver-docker\" rev-parse --abbrev-ref HEAD; fi");
             if (branch.ExitStatus == 0)
             {
                 result.AdvancedSettings.BTCPayDockerBranch = branch.Output;
@@ -234,7 +234,7 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
             var repo = await
                 ssh.RunBash(
-                    "if [ -d \"btcpayserver-docker\" ]; then git -C \"btcpayserver-docker\" ls-remote --get-url;  fi");
+                    "if [ -d \"btcpayserver-docker\" ]; then git -C \"btcpayserver-docker\" config --get remote.origin.url;  fi");
             if (repo.ExitStatus == 0)
             {
                 result.AdvancedSettings.BTCPayDockerRepository = repo.Output;
