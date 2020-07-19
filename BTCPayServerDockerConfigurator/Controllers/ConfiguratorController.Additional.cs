@@ -42,13 +42,32 @@ namespace BTCPayServerDockerConfigurator.Controllers
                             error);
                     }
                 }
+
                 if (updateSettings.Settings.ElectrumPersonalServerSettings.Enabled)
                 {
+                    if (!configuratorSettings.ChainSettings.Bitcoin)
+                    {
+                        ModelState.AddModelError(
+                            nameof(updateSettings.Settings) + "." +
+                            nameof(updateSettings.Settings.ElectrumPersonalServerSettings) + "." +
+                            nameof(updateSettings.Settings.ElectrumPersonalServerSettings.Enabled),
+                            "This can only be used if Bitcoin was enabled.");
+                    }
+
                     //TODO: add xpub validation here
                 }
+
                 if (updateSettings.Settings.ElectrumXSettings.Enabled)
                 {
-                    if (configuratorSettings.ChainSettings.PruneMode != PruneMode.NoPruning)
+                    if (!configuratorSettings.ChainSettings.Bitcoin)
+                    {
+                        ModelState.AddModelError(
+                            nameof(updateSettings.Settings) + "." +
+                            nameof(updateSettings.Settings.ElectrumXSettings) + "." +
+                            nameof(updateSettings.Settings.ElectrumXSettings.Enabled),
+                            "This can only be used if Bitcoin was enabled.");
+                    }
+                    else if (configuratorSettings.ChainSettings.PruneMode != PruneMode.NoPruning)
                     {
                         ModelState.AddModelError(
                             nameof(updateSettings.Settings) + "." +
@@ -74,7 +93,16 @@ namespace BTCPayServerDockerConfigurator.Controllers
 
                 if (updateSettings.Settings.ThunderHubSettings.Enabled)
                 {
-                    if(!configuratorSettings.LightningSettings.Implementation.Equals("lnd", StringComparison.InvariantCultureIgnoreCase))
+                    if (!configuratorSettings.ChainSettings.Bitcoin)
+                    {
+                        ModelState.AddModelError(
+                            nameof(updateSettings.Settings) + "." +
+                            nameof(updateSettings.Settings.ElectrumXSettings) + "." +
+                            nameof(updateSettings.Settings.ElectrumXSettings.Enabled),
+                            "This can only be used if Bitcoin was enabled.");
+                    }
+                    else if (!configuratorSettings.LightningSettings.Implementation.Equals("lnd",
+                        StringComparison.InvariantCultureIgnoreCase))
                     {
                         ModelState.AddModelError(
                             nameof(updateSettings.Settings) + "." +
