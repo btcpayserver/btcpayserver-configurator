@@ -1,12 +1,12 @@
 # Deploy BTCPay with Configurator
 
-BTCPay Server can easily be configured and deployed to a server using Configurator. This tool makes makes deployment simple by allowing users to select their BTCPay setup from the Configurator.
+BTCPay Server can easily be configured and deployed to a server using Configurator. This tool makes makes deployment simple by allowing users to initialize or modify their BTCPay setup from the Configurator.
 
-Configurator can only be enabled on a BTCPay Server admin account. Users may visit the server's Configurator url to deploy new BTCPay instances. 
+Configurator can only be used to modify the existing BTCPay Server on a BTCPay Server admin account. Other users may visit the server's Configurator url to deploy new BTCPay instances. 
 
 Someone such as a BTCPay third-party host may provide a Configurator instance for their users. This can help transition users to a self-hosted solution when they are ready to stop using the third-party host's server.
 
-Another use case is for server admins who are deploying BTCPay Server's on behalf of clients or other users as part of a consulting business. Admins can easily export a Docker deployment script from Configurator selections or deploy the configuration immediately to a VPS or on premise server using SSH.
+Another use-case is for server admins who are deploying BTCPay Server's on behalf of clients or other users as part of a consulting business. Admins can easily export a Docker deployment script from Configurator selections or deploy the configuration immediately to a VPS or on-premise server using SSH.
 
 # How to use Configurator
 
@@ -24,7 +24,7 @@ To configure and deploy a server now, provide your SSH credentials where you wou
 
 ![Provide SSH Details](./docs/img/ConfiguratorStep1ssh.png)
 
-Note: The "Load Existing Settings" option will use the previous deployment's selections for faster configuration.
+Note: The "Load Existing Settings" option will use the previous deployment's selections for faster configuration if you are modifying an existing installation.
 
 Step 2: Domain
 
@@ -102,5 +102,4 @@ If you are using someone else's Configurator to deploy your BTCPay Server, such 
 Users are advised to change their SSH password after Configurator deployment is completed.
 
 To mitigate these privacy and security concerns, the [exported manual script](#export-manual-configuration) can be used at a later time, without providing your domain. Be sure to include the domain when you paste the commands into your terminal. 
-
 
