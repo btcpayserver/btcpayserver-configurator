@@ -40,7 +40,14 @@ namespace BTCPayServerDockerConfigurator.Models
                 ssh.RunBash(FetchDisksCommand);
             if (cmd.ExitStatus == 0)
             {
-                result.StorageList = JsonSerializer.Deserialize<BlockDevicesList>(cmd.Output);
+                try
+                {
+                    result.StorageList = JsonSerializer.Deserialize<BlockDevicesList>(cmd.Output);
+                }
+                catch (Exception e)
+                {
+                    //fail gracefully when trying to do cool stuff
+                }
             }
             
             cmd = await
