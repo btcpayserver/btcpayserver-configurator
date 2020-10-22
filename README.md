@@ -20,7 +20,7 @@ Once enabled, non-admins may also view the Configurator at: `yourbtcpaydomain.co
 
 ## Option 2: Build locally with Docker
 
-If you have Docker installed on your machine, you can open a terminal and the run the following command to build Configurator inside of a Docker container to use on your local machine:
+If you have Docker installed on your machine, you can open a terminal and the run the following command to run Configurator inside of a Docker container to use on your local machine:
 
 `docker run -p 1337:80 --name btcpayserver-configurator btcpayserver/btcpayserver-configurator`
 
@@ -116,4 +116,3 @@ If you are using someone else's Configurator to deploy your BTCPay Server, such 
 Users are advised to change their SSH password after Configurator deployment is complete.
 
 To mitigate these privacy and security concerns, use either the [local deployment with Docker](#option-2-build-locally-with-Docker) or the [exported manual script](#export-manual-configuration) without providing your domain. Be sure to include the domain when you paste the commands into your terminal. 
-
