@@ -2,17 +2,31 @@
 
 BTCPay Server can easily be configured and deployed to a server using Configurator. This tool makes makes deployment simple by allowing users to initialize or modify their BTCPay setup from the Configurator.
 
-Configurator can only be used to modify the existing BTCPay Server on a BTCPay Server admin account. Other users may visit the server's Configurator url to deploy new BTCPay instances. 
+Configurator can be used to modify an existing BTCPay Server, from the admin account only. Other users may visit the server's Configurator url to deploy new BTCPay instances. When enabled, Configurator is located at 
 
 Someone such as a BTCPay third-party host may provide a Configurator instance for their users. This can help transition users to a self-hosted solution when they are ready to stop using the third-party host's server.
 
 Another use-case is for server admins who are deploying BTCPay Server's on behalf of clients or other users as part of a consulting business. Admins can easily export a Docker deployment script from Configurator selections or deploy the configuration immediately to a VPS or on-premise server using SSH.
 
-# How to use Configurator
+# How to set up Configurator
 
-This deployment method assumes you already have an existing BTCPay Server [deployed](https://docs.btcpayserver.org/Deployment/) with the `opt-add-configurator` [environment variable added](https://docs.btcpayserver.org/FAQ/FAQ-Deployment#how-can-i-modify-or-deactivate-environment-variables) to your server and a target server where you would like to deploy a second BTCPay. On your current server, view your Configurator by navigating to: 
+## Option 1: Add as an external service to BTCPay
+
+If you already have an existing BTCPay Server [deployed](https://docs.btcpayserver.org/Deployment/) with the `opt-add-configurator` [environment variable added](https://docs.btcpayserver.org/FAQ/FAQ-Deployment#how-can-i-modify-or-deactivate-environment-variables), view your Configurator by navigating to: 
 
 **Server Settings > Services > Other external services > Configurator > Click See information**
+
+Once enabled, non-admins may also view the Configurator at: `yourbtcpaydomain.com/configurator`.
+
+## Option 2: Build locally with Docker
+
+If you have Docker installed on your machine, you can open a terminal and the run the following command to build Configurator inside of a Docker container to use on your local machine:
+
+`docker run -p 1337:80 --name btcpayserver-configurator btcpayserver/btcpayserver-configurator`
+
+Now you can open a browser tab and view your Configurator at **localhost:1337**
+
+# How to use Configurator
 
 Step 1: Destination
 
@@ -99,7 +113,7 @@ If you are using someone else's Configurator to deploy your BTCPay Server, such 
 - server IP/domain and ssh password
 - server configuration settings
 
-Users are advised to change their SSH password after Configurator deployment is completed.
+Users are advised to change their SSH password after Configurator deployment is complete.
 
-To mitigate these privacy and security concerns, the [exported manual script](#export-manual-configuration) can be used at a later time, without providing your domain. Be sure to include the domain when you paste the commands into your terminal. 
+To mitigate these privacy and security concerns, use either the [local deployment with Docker](#option-2-build-locally-with-Docker) or the [exported manual script](#export-manual-configuration) without providing your domain. Be sure to include the domain when you paste the commands into your terminal. 
 
