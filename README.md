@@ -108,7 +108,7 @@ If you want to deploy the configuration to your server at a later time, you can 
 
 ## Privacy & Security Concerns
 
-If you are using someone else's Configurator to deploy your BTCPay Server, such as a [trusted Third-Party](https://docs.btcpayserver.org/ThirdParty/), you will be providing them with your:
+If you are using someone else's Configurator to deploy your BTCPay Server, such as a [trusted Third-Party](https://docs.btcpayserver.org/ThirdPartyHosting/), you will be providing them with your:
 
 - server IP/domain and ssh password
 - server configuration settings
