@@ -137,7 +137,7 @@ namespace BTCPayServerDockerConfigurator.Models
             public string MajMin { get; set; }
 
             [JsonPropertyName("rm")]
-            public string Rm { get; set; }
+            public object Rm { get; set; }
 
             [JsonPropertyName("size")]
             public string Size { get; set; }
