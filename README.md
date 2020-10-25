@@ -1,6 +1,6 @@
 # Deploy BTCPay with Configurator
 
-BTCPay Server can easily be configured and deployed to a server using Configurator. This tool makes makes deployment simple by allowing users to initialize or modify their BTCPay setup from the Configurator.
+BTCPay Server can easily be configured and deployed to a server using Configurator. This tool makes deployment simple by allowing users to initialize or modify their BTCPay setup from the Configurator.
 
 Configurator can be used to modify an existing BTCPay Server, from the admin account only. Other users may visit the server's Configurator url to deploy new BTCPay instances. When enabled, Configurator is located at 
 
