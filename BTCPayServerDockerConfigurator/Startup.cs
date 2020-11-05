@@ -25,7 +25,7 @@ namespace BTCPayServerDockerConfigurator
 
             services.AddControllersWithViews()
                 .AddRazorRuntimeCompilation()
-                .AddConfigurator(services, Configuration);
+                .AddConfigurator(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,18 +1,17 @@
 using System;
 using System.IO;
 using BTCPayServerDockerConfigurator.Models;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace BTCPayServerDockerConfigurator
 {
     public static class ConfiguratorExtensions
     {
-        public static IMvcBuilder AddConfigurator(this IMvcBuilder mvcBuilder, IServiceCollection services, IConfiguration Configuration)
+        public static IMvcBuilder AddConfigurator(this IMvcBuilder mvcBuilder, IServiceCollection services)
         {
             services.AddOptions();
             services.AddSingleton<DeploymentService>();
-            services.Configure<ConfiguratorOptions>(Configuration);
+            services.AddOptions<ConfiguratorOptions>();
             services.PostConfigure<ConfiguratorOptions>(async options =>
             {
                 if (!string.IsNullOrEmpty(options.CookieFilePath))
