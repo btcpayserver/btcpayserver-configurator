@@ -3,11 +3,30 @@
     ViewData["Title"] = "Deploying your BTCPay Server!";
     ViewData["CurrentStep"] = 8;
     var id = Context.Request.RouteValues["id"];
+    var isCloudInit = Model.Settings?.DeploymentSettings?.DeploymentType == DeploymentType.CloudInit;
 }
 <div class="container">
     @if (!Model.Additional.InProgress)
     {
-        if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
+        @if (!string.IsNullOrEmpty(Model.Additional.CloudInitScript))
+        {
+            <div class="row mb-4">
+                <div class="col-md-8 col-sm-12 offset-md-2">
+                    <div class="card shadow-sm">
+                        <div class="card-body">
+                            <h3 class="card-title">Cloud-Init Script</h3>
+                            <p>Copy this script and paste it into the <strong>User Data</strong> / <strong>Cloud-Init</strong> field when creating a new VPS instance on your provider (DigitalOcean, Vultr, Hetzner, AWS, etc.).</p>
+                            <div class="position-relative">
+                                <textarea class="form-control" rows="12" readonly onclick="this.select();" style="font-family: monospace; font-size: 0.8em;">@Model.Additional.CloudInitScript</textarea>
+                            </div>
+                            <small class="form-text text-muted mt-2 d-block">The server will automatically configure itself on first boot. Choose Ubuntu 22.04+ as your OS.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        if (Model.Settings?.DeploymentSettings?.DeploymentType != DeploymentType.Manual && !isCloudInit)
         {
             <div class="row mb-4">
                 <div class="col-md-6 col-sm-12 offset-md-3">
@@ -17,14 +36,12 @@
                             @if (Model.Additional.ExitStatus == 0)
                             {
                                 <iframe src="@Url.Action("GetOnionUrl")" frameborder="0" class="w-100" style="height: 50px" scrolling="no">
-
                                 </iframe>
                                 <div class="input-group form-group">
-
-                                    <input class="form-control  border-right-0" onclick="this.select();" type="text" style="font-size:0.75em;" value="https://@Model.Settings.DomainSettings.Domain" readonly="">
+                                    <input class="form-control border-right-0" onclick="this.select();" type="text" style="font-size:0.75em;" value="https://@Model.Settings.DomainSettings.Domain" readonly="">
                                     <div class="input-group-append">
-                                        <a href="https://@Model.Settings.DomainSettings.Domain" class="input-group-text text-decoration-none  p-0 px-2">
-                                            <span class="input-group-addon">⮞</span>
+                                        <a href="https://@Model.Settings.DomainSettings.Domain" class="input-group-text text-decoration-none p-0 px-2">
+                                            <span class="input-group-addon">&rarr;</span>
                                         </a>
                                     </div>
                                 </div>
@@ -37,38 +54,31 @@
                         @if (Model.Additional.ExitStatus != 0)
                         {
                             <form class="card-footer" asp-action="Deploy">
-                                <button type="submit" class="btn-primary btn-primary">Retry</button>
+                                <button type="submit" class="btn btn-primary">Retry</button>
                             </form>
                         }
                     </div>
-
                 </div>
             </div>
         }
         <div class="row mb-4">
-            <div class="col-md-6 col-sm-12 offset-md-3">
+            <div class="col-md-8 col-sm-12 offset-md-2">
                 <div class="card shadow-sm">
                     <div class="card-body">
-                        @if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
-                        {
-                            <h3 class="card-title">Executed commands</h3>
-                        }
-                        else
+                        @if (Model.Settings?.DeploymentSettings?.DeploymentType == DeploymentType.Manual || isCloudInit)
                         {
                             <h3 class="card-title">Copy these commands to your terminal</h3>
                         }
-
-                        <code>
-                            @Html.Raw(Model.Additional.Bash.Replace(Environment.NewLine, "<br/>"))
-                        </code>
-
+                        else
+                        {
+                            <h3 class="card-title">Executed commands</h3>
+                        }
+                        <code class="d-block" style="white-space: pre-wrap; font-size: 0.85em;">@Model.Additional.Bash</code>
                     </div>
                 </div>
-
             </div>
         </div>
     }
-
 </div>
 @if (Model.Additional.InProgress)
 {
@@ -83,9 +93,7 @@
                     <div class="progress">
                         <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%"></div>
                     </div>
-
-                    <code class="d-block my-2" id="output" style="max-height: 50vh;
-                                                  overflow-y: scroll;">
+                    <code class="d-block my-2" id="output" style="max-height: 50vh; overflow-y: scroll;">
                         @Html.Raw(Model.Additional.Output?.Replace("\n", "<br/>"))
                     </code>
                 </div>
@@ -100,7 +108,6 @@
     $(document).ready(function(){
         $("form").on("submit", function(){ $("#deploying-modal").modal("show");});
     });
-
     </script>
     @if (Model.Additional.InProgress)
     {
@@ -122,8 +129,6 @@
                 el.scrollIntoView(false);
               }});
         }
-
-    </script>
+        </script>
     }
-
 }

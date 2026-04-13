@@ -1,10 +1,6 @@
-using System.ComponentModel.DataAnnotations;
-using BTCPayServerDockerConfigurator.Validation;
+namespace BTCPayServerDockerConfigurator.Models;
 
-namespace BTCPayServerDockerConfigurator.Models
+public class BTCTransmuterSettings
 {
-    public class BTCTransmuterSettings
-    {
-        public bool Enabled { get; set; }
-    }
+    public bool Enabled { get; set; }
 }

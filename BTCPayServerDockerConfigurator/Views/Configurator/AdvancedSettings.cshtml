@@ -20,12 +20,11 @@
             fragmentSetSuggestion = $"fragmentset-opt-save-memory,+opt-more-memory";
         }
     }
-    
+
 }
 @using System.Text.Json
 @model UpdateSettings<AdvancedSettings, AdvancedSettingsAdditionalData>;
 <form class="container" method="post" asp-action="AdvancedSettings">
-    @* <div asp-validation-summary="All" class="text-danger"></div> *@
     <input type="hidden" asp-for="Json"/>
     <div class="row mb-4">
         <h2 class=" text-center w-100">@ViewData["Title"]</h2>
@@ -43,7 +42,7 @@
         </div>
         </div>
     }
-    
+
     @if (!Model.Additional.ShowSettings)
     {
         <div class="row mb-4">
@@ -64,6 +63,23 @@
             </div>
         </div>
     }
+
+    <div class="row mb-4 @(Model.Additional.ShowSettings ? string.Empty : "invisible")">
+        <div class="col-md-6 col-sm-12 offset-md-3 pt-4">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center">Sync Options</h3>
+                    <div class="form-group form-check">
+                        <input type="checkbox" class="form-check-input" asp-for="Settings.FastSync" id="fastSyncCheck">
+                        <label class="form-check-label" for="fastSyncCheck" asp-for="Settings.FastSync">
+                            Enable FastSync (speeds up initial Bitcoin sync)
+                        </label>
+                        <small class="form-text text-muted d-block">Downloads a pre-verified UTXO set snapshot instead of syncing from genesis. Only works with full (non-pruned) Bitcoin nodes.</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row mb-4 @(Model.Additional.ShowSettings ? string.Empty : "invisible")">
         <div class="col-md-6 col-sm-12 offset-md-3 pt-4">

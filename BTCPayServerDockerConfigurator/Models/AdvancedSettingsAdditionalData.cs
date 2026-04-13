@@ -1,7 +1,6 @@
-namespace BTCPayServerDockerConfigurator.Models
+namespace BTCPayServerDockerConfigurator.Models;
+
+public class AdvancedSettingsAdditionalData
 {
-    public class AdvancedSettingsAdditionalData
-    {
-        public bool ShowSettings { get; set; } = false;
-    }
+    public bool ShowSettings { get; set; } = false;
 }

@@ -1,7 +1,5 @@
-namespace BTCPayServerDockerConfigurator.Models
+namespace BTCPayServerDockerConfigurator.Models;
+
+public class AdditionalDataStub
 {
-    public class AdditionalDataStub
-    {
-        
-    }
 }

@@ -4,7 +4,6 @@
 }
 @model UpdateSettings<DeploymentSettings, DeploymentAdditionalData>;
 <form class="container" method="post" asp-action="DeploymentDestination">
-    @* <div asp-validation-summary="All" class="text-danger"></div> *@
     <input type="hidden" asp-for="Json" value="@Model.Json"/>
     <div class="row mb-4">
         <h2 class="text-center w-100">@ViewData["Title"]</h2>
@@ -15,7 +14,7 @@
             <div class="col-md-@(12 / Model.Additional.AvailableDeploymentTypes.Count)">
                 <label class="card-input-element-label">
                     <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.ThisMachine" class="card-input-element d-none"/>
-                    <div class="card shadow-sm  w-100  h-100">
+                    <div class="card shadow-sm w-100 h-100">
                         <div class="card-img-top" style="background-image: url(assets/machine.svg);"></div>
                         <div class="card-body">
                             <h3 class="card-title text-center">This machine</h3>
@@ -52,7 +51,21 @@
                         <div class="card-body">
                             <h3 class="card-title text-center">Manual</h3>
                             <p class="card-text">We'll generate a bash script that you run on the server without ever providing us access.</p>
-
+                        </div>
+                    </div>
+                </label>
+            </div>
+        }
+        @if (Model.Additional.AvailableDeploymentTypes.Contains(DeploymentType.CloudInit))
+        {
+            <div class="col-md-@(12 / Model.Additional.AvailableDeploymentTypes.Count)">
+                <label class="card-input-element-label">
+                    <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.CloudInit" class="card-input-element d-none"/>
+                    <div class="card shadow-sm w-100 h-100 mt-4 mt-md-0">
+                        <div class="card-img-top" style="background-image: url(assets/remote.svg); opacity: 0.7;"></div>
+                        <div class="card-body">
+                            <h3 class="card-title text-center">Cloud Deploy</h3>
+                            <p class="card-text">We'll generate a cloud-init script you can paste into your VPS provider's user-data field when creating a new server.</p>
                         </div>
                     </div>
                 </label>
@@ -77,9 +90,28 @@
                         <span asp-validation-for="Settings.Username" class="text-danger"></span>
                     </div>
                     <div class="form-group">
-                        <label asp-for="Settings.Password">Password</label>
-                        <input type="password" class="form-control" asp-for="Settings.Password" placeholder="Password" value="@Model.Settings.Password">
-                        <span asp-validation-for="Settings.Password" class="text-danger"></span>
+                        <label>Authentication method</label>
+                        <div class="btn-group w-100" role="group">
+                            <input type="radio" class="btn-check" asp-for="Settings.AuthMethod" value="@SSHAuthMethod.Password" id="auth-password">
+                            <label class="btn btn-outline-primary" for="auth-password">Password</label>
+                            <input type="radio" class="btn-check" asp-for="Settings.AuthMethod" value="@SSHAuthMethod.SSHKey" id="auth-sshkey">
+                            <label class="btn btn-outline-primary" for="auth-sshkey">SSH Key</label>
+                        </div>
+                    </div>
+                    <div id="password-auth-fields">
+                        <div class="form-group">
+                            <label asp-for="Settings.Password">Password</label>
+                            <input type="password" class="form-control" asp-for="Settings.Password" placeholder="Password" value="@Model.Settings.Password">
+                            <span asp-validation-for="Settings.Password" class="text-danger"></span>
+                        </div>
+                    </div>
+                    <div id="sshkey-auth-fields" style="display: none">
+                        <div class="form-group">
+                            <label asp-for="Settings.SSHPrivateKey">SSH Private Key</label>
+                            <textarea class="form-control" asp-for="Settings.SSHPrivateKey" rows="6" placeholder="Paste your private key here (-----BEGIN OPENSSH PRIVATE KEY-----)"></textarea>
+                            <small class="form-text text-muted">Paste the contents of your private SSH key file.</small>
+                            <span asp-validation-for="Settings.SSHPrivateKey" class="text-danger"></span>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label asp-for="Settings.RootPassword">Root password (if ssh user is not root)</label>
@@ -93,7 +125,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 
@@ -107,16 +138,31 @@
     <script>
     $(document).ready(function() {
         toggleForm();
-      $("label").on("click", toggleForm);
+        toggleAuthMethod();
+        $("label").on("click", function() {
+            setTimeout(function() { toggleForm(); toggleAuthMethod(); }, 50);
+        });
+        $("input[name='Settings.AuthMethod']").on("change", toggleAuthMethod);
     });
 
     function toggleForm(){
          var selectedDeploymentType = $('input[name=Settings\\.DeploymentType]:checked').val();
-               if(selectedDeploymentType === "@nameof(DeploymentType.RemoteMachine)"){
-                   $("#remote-machine-form").show();
-               }else{
-                    $("#remote-machine-form").hide();
-               }
+         if(selectedDeploymentType === "@nameof(DeploymentType.RemoteMachine)"){
+             $("#remote-machine-form").show();
+         }else{
+              $("#remote-machine-form").hide();
+         }
+    }
+
+    function toggleAuthMethod(){
+        var method = $("input[name='Settings.AuthMethod']:checked").val();
+        if(method === "@nameof(SSHAuthMethod.SSHKey)"){
+            $("#password-auth-fields").hide();
+            $("#sshkey-auth-fields").show();
+        } else {
+            $("#password-auth-fields").show();
+            $("#sshkey-auth-fields").hide();
+        }
     }
     </script>
 }

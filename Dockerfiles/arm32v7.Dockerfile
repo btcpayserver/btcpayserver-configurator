@@ -1,30 +1,23 @@
-FROM mcr.microsoft.com/dotnet/core/sdk:3.1 AS build
-RUN apt-get update \
-	&& apt-get install -qq --no-install-recommends qemu qemu-user-static qemu-user binfmt-support
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 WORKDIR /app
 
-# copy csproj and restore as distinct layers
 COPY *.sln .
 COPY BTCPayServerDockerConfigurator/*.csproj ./BTCPayServerDockerConfigurator/
 RUN dotnet restore
 
-# copy everything else and build app
 COPY BTCPayServerDockerConfigurator/. ./BTCPayServerDockerConfigurator/
 WORKDIR /app
-
 RUN dotnet publish -c Release -o out
 
-
-FROM mcr.microsoft.com/dotnet/core/aspnet:3.1-buster-slim-arm32v7  AS runtime
-COPY --from=build /usr/bin/qemu-arm-static /usr/bin/qemu-arm-static
+FROM mcr.microsoft.com/dotnet/aspnet:10.0-bookworm-slim-arm32v7 AS runtime
 RUN apt-get update && apt-get install -y --no-install-recommends iproute2 openssh-client \
-    && rm -rf /var/lib/apt/lists/* 
+    && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY --from=build /app/out ./
-ENV LC_ALL en_US.UTF-8
-ENV LANG en_US.UTF-8
-	
-	
+ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
+ENV LC_ALL=en_US.UTF-8
+ENV LANG=en_US.UTF-8
+
 EXPOSE 80
 EXPOSE 443
 COPY Dockerfiles/entrypoint.sh docker-entrypoint.sh

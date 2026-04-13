@@ -1,9 +1,9 @@
-namespace BTCPayServerDockerConfigurator.Models
+namespace BTCPayServerDockerConfigurator.Models;
+
+public enum DeploymentType
 {
-    public enum DeploymentType
-    {
-        ThisMachine,
-        RemoteMachine,
-        Manual
-    }
+    ThisMachine,
+    RemoteMachine,
+    Manual,
+    CloudInit
 }

@@ -1,27 +1,37 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using BTCPayServerDockerConfigurator;
+using BTCPayServerDockerConfigurator.Models;
+using Microsoft.Extensions.Options;
 
-namespace BTCPayServerDockerConfigurator
+var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddEnvironmentVariables(prefix: "CONFIGURATOR_");
+
+builder.Services.AddControllersWithViews()
+    .AddRazorRuntimeCompilation()
+    .AddSessionStateTempDataProvider();
+builder.Services.AddConfigurator();
+
+var app = builder.Build();
+
+if (!app.Environment.IsDevelopment())
 {
-    public class Program
-    {
-        public static void Main(string[] args)
-        {
-            CreateHostBuilder(args).Build().Run();
-        }
-
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((context, builder) =>
-                {
-                    builder.AddEnvironmentVariables(prefix: "CONFIGURATOR_");
-                })
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
-    }
+    app.UseHsts();
 }
+
+app.UseForwardedHeaders();
+app.UseHttpsRedirection();
+
+var options = app.Services.GetRequiredService<IOptions<ConfiguratorOptions>>();
+if (!string.IsNullOrEmpty(options.Value.RootPath))
+{
+    app.UsePathBase(options.Value.RootPath);
+}
+app.UseStaticFiles();
+app.UseRouting();
+app.UseSession();
+app.UseAuthorization();
+
+app.MapControllerRoute(
+    name: "default",
+    pattern: "{action=Index}/{id?}");
+
+app.Run();

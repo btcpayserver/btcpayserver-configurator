@@ -1,36 +1,36 @@
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 
-namespace BTCPayServerDockerConfigurator.Models
+namespace BTCPayServerDockerConfigurator.Models;
+
+public class AdvancedSettings
 {
-    public class AdvancedSettings
+    [Display(Name = "Custom BTCPay Docker image")]
+    public string CustomBTCPayImage { get; set; } = "";
+
+    [Display(Name = "Custom btcpayserver-docker repository")]
+    public string BTCPayDockerRepository { get; set; }
+
+    [Display(Name = "Custom btcpayserver-docker branch")]
+    public string BTCPayDockerBranch { get; set; }
+
+    public List<string> AdditionalFragments { get; set; } = new();
+    public List<string> ExcludedFragments { get; set; } = new();
+
+    [Display(Name = "Enable FastSync (speeds up initial Bitcoin sync)")]
+    public bool FastSync { get; set; }
+
+    public bool AnythingSet()
     {
-        [Display(Name = "Custom BTCPay Docker image")]
-        public string CustomBTCPayImage { get; set; } = "";
-        [Display(Name = "Custom btcpayserver-docker repository")]
-        public string BTCPayDockerRepository { get; set; }
-        [Display(Name = "Custom btcpayserver-docker branch")]
-        public string BTCPayDockerBranch { get; set; }
-        public List<string> AdditionalFragments { get; set; } = new List<string>();
-        public List<string> ExcludedFragments { get; set; } = new List<string>();
+        return !string.IsNullOrEmpty(CustomBTCPayImage) || !string.IsNullOrEmpty(BTCPayDockerRepository) ||
+               !string.IsNullOrEmpty(BTCPayDockerBranch) || AdditionalFragments.Any() ||
+               ExcludedFragments.Any() || FastSync;
+    }
 
-        public bool AnythingSet()
-        {
-            return !string.IsNullOrEmpty(CustomBTCPayImage) || !string.IsNullOrEmpty(BTCPayDockerRepository) ||
-                   !string.IsNullOrEmpty(BTCPayDockerBranch) || AdditionalFragments.Any() || ExcludedFragments.Any();
-        }
-
-        public void EnsureTxIndex()
-        {
-            var fragment = "opt-txindex";
-
-            if (AdditionalFragments.Contains(fragment))
-            {
-                return;
-            }
-            AdditionalFragments.Add(fragment);
-
-        }
+    public void EnsureTxIndex()
+    {
+        var fragment = "opt-txindex";
+        if (AdditionalFragments.Contains(fragment))
+            return;
+        AdditionalFragments.Add(fragment);
     }
 }

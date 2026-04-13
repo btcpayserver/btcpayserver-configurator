@@ -1,7 +1,6 @@
-namespace BTCPayServerDockerConfigurator.Models
+namespace BTCPayServerDockerConfigurator.Models;
+
+public class ElectrumXSettings
 {
-    public class ElectrumXSettings
-    {
-        public bool Enabled { get; set; }
-    }
+    public bool Enabled { get; set; }
 }

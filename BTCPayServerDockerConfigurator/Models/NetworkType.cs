@@ -1,9 +1,8 @@
-namespace BTCPayServerDockerConfigurator.Models
+namespace BTCPayServerDockerConfigurator.Models;
+
+public enum NetworkType
 {
-    public enum NetworkType
-    {
-        Mainnet,
-        Testnet,
-        Regtest
-    }
+    Mainnet,
+    Testnet,
+    Regtest
 }

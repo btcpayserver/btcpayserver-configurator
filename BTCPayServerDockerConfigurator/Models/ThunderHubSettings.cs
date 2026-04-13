@@ -1,7 +1,6 @@
-namespace BTCPayServerDockerConfigurator.Models
+namespace BTCPayServerDockerConfigurator.Models;
+
+public class ThunderHubSettings
 {
-    public class ThunderHubSettings
-    {
-        public bool Enabled { get; set; }
-    }
+    public bool Enabled { get; set; }
 }
