@@ -50,22 +50,7 @@
                         <div class="card-img-top" style="background-image: url(assets/shell.png);"></div>
                         <div class="card-body">
                             <h3 class="card-title text-center">Manual</h3>
-                            <p class="card-text">We'll generate a bash script that you run on the server without ever providing us access.</p>
-                        </div>
-                    </div>
-                </label>
-            </div>
-        }
-        @if (Model.Additional.AvailableDeploymentTypes.Contains(DeploymentType.CloudInit))
-        {
-            <div class="col-md-@(12 / Model.Additional.AvailableDeploymentTypes.Count)">
-                <label class="card-input-element-label">
-                    <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.CloudInit" class="card-input-element d-none"/>
-                    <div class="card shadow-sm w-100 h-100 mt-4 mt-md-0">
-                        <div class="card-img-top" style="background-image: url(assets/remote.svg); opacity: 0.7;"></div>
-                        <div class="card-body">
-                            <h3 class="card-title text-center">Cloud Deploy</h3>
-                            <p class="card-text">We'll generate a cloud-init script you can paste into your VPS provider's user-data field when creating a new server.</p>
+                            <p class="card-text">We'll generate a bash script and a cloud-init script. Run it on your server or paste into your VPS provider's user-data field.</p>
                         </div>
                     </div>
                 </label>
@@ -118,9 +103,9 @@
                         <input type="password" class="form-control" asp-for="Settings.RootPassword" placeholder="Root Password" value="@Model.Settings.RootPassword">
                         <span asp-validation-for="Settings.RootPassword" class="text-danger"></span>
                     </div>
-                    <div class="form-group">
-                        <input type="checkbox" class="form-check-inline" asp-for="Additional.LoadFromServer">
-                        <label asp-for="Additional.LoadFromServer"></label>
+                    <div class="form-check">
+                        <input type="checkbox" class="form-check-input" asp-for="Additional.LoadFromServer">
+                        <label class="form-check-label" asp-for="Additional.LoadFromServer"></label>
                         <span asp-validation-for="Additional.LoadFromServer" class="text-danger"></span>
                     </div>
                 </div>
@@ -128,8 +113,8 @@
         </div>
     </div>
 
-    <div class="row w-100">
-        <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
+    <div class="sticky-cta d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary btn-lg btn-continue">Continue</button>
     </div>
 </form>
 

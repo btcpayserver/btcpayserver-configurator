@@ -4,6 +4,5 @@ public enum DeploymentType
 {
     ThisMachine,
     RemoteMachine,
-    Manual,
-    CloudInit
+    Manual
 }

@@ -83,7 +83,6 @@ public partial class ConfiguratorController : Controller
         switch (configuratorSettings.DeploymentSettings.DeploymentType)
         {
             case DeploymentType.Manual:
-            case DeploymentType.CloudInit:
                 break;
             case DeploymentType.ThisMachine:
                 try

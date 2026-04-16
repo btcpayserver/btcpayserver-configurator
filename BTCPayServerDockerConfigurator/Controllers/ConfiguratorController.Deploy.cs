@@ -22,36 +22,28 @@ public partial class ConfiguratorController
     {
         var model = GetConfiguratorSettings();
 
-        if (model.DeploymentSettings.DeploymentType == DeploymentType.CloudInit)
+        if (model.DeploymentSettings.DeploymentType == DeploymentType.Manual)
         {
-            var cloudInit = model.ConstructCloudInitScript();
-            return RedirectToAction("DeployResult", new
+            var id = Guid.NewGuid().ToString();
+            var result = new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>
             {
-                id = StoreCloudInitResult(model, cloudInit)
-            });
+                Additional = new DeployAdditionalData
+                {
+                    Bash = model.ConstructBashFile(),
+                    CloudInitScript = model.ConstructCloudInitScript(),
+                    ExitStatus = 0
+                },
+                Json = model.ToString(),
+                Settings = model
+            };
+            SetTempData(id, result);
+            return RedirectToAction("DeployResult", new { id });
         }
 
-        var id = _deploymentService.StartDeployment(model, IsVerified);
-        return RedirectToAction("DeployResult", new { id });
-    }
-
-    private string StoreCloudInitResult(ConfiguratorSettings model, string cloudInit)
-    {
-        var id = Guid.NewGuid().ToString();
-        var result = new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>
+        return RedirectToAction("DeployResult", new
         {
-            Additional = new DeployAdditionalData
-            {
-                Bash = model.ConstructBashFile(),
-                CloudInitScript = cloudInit,
-                Output = "Cloud-init script generated successfully.",
-                ExitStatus = 0
-            },
-            Json = model.ToString(),
-            Settings = model
-        };
-        SetTempData(id, result);
-        return id;
+            id = _deploymentService.StartDeployment(model, IsVerified)
+        });
     }
 
     [HttpGet("deploy-result/{id?}")]

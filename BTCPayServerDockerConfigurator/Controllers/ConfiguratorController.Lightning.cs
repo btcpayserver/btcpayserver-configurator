@@ -25,17 +25,9 @@ public partial class ConfiguratorController
         var configuratorSettings = string.IsNullOrEmpty(updateSettings.Json)
             ? new ConfiguratorSettings()
             : JsonSerializer.Deserialize<ConfiguratorSettings>(updateSettings.Json);
-        if (configuratorSettings.ChainSettings.PruneMode != PruneMode.NoPruning &&
-            updateSettings.Settings.Implementation == "eclair")
-        {
-            ModelState.AddModelError(
-                nameof(updateSettings.Settings) + "." +
-                nameof(updateSettings.Settings.Implementation),
-                "You cannot use Eclair when you have pruning enabled.");
-        }
-        else if (configuratorSettings.ChainSettings.PruneMode == PruneMode.ExtraExtraSmall &&
-                 !updateSettings.Settings.Implementation.Equals("none",
-                     StringComparison.InvariantCultureIgnoreCase))
+        if (configuratorSettings.ChainSettings.PruneMode == PruneMode.ExtraExtraSmall &&
+            !updateSettings.Settings.Implementation.Equals("none",
+                StringComparison.InvariantCultureIgnoreCase))
         {
             ModelState.AddModelError(
                 nameof(updateSettings.Settings) + "." +
@@ -49,12 +41,7 @@ public partial class ConfiguratorController
         }
 
         configuratorSettings.LightningSettings = updateSettings.Settings;
-        if (configuratorSettings.LightningSettings.Implementation.Equals("eclair"))
-        {
-            configuratorSettings.AdvancedSettings.EnsureTxIndex();
-        }
-
         SetConfiguratorSettings(configuratorSettings);
-        return RedirectToAction(nameof(AdditionalServices));
+        return RedirectToAction(nameof(AdvancedSettings));
     }
 }

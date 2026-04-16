@@ -2,7 +2,7 @@
 @model UpdateSettings<ConfiguratorSettings, AdditionalDataStub>;
 @{
     ViewData["Title"] = "Does this look right to you?";
-    ViewData["CurrentStep"] = 7;
+    ViewData["CurrentStep"] = 6;
     var sd = Model.Settings.ServerData;
     var df = sd?.DiskFreeForVolume ?? sd?.DiskFreeForLib;
 }
@@ -139,6 +139,13 @@
     <td>Pruning</td>
     <td>@EnumTextHelper.PruneMode[Model.Settings.ChainSettings.PruneMode]</td>
 </tr>
+@if (Model.Settings.ChainSettings.FastSync)
+{
+    <tr>
+        <td>FastSync</td>
+        <td>Enabled</td>
+    </tr>
+}
 
 <thead>
 <tr>
@@ -159,91 +166,6 @@
 <tr>
     <th colspan="2">
         <div class="d-flex justify-content-between">
-            <h3 class="mb-0 pb-0">Additional Services</h3>
-            <a asp-action="AdditionalServices">Edit</a>
-        </div>
-    </th>
-</tr>
-</thead>
-<tr>
-    <td>BTCPay Configurator</td>
-    <td>@(Model.Settings.AdditionalServices.ConfiguratorAddonSettings.Enabled ? "Enabled" : "Not enabled")</td>
-</tr>
-<tr>
-    <td>ThunderHub</td>
-    <td>@(Model.Settings.AdditionalServices.ThunderHubSettings.Enabled ? "Enabled" : "Not enabled")</td>
-</tr>
-<tr>
-    <td>BTCTransmuter</td>
-    <td>@(Model.Settings.AdditionalServices.BTCTransmuterSettings.Enabled ? "Enabled" : "Not enabled")</td>
-</tr>
-<tr>
-    <td>Libre Patron</td>
-    <td>@(Model.Settings.AdditionalServices.LibrePatronSettings.Enabled ? "Enabled" : "Not enabled")</td>
-</tr>
-@if (Model.Settings.AdditionalServices.LibrePatronSettings.Enabled)
-{
-    <tr>
-        <td>Libre Patron Host</td>
-        <td>@Model.Settings.AdditionalServices.LibrePatronSettings.Host</td>
-    </tr>
-}
-<tr>
-    <td>WooCommerce</td>
-    <td>@(Model.Settings.AdditionalServices.WooCommerceSettings.Enabled ? "Enabled" : "Not enabled")</td>
-</tr>
-@if (Model.Settings.AdditionalServices.WooCommerceSettings.Enabled)
-{
-    <tr>
-        <td>WooCommerce Host</td>
-        <td>@Model.Settings.AdditionalServices.WooCommerceSettings.Host</td>
-    </tr>
-}
-<tr>
-    <td>Electrum Personal Server</td>
-    <td>@(Model.Settings.AdditionalServices.ElectrumPersonalServerSettings.Enabled ? "Enabled" : "Not enabled")</td>
-</tr>
-@if (Model.Settings.AdditionalServices.ElectrumPersonalServerSettings.Enabled)
-{
-    <tr>
-        <td>Electrum Personal Server Tracked xpub</td>
-        <td>@Model.Settings.AdditionalServices.ElectrumPersonalServerSettings.Xpub</td>
-    </tr>
-}
-<tr>
-    <td>ElectrumX</td>
-    <td>@(Model.Settings.AdditionalServices.ElectrumXSettings.Enabled ? "Enabled" : "Not enabled")</td>
-</tr>
-<tr>
-    <td>Tor Relay</td>
-    <td>@(Model.Settings.AdditionalServices.TorRelaySettings.Enabled ? "Enabled" : "Not enabled")</td>
-</tr>
-@if (Model.Settings.AdditionalServices.TorRelaySettings.Enabled)
-{
-    <tr>
-        <td>Tor Relay nickname</td>
-        <td>@Model.Settings.AdditionalServices.TorRelaySettings.Nickname</td>
-    </tr>
-    <tr>
-        <td>Tor Relay contact email</td>
-        <td>@Model.Settings.AdditionalServices.TorRelaySettings.Email</td>
-    </tr>
-}
-<tr>
-    <td>Pi-Hole</td>
-    <td>@(Model.Settings.AdditionalServices.PiHoleSettings.Enabled ? "Enabled" : "Not enabled")</td>
-</tr>
-@if (Model.Settings.AdditionalServices.PiHoleSettings.Enabled && !string.IsNullOrEmpty(Model.Settings.AdditionalServices.PiHoleSettings.ServerIp))
-{
-    <tr>
-        <td>Pi-Hole Server IP</td>
-        <td>@Model.Settings.AdditionalServices.PiHoleSettings.ServerIp</td>
-    </tr>
-}
-<thead>
-<tr>
-    <th colspan="2">
-        <div class="d-flex justify-content-between">
             <h3 class="mb-0 pb-0">Advanced</h3>
             <a asp-action="AdvancedSettings">Edit</a>
         </div>
@@ -252,13 +174,6 @@
 </thead>
 @if (Model.Settings.AdvancedSettings.AnythingSet())
 {
-    @if (Model.Settings.AdvancedSettings.FastSync)
-    {
-        <tr>
-            <td>FastSync</td>
-            <td>Enabled</td>
-        </tr>
-    }
     <tr>
         <td>Custom BTCPay Image</td>
         <td>@(string.IsNullOrEmpty(Model.Settings.AdvancedSettings.CustomBTCPayImage) ? "Not set" : Model.Settings.AdvancedSettings.CustomBTCPayImage)</td>
@@ -299,14 +214,10 @@ else
 </div>
 </div>
 
-<form method="post" asp-action="Deploy" class="row w-100">
+<form method="post" asp-action="Deploy" class="sticky-cta d-flex justify-content-center">
     <input type="hidden" asp-for="Json"/>
-    <button type="submit" class="m-auto btn btn-primary btn-lg deploy-button">
-        @if (Model.Settings.DeploymentSettings.DeploymentType == DeploymentType.CloudInit)
-        {
-            <text>Generate Cloud-Init Script</text>
-        }
-        else if (Model.Settings.DeploymentSettings.DeploymentType == DeploymentType.Manual)
+    <button type="submit" class="btn btn-primary btn-lg btn-continue">
+        @if (Model.Settings.DeploymentSettings.DeploymentType == DeploymentType.Manual)
         {
             <text>Generate Script</text>
         }
@@ -318,9 +229,9 @@ else
 </form>
 </div>
 
-@if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual && Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.CloudInit)
+@if (Model.Settings.DeploymentSettings.DeploymentType != DeploymentType.Manual)
 {
-   <div class="modal" tabindex="-1" role="dialog" id="deploying-modal" data-keyboard="false" data-backdrop="static">
+   <div class="modal" tabindex="-1" role="dialog" id="deploying-modal" data-bs-keyboard="false" data-bs-backdrop="static">
      <div class="modal-dialog" role="document">
        <div class="modal-content">
          <div class="modal-header">
@@ -341,7 +252,7 @@ else
     <script>
     $(document).ready(function(){
         $("form").on("submit", function(){
-            $("#deploying-modal").modal("show");
+            new bootstrap.Modal(document.getElementById('deploying-modal')).show();
         })
     })
     </script>

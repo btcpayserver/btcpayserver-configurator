@@ -171,7 +171,6 @@ public partial class ConfiguratorController
 
         additionalData.AvailableDeploymentTypes.Add(DeploymentType.RemoteMachine);
         additionalData.AvailableDeploymentTypes.Add(DeploymentType.Manual);
-        additionalData.AvailableDeploymentTypes.Add(DeploymentType.CloudInit);
         return additionalData;
     }
 

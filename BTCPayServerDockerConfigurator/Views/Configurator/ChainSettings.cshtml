@@ -59,6 +59,13 @@
                      {
                          <div class="alert alert-info">@ServerData.BytesToString(df.Available) (@df.UsedPercentage%) available out of @ServerData.BytesToString(df.Total) where BTCPay Server is located (@df.FileSystem).</div>
                      }
+                    <div class="form-group form-check mt-3 mb-0" id="fastSyncGroup">
+                        <input type="checkbox" class="form-check-input" asp-for="Settings.FastSync" id="fastSyncCheck">
+                        <label class="form-check-label" for="fastSyncCheck">
+                            Enable FastSync
+                        </label>
+                        <small class="form-text text-muted d-block">Downloads a UTXO set snapshot to speed up initial sync. Only available for full (non-pruned) nodes.</small>
+                    </div>
                     </div>
             </div>
         </div>
@@ -73,12 +80,10 @@
                             <div class="form-group">
                                 <div class="input-group mb-3">
                                     <input class="form-control" asp-for="Settings.AltChains[index]" placeholder="Crypto Code">
-                                    <div class="input-group-append">
                                         <label class="btn btn-outline-secondary">
                                             Remove
                                             <input type="submit" name="command" value="@($"remove-chain:{index}")" class="d-none"/>
                                         </label>
-                                    </div>
                                 </div>
                                 <span asp-validation-for="Settings.AltChains[index]" class="text-danger"></span>
                             </div>
@@ -93,10 +98,8 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-md-6 col-sm-12 offset-md-3 text-center">
-            <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
-        </div>
+    <div class="sticky-cta d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary btn-lg btn-continue">Continue</button>
     </div>
 </form>
 
@@ -107,7 +110,7 @@
                 <h5 class="modal-title">⚠ Lightning is not supported with this level of pruning.</h5>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
@@ -119,14 +122,31 @@
         var warningToggled = false;
         $(document).ready(function() {
             var select = $("#Settings_PruneMode");
-            select.on("change input", function(){ toggleWarning(select)});
+            select.on("change input", function(){
+                toggleWarning(select);
+                toggleFastSync(select);
+            });
+            toggleFastSync(select);
         });
 
         function toggleWarning(select){
              var pruning = select.val();
              if(pruning === "@PruneMode.ExtraExtraSmall"){
-                 $("#warningModal").modal("show");
+                 new bootstrap.Modal(document.getElementById('warningModal')).show();
              }
+        }
+
+        function toggleFastSync(select){
+            var pruning = select.val();
+            var group = $("#fastSyncGroup");
+            var checkbox = $("#fastSyncCheck");
+            if(pruning === "@PruneMode.NoPruning"){
+                group.css("opacity", "1");
+                checkbox.prop("disabled", false);
+            } else {
+                group.css("opacity", "0.4");
+                checkbox.prop("checked", false).prop("disabled", true);
+            }
         }
     </script>
 }

@@ -138,7 +138,7 @@ public class ConfiguratorSettings
         result.AppendLine("cd btcpayserver-docker");
         result.AppendLine(". ./btcpay-setup.sh -i");
 
-        if (AdvancedSettings.FastSync && ChainSettings.Bitcoin &&
+        if (ChainSettings.FastSync && ChainSettings.Bitcoin &&
             ChainSettings.PruneMode == PruneMode.NoPruning)
         {
             result.AppendLine("cd contrib/FastSync");

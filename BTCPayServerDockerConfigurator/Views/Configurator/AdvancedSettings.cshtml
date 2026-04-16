@@ -1,6 +1,6 @@
 @{
     ViewData["Title"] = "Geeky settings?";
-    ViewData["CurrentStep"] = 6;
+    ViewData["CurrentStep"] = 5;
     var moreMemory = Model.Settings.AdditionalFragments.Contains("opt-more-memory");
     var saveMemory = Model.Settings.AdditionalFragments.Contains("opt-save-memory");
     var sd = JsonSerializer.Deserialize<ConfiguratorSettings>(Model.Json).ServerData;
@@ -67,23 +67,6 @@
     <div class="row mb-4 @(Model.Additional.ShowSettings ? string.Empty : "invisible")">
         <div class="col-md-6 col-sm-12 offset-md-3 pt-4">
             <div class="card shadow-sm">
-                <div class="card-body">
-                    <h3 class="card-title text-center">Sync Options</h3>
-                    <div class="form-group form-check">
-                        <input type="checkbox" class="form-check-input" asp-for="Settings.FastSync" id="fastSyncCheck">
-                        <label class="form-check-label" for="fastSyncCheck" asp-for="Settings.FastSync">
-                            Enable FastSync (speeds up initial Bitcoin sync)
-                        </label>
-                        <small class="form-text text-muted d-block">Downloads a pre-verified UTXO set snapshot instead of syncing from genesis. Only works with full (non-pruned) Bitcoin nodes.</small>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="row mb-4 @(Model.Additional.ShowSettings ? string.Empty : "invisible")">
-        <div class="col-md-6 col-sm-12 offset-md-3 pt-4">
-            <div class="card shadow-sm">
                 <h3 class="card-title text-center m-3">Additional fragments</h3>
                 <ul class="list-group list-group-flush" style="list-style-type: none">
                     @for (var index = 0; index < Model.Settings.AdditionalFragments.Count; index++)
@@ -92,12 +75,10 @@
                             <div class="form-group">
                                 <div class="input-group m-2 pr-3">
                                     <input class="form-control" asp-for="Settings.AdditionalFragments[index]" placeholder="Fragment">
-                                    <div class="input-group-append">
                                         <label class="btn btn-outline-secondary">
                                             Remove
                                             <input type="submit" name="command" value="@($"remove-additional:{index}")" class="d-none"/>
                                         </label>
-                                    </div>
                                 </div>
                                 <span asp-validation-for="Settings.AdditionalFragments[index]" class="text-danger"></span>
                             </div>
@@ -122,12 +103,10 @@
                             <div class="form-group">
                                 <div class="input-group m-2 pr-3">
                                     <input class="form-control" asp-for="Settings.ExcludedFragments[index]" placeholder="Fragment">
-                                    <div class="input-group-append">
                                         <label class="btn btn-outline-secondary">
                                             Remove
                                             <input type="submit" name="command" value="@($"remove-excluded:{index}")" class="d-none"/>
                                         </label>
-                                    </div>
                                 </div>
                                 <span asp-validation-for="Settings.ExcludedFragments[index]" class="text-danger"></span>
                             </div>
@@ -167,9 +146,7 @@
         </div>
     </div>
 
-    <div class="row @(Model.Additional.ShowSettings ? string.Empty : "invisible")">
-        <div class="col-md-6 col-sm-12 offset-md-3 text-center">
-            <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
-        </div>
+    <div class="sticky-cta d-flex justify-content-center @(Model.Additional.ShowSettings ? string.Empty : "invisible")">
+        <button type="submit" class="btn btn-primary btn-lg btn-continue">Continue</button>
     </div>
 </form>

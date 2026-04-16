@@ -1,32 +1,14 @@
 @model UpdateSettings<ConfiguratorSettings, BTCPayServerDockerConfigurator.Controllers.DeployAdditionalData>
 @{
     ViewData["Title"] = "Deploying your BTCPay Server!";
-    ViewData["CurrentStep"] = 8;
+    ViewData["CurrentStep"] = 7;
     var id = Context.Request.RouteValues["id"];
-    var isCloudInit = Model.Settings?.DeploymentSettings?.DeploymentType == DeploymentType.CloudInit;
+    var isManual = Model.Settings?.DeploymentSettings?.DeploymentType == DeploymentType.Manual;
 }
 <div class="container">
     @if (!Model.Additional.InProgress)
     {
-        @if (!string.IsNullOrEmpty(Model.Additional.CloudInitScript))
-        {
-            <div class="row mb-4">
-                <div class="col-md-8 col-sm-12 offset-md-2">
-                    <div class="card shadow-sm">
-                        <div class="card-body">
-                            <h3 class="card-title">Cloud-Init Script</h3>
-                            <p>Copy this script and paste it into the <strong>User Data</strong> / <strong>Cloud-Init</strong> field when creating a new VPS instance on your provider (DigitalOcean, Vultr, Hetzner, AWS, etc.).</p>
-                            <div class="position-relative">
-                                <textarea class="form-control" rows="12" readonly onclick="this.select();" style="font-family: monospace; font-size: 0.8em;">@Model.Additional.CloudInitScript</textarea>
-                            </div>
-                            <small class="form-text text-muted mt-2 d-block">The server will automatically configure itself on first boot. Choose Ubuntu 22.04+ as your OS.</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
-
-        if (Model.Settings?.DeploymentSettings?.DeploymentType != DeploymentType.Manual && !isCloudInit)
+        if (!isManual)
         {
             <div class="row mb-4">
                 <div class="col-md-6 col-sm-12 offset-md-3">
@@ -39,11 +21,9 @@
                                 </iframe>
                                 <div class="input-group form-group">
                                     <input class="form-control border-right-0" onclick="this.select();" type="text" style="font-size:0.75em;" value="https://@Model.Settings.DomainSettings.Domain" readonly="">
-                                    <div class="input-group-append">
                                         <a href="https://@Model.Settings.DomainSettings.Domain" class="input-group-text text-decoration-none p-0 px-2">
                                             <span class="input-group-addon">&rarr;</span>
                                         </a>
-                                    </div>
                                 </div>
                             }
                             <code class="d-block" style="max-height: 250px; overflow-y: scroll">
@@ -63,11 +43,12 @@
         }
         <div class="row mb-4">
             <div class="col-md-8 col-sm-12 offset-md-2">
-                <div class="card shadow-sm">
+                <div class="card shadow-sm deploy-card">
                     <div class="card-body">
-                        @if (Model.Settings?.DeploymentSettings?.DeploymentType == DeploymentType.Manual || isCloudInit)
+                        @if (isManual)
                         {
-                            <h3 class="card-title">Copy these commands to your terminal</h3>
+                            <h3 class="card-title">Bash Script</h3>
+                            <p>SSH into your server and run these commands:</p>
                         }
                         else
                         {
@@ -78,11 +59,28 @@
                 </div>
             </div>
         </div>
+        @if (!string.IsNullOrEmpty(Model.Additional.CloudInitScript))
+        {
+            <div class="row mb-4">
+                <div class="col-md-8 col-sm-12 offset-md-2">
+                    <div class="card shadow-sm deploy-card">
+                        <div class="card-body">
+                            <h3 class="card-title">Cloud-Init Script</h3>
+                            <p>Alternatively, copy this and paste it into the <strong>User Data</strong> / <strong>Cloud-Init</strong> field when creating a new VPS instance (DigitalOcean, Vultr, Hetzner, AWS, etc.).</p>
+                            <div class="position-relative">
+                                <textarea class="form-control" rows="12" readonly onclick="this.select();" style="font-family: monospace; font-size: 0.8em;">@Model.Additional.CloudInitScript</textarea>
+                            </div>
+                            <small class="form-text text-muted mt-2 d-block">The server will automatically configure itself on first boot. Choose Ubuntu 22.04+ as your OS.</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
     }
 </div>
 @if (Model.Additional.InProgress)
 {
-    <div class="modal" tabindex="-1" role="dialog" id="deploying-modal" data-keyboard="false" data-backdrop="static">
+    <div class="modal" tabindex="-1" role="dialog" id="deploying-modal" data-bs-keyboard="false" data-bs-backdrop="static">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
@@ -106,14 +104,14 @@
 {
     <script>
     $(document).ready(function(){
-        $("form").on("submit", function(){ $("#deploying-modal").modal("show");});
+        $("form").on("submit", function(){ new bootstrap.Modal(document.getElementById('deploying-modal')).show();});
     });
     </script>
     @if (Model.Additional.InProgress)
     {
         <script>
         $(document).ready(function(){
-            $("#deploying-modal").modal("show");
+            new bootstrap.Modal(document.getElementById('deploying-modal')).show();
             update();
         });
 

@@ -8,4 +8,5 @@ public class ChainSettings
     [Display(Name = "")] public List<string> AltChains { get; set; } = new();
     [Display(Name = "Pruning mode")] public PruneMode PruneMode { get; set; } = PruneMode.Small;
     public NetworkType Network { get; set; } = NetworkType.Mainnet;
+    public bool FastSync { get; set; }
 }

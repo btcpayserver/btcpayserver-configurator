@@ -23,11 +23,11 @@
         </div>
         <div class="col-md-4 mb-4">
             <label class="card-input-element-label">
-                <input type="radio" asp-for="Settings.Implementation" value="eclair" class="card-input-element d-none"/>
+                <input type="radio" asp-for="Settings.Implementation" value="phoenixd" class="card-input-element d-none"/>
                 <div class="card shadow-sm w-100 h-100">
-                    <div class="card-img-top" style="background-image: url(assets/eclair.svg); background-size: 60%;"></div>
+                    <div class="card-img-top" style="background-image: url(assets/phoenixd.png);"></div>
                     <div class="card-body">
-                        <h3 class="card-title text-center">Eclair</h3>
+                        <h3 class="card-title text-center">phoenixd</h3>
                         <p class="card-text text-center">by ACINQ</p>
                     </div>
                 </div>
@@ -51,10 +51,9 @@
             <label class="card-input-element-label">
                 <input type="radio" asp-for="Settings.Implementation" value="none" class="card-input-element d-none"/>
                 <div class="card dark shadow-sm w-100 h-100">
-                    <div class="card-img-top" style="background-image: url(assets/sad.svg);"></div>
-                    <div class="card-body">
-                        <h3 class="card-title text-center">None</h3>
-                        <p class="card-text text-center">You're missing out.</p>
+                    <div class="card-body text-center py-5">
+                        <h3 class="card-title">Skip for now</h3>
+                        <p class="card-text">You can add Lightning support later via BTCPay plugins.</p>
                     </div>
                 </div>
             </label>
@@ -62,7 +61,7 @@
         <span asp-validation-for="Settings.Implementation" class="text-danger w-100 text-center"></span>
     </div>
 
-    <div class="row w-100">
-        <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
+    <div class="sticky-cta d-flex justify-content-center">
+        <button type="submit" class="btn btn-primary btn-lg btn-continue">Continue</button>
     </div>
 </form>

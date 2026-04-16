@@ -1,47 +1,153 @@
-﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-for details on configuring this project to bundle and minify static web assets. */
+/* ============================================================
+   BTCPay Server Configurator — Site Styles
+   ============================================================ */
 
-a.navbar-brand {
-    white-space: normal;
-    text-align: center;
-    word-break: break-all;
-}
+/* --- Base & Typography ----------------------------------- */
 
-.btcpay-theme-switch {
-  position: absolute;
-  right: 1rem;
-  top: 1rem;
-}
-
-/* Sticky footer styles
--------------------------------------------------- */
 html {
     font-size: 14px;
 }
 
 @media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
+    html { font-size: 16px; }
 }
 
-/* Sticky footer styles
--------------------------------------------------- */
 html {
     position: relative;
     min-height: 100%;
 }
 
 body {
-    /* Margin bottom by footer height */
-    margin-bottom: 60px;
+    margin-bottom: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
-/*cards as an input element*/
+label { cursor: pointer; }
 
-label {
-    cursor: pointer;
+h2 { font-weight: 600; }
+
+/* BS4 compat: form-group was removed in BS5 */
+.form-group { margin-bottom: 1rem; }
+
+/* --- Header ---------------------------------------------- */
+
+.btcpay-header {
+    border-bottom: 3px solid var(--btcpay-brand-primary);
 }
+
+.btcpay-header h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+}
+
+/* --- Theme Switch ---------------------------------------- */
+
+.btcpay-theme-switch {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    border: 1px solid var(--btcpay-border-color-light);
+    border-radius: 50%;
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.btcpay-theme-switch:hover {
+    background-color: rgba(81, 177, 62, 0.1);
+    border-color: var(--btcpay-color-primary);
+}
+
+/* --- Wizard Stepper -------------------------------------- */
+
+.wizard .nav {
+    position: relative;
+    z-index: 1;
+}
+
+.wizard > div.wizard-inner {
+    position: relative;
+}
+
+/* Line connecting the step circles */
+.connecting-line {
+    height: 2px;
+    background: var(--btcpay-border-color-medium);
+    position: absolute;
+    width: 80%;
+    margin: 0 auto;
+    left: 0;
+    right: 0;
+    top: 16px;
+    z-index: 0;
+}
+
+.wizard .nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.wizard .nav-item p {
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin: 0;
+    opacity: 0.55;
+}
+
+/* Step circles */
+.btn-circle {
+    width: 32px;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    padding: 0;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 0.75rem;
+    transition: all 0.2s ease;
+    position: relative;
+    z-index: 2;
+}
+
+/* Current step */
+.btn-circle.btn-primary {
+    box-shadow: 0 0 0 3px rgba(81, 177, 62, 0.2);
+}
+
+/* Completed steps */
+.btn-circle.btn-success {
+    font-size: 0;
+}
+.btn-circle.btn-success::after {
+    content: "\2713";
+    font-size: 0.8rem;
+}
+
+/* Active step label is fully opaque */
+.wizard .nav-item:has(.btn-primary) p,
+.wizard .nav-item:has(.btn-success) p {
+    opacity: 1;
+}
+
+/* Disabled steps */
+.btn-disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+
+/* --- Page Titles ----------------------------------------- */
+
+main h2.text-center {
+    font-size: 1.3rem;
+    margin-bottom: 0.25rem;
+}
+
+/* --- Card Selection (Deployment, Lightning, Chain) ------- */
 
 label.card-input-element-label {
     width: 100%;
@@ -50,18 +156,25 @@ label.card-input-element-label {
 
 .card-input-element + .card {
     border: 2px solid transparent;
-    display: inline-table;
+    border-radius: var(--btcpay-border-radius, 6px);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease;
+    overflow: hidden;
 }
 
 .card-input-element + .card:hover {
     cursor: pointer;
+    border-color: var(--btcpay-border-color-medium);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 .card-input-element:checked + .card {
-    border: 2px solid var(--btcpay-border-color-medium);
-    -webkit-transition: border .3s;
-    -o-transition: border .3s;
-    transition: border .3s;
+    border-color: var(--btcpay-color-primary);
+    box-shadow: 0 0 0 1px var(--btcpay-color-primary);
+}
+
+.card-input-element:checked + .card:hover {
+    transform: none;
 }
 
 .card-input-element-label {
@@ -69,129 +182,152 @@ label.card-input-element-label {
     margin-bottom: 0;
 }
 
+/* Selection card images */
 .card-input-element-label .card-img-top {
     position: relative;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
     width: 100%;
-    height: 150px;
-    margin-top: 2rem;
+    height: 100px;
+    margin-top: 1rem;
 }
 
+/* Checkmark badge on selected card */
 .card-input-element:checked + .card::after {
-    content: '✓';
-    color: var(--btcpay-border-color-medium);
-
-    font-size: 50px;
-    -webkit-animation-name: fadeInCheckbox;
-    animation-name: fadeInCheckbox;
-    -webkit-animation-duration: .5s;
-    animation-duration: .5s;
-    -webkit-animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    content: "\2713";
     position: absolute;
-    right: 2rem;
-    top: .5rem;
+    right: 0.75rem;
+    top: 0.5rem;
+    width: 24px;
+    height: 24px;
+    line-height: 24px;
     text-align: center;
-}
-
-.card-body {
-  padding: 2rem;
-}
-
-.services {
-  display: grid;
-  grid-gap: 30px;
-
-}
-
-@media (max-width: 767px) {
-  .services {
-    grid-template-columns: repeat(1, 1fr);
-  }
-}
-@media (min-width: 768px) and (max-width: 991px) {
-  .services {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-@media (min-width: 992px) {
-  .services {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@-webkit-keyframes fadeInCheckbox {
-    from {
-        opacity: 0;
-        -webkit-transform: rotateZ(-20deg);
-    }
-    to {
-        opacity: 1;
-        -webkit-transform: rotateZ(0deg);
-    }
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #fff;
+    background: var(--btcpay-color-primary);
+    border-radius: 50%;
+    animation: fadeInCheckbox 0.3s ease;
 }
 
 @keyframes fadeInCheckbox {
-    from {
-        opacity: 0;
-        transform: rotateZ(-20deg);
+    from { opacity: 0; transform: scale(0.5); }
+    to   { opacity: 1; transform: scale(1); }
+}
+
+/* --- Card Body ------------------------------------------- */
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.card-title {
+    font-weight: 600;
+}
+
+.card-text {
+    font-size: 0.85rem;
+    line-height: 1.5;
+    opacity: 0.85;
+}
+
+/* --- Sticky Continue / Action Buttons -------------------- */
+
+.btn-continue {
+    min-width: 200px;
+}
+
+.sticky-cta {
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    padding: 1rem 0;
+    background: linear-gradient(to top, var(--btcpay-color-neutral-100) 60%, transparent);
+}
+
+:root[data-btcpay-theme="dark"] .sticky-cta {
+    background: linear-gradient(to top, var(--btcpay-color-neutral-900) 60%, transparent);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root:not([data-btcpay-theme="light"]) .sticky-cta {
+        background: linear-gradient(to top, var(--btcpay-color-neutral-900) 60%, transparent);
     }
-    to {
-        opacity: 1;
-        transform: rotateZ(0deg);
-    }
 }
 
-.styled-checkbox {
-    margin: 20px;
+/* --- Summary Table --------------------------------------- */
+
+.summary-table thead th {
+    background: var(--btcpay-bg-tile);
+    border-bottom-width: 2px;
 }
 
-.styled-checkbox-label:hover {
-    background-color: var(--btcpay-border-color-medium);
+.summary-table thead h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
 }
 
-.styled-checkbox-label h3 {
-    margin-left: 2rem;
+.summary-table thead a {
+    font-size: 0.85rem;
+    font-weight: 500;
 }
 
+.summary-table td {
+    font-size: 0.9rem;
+    vertical-align: middle;
+}
+
+.summary-table td:first-child {
+    font-weight: 500;
+    width: 40%;
+}
+
+/* --- Deploy Result --------------------------------------- */
+
+.deploy-card code {
+    display: block;
+    white-space: pre-wrap;
+    font-size: 0.82rem;
+    line-height: 1.7;
+    padding: 1rem;
+    background: var(--btcpay-color-neutral-950, #222);
+    color: var(--btcpay-color-neutral-200, #e9ecef);
+    border-radius: var(--btcpay-border-radius, 4px);
+    overflow-x: auto;
+}
+
+.deploy-card textarea.form-control {
+    font-family: var(--btcpay-font-family-monospace);
+    font-size: 0.82rem;
+    line-height: 1.6;
+}
+
+/* --- "Just do it" button --------------------------------- */
 
 .justdoitbutton:hover {
-    -webkit-filter: brightness(70%);
-    -webkit-transition: all 1s ease;
-    -moz-transition: all 1s ease;
-    -o-transition: all 1s ease;
-    -ms-transition: all 1s ease;
-    transition: all 1s ease;
+    filter: brightness(70%);
+    transition: all 0.5s ease;
 }
 
-.wizard .nav {
-    position: relative;
-    z-index: 1
+/* --- Dark Mode Text Fixes -------------------------------- */
+
+:root[data-btcpay-theme="dark"] .text-muted {
+    color: var(--btcpay-color-neutral-400) !important;
 }
 
-.wizard > div.wizard-inner {
-    position: relative;
+@media (prefers-color-scheme: dark) {
+    :root:not([data-btcpay-theme="light"]) .text-muted {
+        color: var(--btcpay-color-neutral-400) !important;
+    }
 }
 
-.connecting-line {
-    height: 2px;
-    background: var(--btcpay-border-color-medium);
-    position: absolute;
-    width: 85%;
-    margin: 0 auto;
-    left: 0;
-    right: 0;
-    top: 25%;
-    z-index: 1;
+:root[data-btcpay-theme="dark"] .card-text {
+    opacity: 0.9;
 }
 
-.btn-circle {
-    width: 45px;
-    height: 45px;
-    line-height: 45px;
-    text-align: center;
-    padding: 0;
-    border-radius: 50%;
+/* --- Utility --------------------------------------------- */
+
+.text-muted {
+    font-size: 0.88rem;
 }

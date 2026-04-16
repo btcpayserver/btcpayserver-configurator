@@ -9,8 +9,8 @@
     <div class="row mb-4">
         <h2 class=" text-center w-100">@ViewData["Title"]</h2>
     </div>
-    <div class="row w-100">
-        <div class="card-columns services">
+    <div>
+        <div class="services">
           <partial for="Settings.ConfiguratorAddonSettings" name="Additional/ConfiguratorSettings"/>
           <partial for="Settings.BTCTransmuterSettings" name="Additional/BTCTransmuterSettings"/>
           <partial for="Settings.ThunderHubSettings" name="Additional/ThunderHubSettings"/>
@@ -22,28 +22,10 @@
           <partial for="Settings.PiHoleSettings" name="Additional/PiHoleSettings"/>
         </div>
     </div>
-    <div class="row w-100">
-        <button type="submit" class="m-auto btn btn-primary btn-lg">Continue</button>
+    <div class="d-flex justify-content-center mt-4">
+        <button type="submit" class="btn btn-primary btn-lg btn-continue">Continue</button>
     </div>
 </form>
-
-<style>
-    .services .card.service .service-form {
-        max-height: 0;
-        opacity:0;
-            overflow-y:hidden;
-        -webkit-transition: max-height 0.3s ease-out, opacity 0.1s ;
-        -moz-transition: max-height 0.3s  ease-out, opacity 0.1s;
-        -o-transition: max-height 0.3s ease-out, opacity 0.1s;
-        transition: max-height 0.3s ease-out, opacity 0.1s;
-    }
-    
-    .services .card.service.enabled .service-form {
-        max-height: 500px;
-        overflow-y:auto;
-        opacity:1;
-    }
-</style>
 
 @section Scripts
 {

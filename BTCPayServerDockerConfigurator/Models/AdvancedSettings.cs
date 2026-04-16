@@ -16,14 +16,11 @@ public class AdvancedSettings
     public List<string> AdditionalFragments { get; set; } = new();
     public List<string> ExcludedFragments { get; set; } = new();
 
-    [Display(Name = "Enable FastSync (speeds up initial Bitcoin sync)")]
-    public bool FastSync { get; set; }
-
     public bool AnythingSet()
     {
         return !string.IsNullOrEmpty(CustomBTCPayImage) || !string.IsNullOrEmpty(BTCPayDockerRepository) ||
                !string.IsNullOrEmpty(BTCPayDockerBranch) || AdditionalFragments.Any() ||
-               ExcludedFragments.Any() || FastSync;
+               ExcludedFragments.Any();
     }
 
     public void EnsureTxIndex()
