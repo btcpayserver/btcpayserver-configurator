@@ -153,12 +153,17 @@ public class ConfiguratorSettings
         var result = new StringBuilder();
         result.AppendLine("#cloud-config");
         result.AppendLine("runcmd:");
+        result.AppendLine("  - |");
         var bashLines = ConstructBashFile()
             .Replace(Environment.NewLine, "\n")
             .Split("\n", StringSplitOptions.RemoveEmptyEntries);
         foreach (var line in bashLines)
         {
-            result.AppendLine($"  - {line}");
+            // Skip sudo su lines — cloud-init already runs as root
+            if (line.TrimStart().StartsWith("sudo su") ||
+                line.Contains("sudo -S sleep 1 && sudo su"))
+                continue;
+            result.AppendLine($"    {line}");
         }
 
         return result.ToString();

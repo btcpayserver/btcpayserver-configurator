@@ -44,38 +44,41 @@
         <div class="row mb-4">
             <div class="col-md-8 col-sm-12 offset-md-2">
                 <div class="card shadow-sm deploy-card">
-                    <div class="card-body">
-                        @if (isManual)
-                        {
-                            <h3 class="card-title">Bash Script</h3>
-                            <p>SSH into your server and run these commands:</p>
-                        }
-                        else
-                        {
-                            <h3 class="card-title">Executed commands</h3>
-                        }
-                        <code class="d-block" style="white-space: pre-wrap; font-size: 0.85em;">@Model.Additional.Bash</code>
-                    </div>
+                    @if (isManual && !string.IsNullOrEmpty(Model.Additional.CloudInitScript))
+                    {
+                        <div class="card-header p-0">
+                            <ul class="nav nav-tabs card-header-tabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-bash" type="button" role="tab">Bash Script</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" data-bs-toggle="tab" data-bs-target="#tab-cloudinit" type="button" role="tab">Cloud-Init</button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="card-body tab-content">
+                            <div class="tab-pane fade show active" id="tab-bash" role="tabpanel">
+                                <p>SSH into your server and run these commands:</p>
+                                <code class="d-block">@Model.Additional.Bash</code>
+                            </div>
+                            <div class="tab-pane fade" id="tab-cloudinit" role="tabpanel">
+                                <p>Copy this into the <strong>User Data</strong> / <strong>Cloud-Init</strong> field when creating a new VPS instance (DigitalOcean, Vultr, Hetzner, etc.).</p>
+                                <textarea class="form-control" rows="16" readonly onclick="this.select();" style="font-family: var(--btcpay-font-family-monospace); font-size: 0.8em;">@Model.Additional.CloudInitScript</textarea>
+                                <small class="form-text text-muted mt-2 d-block">The server will configure itself on first boot. Choose Ubuntu 22.04+ as your OS.</small>
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="card-body">
+                            <h3 class="card-title">@(isManual ? "Bash Script" : "Executed commands")</h3>
+                            @if (isManual) { <p>SSH into your server and run these commands:</p> }
+                            <code class="d-block">@Model.Additional.Bash</code>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
-        @if (!string.IsNullOrEmpty(Model.Additional.CloudInitScript))
-        {
-            <div class="row mb-4">
-                <div class="col-md-8 col-sm-12 offset-md-2">
-                    <div class="card shadow-sm deploy-card">
-                        <div class="card-body">
-                            <h3 class="card-title">Cloud-Init Script</h3>
-                            <p>Alternatively, copy this and paste it into the <strong>User Data</strong> / <strong>Cloud-Init</strong> field when creating a new VPS instance (DigitalOcean, Vultr, Hetzner, AWS, etc.).</p>
-                            <div class="position-relative">
-                                <textarea class="form-control" rows="12" readonly onclick="this.select();" style="font-family: monospace; font-size: 0.8em;">@Model.Additional.CloudInitScript</textarea>
-                            </div>
-                            <small class="form-text text-muted mt-2 d-block">The server will automatically configure itself on first boot. Choose Ubuntu 22.04+ as your OS.</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        }
     }
 </div>
 @if (Model.Additional.InProgress)

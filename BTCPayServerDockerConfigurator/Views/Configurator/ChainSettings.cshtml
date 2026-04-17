@@ -54,17 +54,41 @@
                     @{
                         var sd = JsonSerializer.Deserialize<ConfiguratorSettings>(Model.Json).ServerData;
                         var df = sd?.DiskFreeForVolume ?? sd?.DiskFreeForLib;
+                        var btcNode = sd?.BitcoinNode;
+                        var nodeAlreadySynced = btcNode?.IsSynced == true || btcNode?.IsSyncing == true;
                     }
                      @if(df != null)
                      {
                          <div class="alert alert-info">@ServerData.BytesToString(df.Available) (@df.UsedPercentage%) available out of @ServerData.BytesToString(df.Total) where BTCPay Server is located (@df.FileSystem).</div>
                      }
-                    <div class="form-group form-check mt-3 mb-0" id="fastSyncGroup">
+                    @if (btcNode != null)
+                    {
+                        <div class="alert @(btcNode.IsSynced ? "alert-success" : "alert-warning") mt-2">
+                            <strong>Bitcoin node detected</strong> (@btcNode.Chain)
+                            <br/>
+                            @if (btcNode.IsSynced)
+                            {
+                                <text>Fully synced — block @btcNode.Blocks.ToString("N0")@(btcNode.Pruned ? " (pruned)" : "")</text>
+                            }
+                            else
+                            {
+                                <text>Syncing — @btcNode.ProgressPercent% (block @btcNode.Blocks.ToString("N0") / @btcNode.Headers.ToString("N0"))@(btcNode.Pruned ? " (pruned)" : "")</text>
+                            }
+                        </div>
+                    }
+                    <div class="form-group form-check mt-3 mb-0" id="fastSyncGroup" data-node-synced="@(nodeAlreadySynced ? "true" : "false")">
                         <input type="checkbox" class="form-check-input" asp-for="Settings.FastSync" id="fastSyncCheck">
                         <label class="form-check-label" for="fastSyncCheck">
                             Enable FastSync
                         </label>
-                        <small class="form-text text-muted d-block">Downloads a UTXO set snapshot to speed up initial sync. Only available for full (non-pruned) nodes.</small>
+                        @if (nodeAlreadySynced)
+                        {
+                            <small class="form-text text-muted d-block">Not available — your Bitcoin node is already @(btcNode.IsSynced ? "synced" : "syncing").</small>
+                        }
+                        else
+                        {
+                            <small class="form-text text-muted d-block">Downloads a UTXO set snapshot to speed up initial sync. Only available for full (non-pruned) nodes.</small>
+                        }
                     </div>
                     </div>
             </div>
@@ -119,7 +143,7 @@
 @section Scripts
 {
     <script>
-        var warningToggled = false;
+        var nodeAlreadySynced = $("#fastSyncGroup").data("node-synced") === true;
         $(document).ready(function() {
             var select = $("#Settings_PruneMode");
             select.on("change input", function(){
@@ -140,12 +164,12 @@
             var pruning = select.val();
             var group = $("#fastSyncGroup");
             var checkbox = $("#fastSyncCheck");
-            if(pruning === "@PruneMode.NoPruning"){
-                group.css("opacity", "1");
-                checkbox.prop("disabled", false);
-            } else {
+            if(nodeAlreadySynced || pruning !== "@PruneMode.NoPruning"){
                 group.css("opacity", "0.4");
                 checkbox.prop("checked", false).prop("disabled", true);
+            } else {
+                group.css("opacity", "1");
+                checkbox.prop("disabled", false);
             }
         }
     </script>

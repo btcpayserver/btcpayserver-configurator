@@ -20,6 +20,7 @@ public class ServerData
     public string VolumeFolderMount { get; set; }
     public DiskFreeResult DiskFreeForVolume { get; set; }
     public DiskFreeResult DiskFreeForLib { get; set; }
+    public BitcoinNodeInfo BitcoinNode { get; set; }
     public bool Loaded { get; set; }
 
     public static async Task<ServerData> Load(SshClient ssh)
@@ -62,6 +63,16 @@ public class ServerData
         {
             cmd = await ssh.RunBash(DiskFreeForVolumeFolderCommand);
             result.DiskFreeForVolume = DiskFreeResult.TryParse(cmd.Output);
+        }
+
+        cmd = await ssh.RunBash(". /etc/profile.d/btcpay-env.sh 2>/dev/null; bitcoin-cli.sh getblockchaininfo 2>/dev/null");
+        if (cmd.ExitStatus == 0 && !string.IsNullOrWhiteSpace(cmd.Output))
+        {
+            try
+            {
+                result.BitcoinNode = JsonSerializer.Deserialize<BitcoinNodeInfo>(cmd.Output);
+            }
+            catch (JsonException) { }
         }
 
         result.Loaded = true;
@@ -124,6 +135,34 @@ public class ServerData
                 return null;
             }
         }
+    }
+
+    public class BitcoinNodeInfo
+    {
+        [JsonPropertyName("chain")]
+        public string Chain { get; set; }
+
+        [JsonPropertyName("blocks")]
+        public long Blocks { get; set; }
+
+        [JsonPropertyName("headers")]
+        public long Headers { get; set; }
+
+        [JsonPropertyName("verificationprogress")]
+        public decimal VerificationProgress { get; set; }
+
+        [JsonPropertyName("initialblockdownload")]
+        public bool InitialBlockDownload { get; set; }
+
+        [JsonPropertyName("pruned")]
+        public bool Pruned { get; set; }
+
+        [JsonPropertyName("size_on_disk")]
+        public long SizeOnDisk { get; set; }
+
+        public bool IsSynced => VerificationProgress > 0.999m && !InitialBlockDownload;
+        public bool IsSyncing => !IsSynced && Blocks > 0;
+        public int ProgressPercent => (int)(VerificationProgress * 100);
     }
 
     public class BlockDevicesList

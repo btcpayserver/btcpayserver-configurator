@@ -1,276 +1,315 @@
 /* ============================================================
-   BTCPay Server Bootstrap 5 Theme Bridge
-   Maps --btcpay-* custom properties to Bootstrap 5's --bs-*
-   variables so the BTCPay theme controls the look through
-   its existing design tokens.
+   Bootstrap 5 Theme Bridge
+   Maps --btcpay-* tokens to --bs-* so Bootstrap components
+   pick up the BTCPay palette automatically.
    ============================================================ */
 
 :root {
-    --bs-body-bg: var(--btcpay-color-neutral-100);
-    --bs-body-color: var(--btcpay-color-neutral-900);
-    --bs-primary: var(--btcpay-color-primary);
-    --bs-primary-rgb: 81, 177, 62;
-    --bs-secondary: var(--btcpay-color-secondary);
-    --bs-secondary-rgb: 143, 151, 158;
-    --bs-success: var(--btcpay-color-success);
-    --bs-success-rgb: 36, 126, 18;
-    --bs-info: var(--btcpay-color-info);
-    --bs-info-rgb: 23, 162, 184;
-    --bs-warning: var(--btcpay-color-warning);
-    --bs-warning-rgb: 255, 193, 7;
-    --bs-danger: var(--btcpay-color-danger);
-    --bs-danger-rgb: 193, 44, 26;
-    --bs-light: var(--btcpay-color-light);
-    --bs-light-rgb: 233, 236, 239;
-    --bs-dark: var(--btcpay-color-dark);
-    --bs-dark-rgb: 52, 58, 64;
-    --bs-link-color: var(--btcpay-color-primary);
-    --bs-link-hover-color: var(--btcpay-color-primary-accent);
-    --bs-border-radius: var(--btcpay-border-radius);
-    --bs-font-sans-serif: var(--btcpay-font-family-base);
-    --bs-font-monospace: var(--btcpay-font-family-monospace);
-    --bs-border-color: var(--btcpay-border-color-medium);
+    --bs-body-bg: var(--btcpay-bg);
+    --bs-body-color: var(--btcpay-text);
+    --bs-primary: var(--btcpay-brand);
+    --bs-primary-rgb: var(--btcpay-brand-rgb);
+    --bs-success: var(--btcpay-success);
+    --bs-warning: var(--btcpay-warning);
+    --bs-danger: var(--btcpay-danger);
+    --bs-info: var(--btcpay-info);
+    --bs-link-color: var(--btcpay-brand);
+    --bs-link-hover-color: var(--btcpay-brand-hover);
+    --bs-border-color: var(--btcpay-border);
+    --bs-border-radius: var(--btcpay-radius);
+    --bs-font-sans-serif: var(--btcpay-font);
+    --bs-font-monospace: var(--btcpay-font-mono);
 }
 
-/* --- Buttons --------------------------------------------- */
+/* --- Base ---------------------------------------------------- */
+
+body {
+    font-family: var(--btcpay-font);
+    font-size: 15px;
+    font-weight: 400;
+    line-height: 1.6;
+    color: var(--btcpay-text);
+    background: var(--btcpay-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+    color: var(--btcpay-brand);
+    transition: color var(--btcpay-duration) var(--btcpay-ease);
+}
+
+a:hover { color: var(--btcpay-brand-hover); }
+
+pre, code {
+    font-family: var(--btcpay-font-mono);
+    font-size: 0.85em;
+}
+
+/* --- Buttons ------------------------------------------------- */
 
 .btn {
     font-weight: 500;
-    transition: all 0.15s ease;
+    font-size: 0.875rem;
+    border-radius: var(--btcpay-radius-sm);
+    transition: all var(--btcpay-duration) var(--btcpay-ease);
 }
 
 .btn-primary {
-    --bs-btn-bg: var(--btcpay-color-primary);
-    --bs-btn-border-color: var(--btcpay-color-primary);
-    --bs-btn-hover-bg: var(--btcpay-color-primary-accent);
-    --bs-btn-hover-border-color: var(--btcpay-color-primary-accent);
-    --bs-btn-active-bg: var(--btcpay-color-primary-accent);
-    --bs-btn-active-border-color: var(--btcpay-color-primary-accent);
-    --bs-btn-disabled-bg: var(--btcpay-color-primary);
-    --bs-btn-disabled-border-color: var(--btcpay-color-primary);
+    --bs-btn-bg: var(--btcpay-brand);
+    --bs-btn-border-color: var(--btcpay-brand);
+    --bs-btn-hover-bg: var(--btcpay-brand-hover);
+    --bs-btn-hover-border-color: var(--btcpay-brand-hover);
+    --bs-btn-active-bg: var(--btcpay-brand-hover);
+    --bs-btn-active-border-color: var(--btcpay-brand-hover);
+    --bs-btn-disabled-bg: var(--btcpay-brand);
+    --bs-btn-disabled-border-color: var(--btcpay-brand);
     color: #fff;
 }
 
 .btn-outline-primary {
-    --bs-btn-color: var(--btcpay-color-primary);
-    --bs-btn-border-color: var(--btcpay-color-primary);
-    --bs-btn-hover-bg: var(--btcpay-color-primary);
-    --bs-btn-hover-border-color: var(--btcpay-color-primary);
+    --bs-btn-color: var(--btcpay-brand);
+    --bs-btn-border-color: var(--btcpay-brand);
+    --bs-btn-hover-bg: var(--btcpay-brand);
+    --bs-btn-hover-border-color: var(--btcpay-brand);
     --bs-btn-hover-color: #fff;
-    --bs-btn-active-bg: var(--btcpay-color-primary);
-    --bs-btn-active-border-color: var(--btcpay-color-primary);
+    --bs-btn-active-bg: var(--btcpay-brand);
+    --bs-btn-active-border-color: var(--btcpay-brand);
     --bs-btn-active-color: #fff;
 }
 
 .btn-success {
-    --bs-btn-bg: var(--btcpay-color-success);
-    --bs-btn-border-color: var(--btcpay-color-success);
-    --bs-btn-hover-bg: var(--btcpay-color-success-accent);
-    --bs-btn-hover-border-color: var(--btcpay-color-success-accent);
+    --bs-btn-bg: var(--btcpay-success);
+    --bs-btn-border-color: var(--btcpay-success);
     color: #fff;
 }
 
 .btn-secondary {
-    --bs-btn-bg: var(--btcpay-color-neutral-600);
-    --bs-btn-border-color: var(--btcpay-color-neutral-600);
-    --bs-btn-hover-bg: var(--btcpay-color-neutral-700);
-    --bs-btn-hover-border-color: var(--btcpay-color-neutral-700);
+    --bs-btn-bg: var(--btcpay-text-muted);
+    --bs-btn-border-color: var(--btcpay-text-muted);
     color: #fff;
 }
 
-.btn-lg {
-    padding: 0.6rem 2rem;
-    font-size: 1rem;
-    border-radius: 6px;
+.btn-outline-secondary {
+    --bs-btn-color: var(--btcpay-text-secondary);
+    --bs-btn-border-color: var(--btcpay-border-strong);
+    --bs-btn-hover-bg: var(--btcpay-surface-hover);
+    --bs-btn-hover-color: var(--btcpay-text);
+    --bs-btn-hover-border-color: var(--btcpay-border-strong);
 }
 
-/* --- Cards ----------------------------------------------- */
+.btn-lg {
+    padding: 0.65rem 2rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: var(--btcpay-radius);
+}
+
+.btn-link {
+    color: var(--btcpay-brand);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+.btn-link:hover {
+    color: var(--btcpay-brand-hover);
+}
+
+/* --- Cards --------------------------------------------------- */
 
 .card {
-    --bs-card-bg: var(--btcpay-bg-tile);
-    --bs-card-border-color: var(--btcpay-border-color-light);
-    border-radius: 8px;
+    --bs-card-bg: var(--btcpay-surface);
+    --bs-card-border-color: var(--btcpay-border);
+    border-radius: var(--btcpay-radius-lg);
+    border: 1px solid var(--btcpay-border);
     overflow: hidden;
 }
 
 .card.shadow-sm {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+    box-shadow: var(--btcpay-shadow);
 }
 
-/* --- Alerts ---------------------------------------------- */
+/* --- Alerts -------------------------------------------------- */
+
+.alert {
+    border-radius: var(--btcpay-radius);
+    font-size: 0.875rem;
+    border: 1px solid;
+}
 
 .alert-info {
-    --bs-alert-bg: var(--btcpay-color-info-backdrop);
-    --bs-alert-color: var(--btcpay-color-info-text);
-    --bs-alert-border-color: var(--btcpay-color-info);
+    background: var(--btcpay-info-bg);
+    color: var(--btcpay-info-text);
+    border-color: transparent;
 }
 
 .alert-warning {
-    --bs-alert-bg: var(--btcpay-color-warning-backdrop);
-    --bs-alert-color: var(--btcpay-color-warning-text);
-    --bs-alert-border-color: var(--btcpay-color-warning);
+    background: var(--btcpay-warning-bg);
+    color: var(--btcpay-warning-text);
+    border-color: transparent;
 }
 
-/* --- Tables ---------------------------------------------- */
-
-.table {
-    --bs-table-bg: var(--btcpay-bg-tile);
-    --bs-table-color: var(--bs-body-color);
-    --bs-table-border-color: var(--btcpay-border-color-light);
-    margin-bottom: 0;
+.alert-success {
+    background: var(--btcpay-success-bg);
+    color: var(--btcpay-success-text);
+    border-color: transparent;
 }
 
-/* --- Forms ----------------------------------------------- */
+.alert-danger {
+    background: var(--btcpay-danger-bg);
+    color: var(--btcpay-danger-text);
+    border-color: transparent;
+}
+
+/* --- Forms --------------------------------------------------- */
 
 .form-control, .form-select {
-    color: var(--bs-body-color);
-    background-color: var(--btcpay-bg-tile);
-    border-color: var(--btcpay-border-color-medium);
-    border-radius: 6px;
-    padding: 0.5rem 0.75rem;
-    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    color: var(--btcpay-text);
+    background: var(--btcpay-surface);
+    border: 1px solid var(--btcpay-border);
+    border-radius: var(--btcpay-radius-sm);
+    padding: 0.55rem 0.8rem;
+    font-size: 0.9rem;
+    transition: border-color var(--btcpay-duration) var(--btcpay-ease),
+                box-shadow var(--btcpay-duration) var(--btcpay-ease);
 }
 
 .form-control:focus, .form-select:focus {
-    border-color: var(--btcpay-color-primary);
-    box-shadow: 0 0 0 3px rgba(81, 177, 62, 0.15);
+    border-color: var(--btcpay-brand);
+    box-shadow: 0 0 0 3px rgba(var(--btcpay-brand-rgb), .15);
+    color: var(--btcpay-text);
+    background: var(--btcpay-surface);
 }
 
-.form-label, label:not(.btn):not(.card-input-element-label):not(.styled-checkbox-label):not(.form-check-label):not(.list-group-item-action) {
-    font-size: 0.85rem;
+.form-control::placeholder {
+    color: var(--btcpay-text-muted);
+}
+
+textarea.form-control {
+    border-radius: var(--btcpay-radius);
+}
+
+.form-label,
+label:not(.btn):not(.card-input-element-label):not(.form-check-label):not(.list-group-item-action):not(.nav-link) {
+    font-size: 0.8rem;
     font-weight: 600;
-    margin-bottom: 0.3rem;
+    color: var(--btcpay-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin-bottom: 0.35rem;
 }
 
-/* --- Modals ---------------------------------------------- */
+.form-text {
+    font-size: 0.8rem;
+    color: var(--btcpay-text-muted);
+}
+
+/* --- Tables -------------------------------------------------- */
+
+.table {
+    --bs-table-bg: var(--btcpay-surface);
+    --bs-table-color: var(--btcpay-text);
+    --bs-table-border-color: var(--btcpay-border);
+    margin-bottom: 0;
+}
+
+/* --- Modals -------------------------------------------------- */
 
 .modal-content {
-    background-color: var(--btcpay-bg-tile);
-    color: var(--bs-body-color);
-    border-radius: 10px;
-    border: 1px solid var(--btcpay-border-color-light);
+    background: var(--btcpay-surface);
+    color: var(--btcpay-text);
+    border-radius: var(--btcpay-radius-lg);
+    border: 1px solid var(--btcpay-border);
+    box-shadow: var(--btcpay-shadow-lg);
 }
 
-/* --- Progress bar ---------------------------------------- */
+/* --- Progress ------------------------------------------------ */
 
 .progress {
-    --bs-progress-bg: var(--btcpay-border-color-light);
-    border-radius: 6px;
+    background: var(--btcpay-inset);
+    border-radius: var(--btcpay-radius-full);
+    height: 6px;
 }
 
 .progress-bar {
-    background-color: var(--btcpay-color-primary);
+    background: var(--btcpay-brand);
+    border-radius: var(--btcpay-radius-full);
 }
 
-/* --- List group ------------------------------------------ */
+/* --- List group ---------------------------------------------- */
 
 .list-group-item {
-    background-color: var(--btcpay-bg-tile);
-    color: var(--bs-body-color);
-    border-color: var(--btcpay-border-color-light);
+    background: var(--btcpay-surface);
+    color: var(--btcpay-text);
+    border-color: var(--btcpay-border);
 }
 
 .list-group-item-action {
     cursor: pointer;
-    color: var(--btcpay-color-primary);
+    color: var(--btcpay-brand);
     font-weight: 500;
-    transition: background-color 0.15s ease;
+    font-size: 0.875rem;
+    transition: background var(--btcpay-duration) var(--btcpay-ease);
 }
 
 .list-group-item-action:hover {
-    background-color: rgba(81, 177, 62, 0.06);
+    background: rgba(var(--btcpay-brand-rgb), .06);
+    color: var(--btcpay-brand);
 }
 
-/* --- Input group ----------------------------------------- */
+/* --- Input group --------------------------------------------- */
 
 .input-group-text {
-    background-color: var(--btcpay-border-color-light);
-    border-color: var(--btcpay-border-color-medium);
-    color: var(--bs-body-color);
+    background: var(--btcpay-inset);
+    border-color: var(--btcpay-border);
+    color: var(--btcpay-text-secondary);
+    font-size: 0.875rem;
 }
 
-/* --- Form check (checkboxes/radios) ---------------------- */
+/* --- Checkboxes / radios ------------------------------------- */
 
 .form-check-input:checked {
-    background-color: var(--btcpay-color-primary);
-    border-color: var(--btcpay-color-primary);
+    background-color: var(--btcpay-brand);
+    border-color: var(--btcpay-brand);
 }
 
 .form-check-input:focus {
-    box-shadow: 0 0 0 3px rgba(81, 177, 62, 0.15);
-    border-color: var(--btcpay-color-primary);
+    box-shadow: 0 0 0 3px rgba(var(--btcpay-brand-rgb), .15);
+    border-color: var(--btcpay-brand);
 }
 
-/* --- btn-check (radio/checkbox toggle buttons) ----------- */
-
 .btn-check:checked + .btn-outline-primary {
-    background-color: var(--btcpay-color-primary);
-    border-color: var(--btcpay-color-primary);
+    background-color: var(--btcpay-brand);
+    border-color: var(--btcpay-brand);
     color: #fff;
 }
 
-/* =========================================================
-   DARK MODE
-   ========================================================= */
+/* --- Nav tabs ------------------------------------------------ */
 
-:root[data-btcpay-theme="dark"] {
-    --bs-body-bg: var(--btcpay-color-neutral-900);
-    --bs-body-color: var(--btcpay-color-white);
-    --bs-border-color: var(--btcpay-border-color-medium);
+.nav-tabs {
+    border-bottom: 1px solid var(--btcpay-border);
 }
 
-:root[data-btcpay-theme="dark"] .card.shadow-sm {
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+.nav-tabs .nav-link {
+    color: var(--btcpay-text-secondary);
+    font-weight: 500;
+    font-size: 0.875rem;
+    border: none;
+    border-bottom: 2px solid transparent;
+    border-radius: 0;
+    padding: 0.75rem 1.25rem;
+    transition: all var(--btcpay-duration) var(--btcpay-ease);
 }
 
-:root[data-btcpay-theme="dark"] .form-control,
-:root[data-btcpay-theme="dark"] .form-select {
-    color: var(--btcpay-color-white);
-    background-color: var(--btcpay-color-neutral-950);
-    border-color: var(--btcpay-border-color-medium);
+.nav-tabs .nav-link:hover {
+    color: var(--btcpay-text);
+    border-bottom-color: var(--btcpay-border-strong);
+    background: transparent;
 }
 
-:root[data-btcpay-theme="dark"] .form-control::placeholder {
-    color: var(--btcpay-color-neutral-500);
-}
-
-:root[data-btcpay-theme="dark"] .input-group-text {
-    background-color: var(--btcpay-color-neutral-800);
-    border-color: var(--btcpay-border-color-medium);
-    color: var(--btcpay-color-white);
-}
-
-:root[data-btcpay-theme="dark"] .deploy-card code {
-    background: var(--btcpay-color-black);
-}
-
-/* --- prefers-color-scheme fallback ----------------------- */
-
-@media (prefers-color-scheme: dark) {
-    :root:not([data-btcpay-theme="light"]) {
-        --bs-body-bg: var(--btcpay-color-neutral-900);
-        --bs-body-color: var(--btcpay-color-white);
-        --bs-border-color: var(--btcpay-border-color-medium);
-    }
-
-    :root:not([data-btcpay-theme="light"]) .card.shadow-sm {
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
-    }
-
-    :root:not([data-btcpay-theme="light"]) .form-control,
-    :root:not([data-btcpay-theme="light"]) .form-select {
-        color: var(--btcpay-color-white);
-        background-color: var(--btcpay-color-neutral-950);
-        border-color: var(--btcpay-border-color-medium);
-    }
-
-    :root:not([data-btcpay-theme="light"]) .form-control::placeholder {
-        color: var(--btcpay-color-neutral-500);
-    }
-
-    :root:not([data-btcpay-theme="light"]) .input-group-text {
-        background-color: var(--btcpay-color-neutral-800);
-        border-color: var(--btcpay-border-color-medium);
-        color: var(--btcpay-color-white);
-    }
+.nav-tabs .nav-link.active {
+    color: var(--btcpay-brand);
+    border-bottom-color: var(--btcpay-brand);
+    background: transparent;
+    font-weight: 600;
 }

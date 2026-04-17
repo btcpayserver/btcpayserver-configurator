@@ -38,7 +38,9 @@ public partial class ConfiguratorController
     public async Task<IActionResult> DeploymentDestination(
         UpdateSettings<DeploymentSettings, DeploymentAdditionalData> updateSettings)
     {
+        var loadFromServer = updateSettings.Additional?.LoadFromServer ?? false;
         updateSettings.Additional = ConstructDeploymentAdditionalData();
+        updateSettings.Additional.LoadFromServer = loadFromServer;
         switch (updateSettings.Settings.DeploymentType)
         {
             case DeploymentType.RemoteMachine when ModelState.IsValid:
@@ -226,25 +228,17 @@ public partial class ConfiguratorController
         using var ssh = await sshSettings.ConnectAsync();
         result.AdvancedSettings ??= new AdvancedSettings();
 
-        var x = await ssh.RunBash("cat .env");
         var preloadedEnvVars = new Dictionary<string, string>();
-        if (x.ExitStatus == 0)
-        {
-            preloadedEnvVars = x.Output.Split("\n", StringSplitOptions.RemoveEmptyEntries)
-                .Select(s => s.Split("=", StringSplitOptions.None))
-                .Where(s => s.Length >= 1)
-                .ToDictionary(strings => strings[0],
-                    strings => strings.Length > 1 ? strings[1] : "");
-        }
 
-        x = await ssh.RunBash("cat /etc/profile.d/btcpay-env.sh");
+        // Read btcpay-env.sh FIRST to discover BTCPAY_ENV_FILE and BTCPAY_BASE_DIRECTORY
+        var x = await ssh.RunBash("cat /etc/profile.d/btcpay-env.sh");
         if (x.ExitStatus == 0)
         {
             var profileVars = x.Output.Split("\n", StringSplitOptions.RemoveEmptyEntries)
                 .Where(s => s.Contains('=') && !s.Contains("==") && s.Contains("export"))
                 .Select(s => s.Split("=", StringSplitOptions.None))
                 .ToDictionary(
-                    strings => strings[0].Replace("export ", ""),
+                    strings => strings[0].Replace("export ", "").Trim(),
                     strings => strings.Length > 1 ? strings[1].Trim('"') : "");
             foreach (var kv in profileVars)
             {
@@ -252,15 +246,41 @@ public partial class ConfiguratorController
             }
         }
 
+        // Use BTCPAY_ENV_FILE from profile if available, otherwise fall back to ~/.env
+        var envFilePath = preloadedEnvVars.TryGetValue("BTCPAY_ENV_FILE", out var envFile)
+            ? envFile
+            : ".env";
+        x = await ssh.RunBash($"cat \"{envFilePath}\"");
+        if (x.ExitStatus == 0)
+        {
+            var envVars = x.Output.Split("\n", StringSplitOptions.RemoveEmptyEntries)
+                .Where(s => !s.StartsWith('#') && s.Contains('='))
+                .Select(s => s.Split("=", StringSplitOptions.None))
+                .Where(s => s.Length >= 1)
+                .ToDictionary(strings => strings[0],
+                    strings => strings.Length > 1 ? string.Join("=", strings.Skip(1)) : "");
+            // .env values take priority over profile defaults
+            foreach (var kv in envVars)
+            {
+                preloadedEnvVars[kv.Key] = kv.Value;
+            }
+        }
+
+        // Use BTCPAY_BASE_DIRECTORY to find btcpayserver-docker, fall back to ~/
+        var baseDir = preloadedEnvVars.TryGetValue("BTCPAY_BASE_DIRECTORY", out var bd)
+            ? bd
+            : "~";
+        var dockerDir = $"{baseDir}/btcpayserver-docker";
+
         var branch = await ssh.RunBash(
-            "if [ -d \"btcpayserver-docker\" ]; then git -C \"btcpayserver-docker\" rev-parse --abbrev-ref HEAD; fi");
+            $"if [ -d \"{dockerDir}\" ]; then git -C \"{dockerDir}\" rev-parse --abbrev-ref HEAD; fi");
         if (branch.ExitStatus == 0)
         {
             result.AdvancedSettings.BTCPayDockerBranch = branch.Output;
         }
 
         var repo = await ssh.RunBash(
-            "if [ -d \"btcpayserver-docker\" ]; then git -C \"btcpayserver-docker\" config --get remote.origin.url; fi");
+            $"if [ -d \"{dockerDir}\" ]; then git -C \"{dockerDir}\" config --get remote.origin.url; fi");
         if (repo.ExitStatus == 0)
         {
             result.AdvancedSettings.BTCPayDockerRepository = repo.Output;
