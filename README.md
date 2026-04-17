@@ -1,118 +1,85 @@
-# Deploy BTCPay with Configurator
+# BTCPay Server Configurator
 
-BTCPay Server can easily be configured and deployed to a server using Configurator. This tool makes deployment simple by allowing users to initialize or modify their BTCPay setup from the Configurator.
+A web-based wizard for configuring and deploying [BTCPay Server](https://btcpayserver.org) via Docker. Deploy directly to a remote server over SSH or generate a bash script for manual deployment.
 
-Configurator can be used to modify an existing BTCPay Server, from the admin account only. Other users may visit the server's Configurator url to deploy new BTCPay instances.
+## Use Cases
 
-Someone such as a BTCPay third-party host may provide a Configurator instance for their users. This can help transition users to a self-hosted solution when they are ready to stop using the third-party host's server.
+- **Self-hosting migration** — Third-party hosts can offer a Configurator instance so users can easily transition to their own server.
+- **Consulting / managed deployments** — Server admins deploying BTCPay on behalf of clients can export or directly deploy configurations.
+- **Existing server reconfiguration** — Admins can modify a running BTCPay Server's settings from the Configurator (admin account required).
 
-Another use-case is for server admins who are deploying BTCPay Server's on behalf of clients or other users as part of a consulting business. Admins can easily export a Docker deployment script from Configurator selections or deploy the configuration immediately to a VPS or on-premise server using SSH.
+## Setup
 
-# How to set up Configurator
+### Option 1: Add as an external service to BTCPay
 
-## Option 1: Add as an external service to BTCPay
+If you already have a BTCPay Server [deployed](https://docs.btcpayserver.org/Deployment/) with the `opt-add-configurator` [environment variable](https://docs.btcpayserver.org/FAQ/FAQ-Deployment#how-can-i-modify-or-deactivate-environment-variables):
 
-If you already have an existing BTCPay Server [deployed](https://docs.btcpayserver.org/Deployment/) with the `opt-add-configurator` [environment variable added](https://docs.btcpayserver.org/FAQ/FAQ-Deployment#how-can-i-modify-or-deactivate-environment-variables), view your Configurator by navigating to: 
+**Server Settings > Services > Other external services > Configurator > See information**
 
-**Server Settings > Services > Other external services > Configurator > Click See information**
+Non-admins can access the Configurator at `yourbtcpaydomain.com/configurator`.
 
-Once enabled, non-admins may also view the Configurator at: `yourbtcpaydomain.com/configurator`.
+### Option 2: Run with Docker
 
-## Option 2: Build locally with Docker
+```bash
+docker run -p 1337:80 ghcr.io/btcpayserver/btcpayserver-configurator
+```
 
-If you have Docker installed on your machine, you can open a terminal and the run the following command to run Configurator inside of a Docker container to use on your local machine:
+Then open **http://localhost:1337** in your browser.
 
-`docker run -p 1337:80 --name btcpayserver-configurator btcpayserver/btcpayserver-configurator`
+### Option 3: Build from source
 
-Now you can open a browser tab and view your Configurator at **localhost:1337**
+Requires [.NET 10 SDK](https://dotnet.microsoft.com/download).
 
-# How to use Configurator
+```bash
+git clone https://github.com/btcpayserver/btcpayserver-configurator.git
+cd btcpayserver-configurator
+dotnet run --project BTCPayServerDockerConfigurator
+```
 
-Step 1: Destination
+## Wizard Steps
 
-Select an option to deploy using SSH now or generate a bash script for later deployment.
+The configurator walks through 6 steps:
 
-![Select Deployment](./docs/img/ConfiguratorStep1.png)
+1. **Destination** — Deploy via SSH now, or generate a bash script for later.
+2. **Domain** — Set the domain name pointing to your server.
+3. **Chain** — Choose Bitcoin network (mainnet/testnet), pruning level, and optional altcoins.
+4. **Lightning** — Pick a Lightning implementation: LND, Core Lightning, Eclair, or Phoenixd (optional).
+5. **Advanced** — Additional settings like reverse proxy, custom BTCPAY_IMAGE, startup options.
+6. **Summary** — Review all selections, then deploy or export the script.
 
-To configure and deploy a server now, provide your SSH credentials where you would like it deployed to. 
+### SSH Deployment
 
-![Provide SSH Details](./docs/img/ConfiguratorStep1ssh.png)
+When deploying over SSH, the Configurator automates:
 
-Note: The "Load Existing Settings" option will use the previous deployment's selections for faster configuration if you are modifying an existing installation.
+- Installing Docker, Docker Compose, and Git
+- Configuring BTCPay environment variables
+- Setting up systemd for auto-start on reboot
+- Adding BTCPay utilities to `/usr/bin`
+- Starting BTCPay Server
 
-Step 2: Domain
+### Manual Script Export
 
-Provide the domain name associated with your server IP address.
+Choose "Generate Script" in step 1 to get a bash script you can paste into your server terminal later.
 
-![Provide Domain](./docs/img/ConfiguratorStep2.png)
+## Docker Images
 
-Step 3: Chain
+Images are published to [GitHub Container Registry](https://ghcr.io/btcpayserver/btcpayserver-configurator) on every push to `master`.
 
-Select the desired Bitcoin network type, Bitcoin node pruning level and add any altcoins.
+| Tag | Description |
+|-----|-------------|
+| `latest` | Every master push |
+| `x.y.z` | Versioned release (e.g. `0.0.23`) |
+| `x.y` | Major.minor (e.g. `0.0`) |
 
-![Select Chain](./docs/img/ConfiguratorStep3.png)
+Versioning is driven by the `<Version>` property in `BTCPayServerDockerConfigurator.csproj`. When the version is bumped, CI automatically creates a git tag and publishes versioned Docker images.
 
-Step 4: Lightning
+## Privacy & Security
 
-Select the desired Lightning network option (optional).
+If using someone else's Configurator instance, you will be sharing:
 
-![Lightning Options](./docs/img/ConfiguratorStep4.png)
+- Your server IP/domain and SSH credentials
+- Your server configuration choices
 
-Step 5: Additional
-
-Add any additional services to your BTCPay Server deployment (optional).
-
-![Docker Options](./docs/img/ConfiguratorStep5.png)
-
-Step 6: Advanced
-
-Provide any additional advanced settings (optional).
-
-![Advanced Settings](./docs/img/ConfiguratorStep6.png)
-
-Step 7: Summary
-
-Verify your configuration settings look correct before deploying the server.
-
-![Review Settings](./docs/img/ConfiguratorStep7.png)
-
-During Deployment:
-
-Configurator will SSH into the target server and do the following actions completely automated on your behalf:
-
-- Install Docker
-- Install Docker-Compose
-- Install Git
-- Setup BTCPay settings
-- Make sure it starts at reboot via upstart or systemd
-- Add BTCPay utilities in /user/bin
-- Start BTCPay
-
-The deployment progress will be displayed in your Configurator.
-
-![Wait for Deployment](./docs/img/ConfiguratorDeploy1.png)
-
-Upon deployment completion, Configurator will display the domain of the newly configured BTCPay Server.
-
-![Deployment Location](./docs/img/ConfiguratorDeploy2.png)
-
-The list of executed commands that were used to deploy the server configuration are also displayed.
-
-![Executed Commands](./docs/img/ConfiguratorDeploy3.png)
-
-## Export Manual Configuration
-
-If you want to deploy the configuration to your server at a later time, you can instead export a bash script of your settings. Later you can paste the configuration into your server terminal. 
-
-![Manual Script](./docs/img/ConfiguratorDeployManual.png)
-
-## Privacy & Security Concerns
-
-If you are using someone else's Configurator to deploy your BTCPay Server, such as a [trusted Third-Party](https://docs.btcpayserver.org/ThirdPartyHosting/), you will be providing them with your:
-
-- server IP/domain and ssh password
-- server configuration settings
-
-Users are advised to change their SSH password after Configurator deployment is complete.
-
-To mitigate these privacy and security concerns, use either the [local deployment with Docker](#option-2-build-locally-with-Docker) or the [exported manual script](#export-manual-configuration) without providing your domain. Be sure to include the domain when you paste the commands into your terminal. 
+**Mitigations:**
+- Change your SSH password after deployment.
+- Use [local Docker deployment](#option-2-run-with-docker) or [export the script](#manual-script-export) without entering your domain — add it when you paste the commands into your terminal.
