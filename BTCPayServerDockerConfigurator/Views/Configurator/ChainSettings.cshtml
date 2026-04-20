@@ -87,7 +87,7 @@
                         }
                         else
                         {
-                            <small class="form-text text-muted d-block">Downloads a UTXO set snapshot to speed up initial sync. Only available for full (non-pruned) nodes.</small>
+                            <small class="form-text text-muted d-block">Downloads a UTXO set snapshot to speed up initial sync. Only available for pruned nodes.</small>
                         }
                     </div>
                     </div>
@@ -164,7 +164,7 @@
             var pruning = select.val();
             var group = $("#fastSyncGroup");
             var checkbox = $("#fastSyncCheck");
-            if(nodeAlreadySynced || pruning !== "@PruneMode.NoPruning"){
+            if(nodeAlreadySynced || pruning === "@PruneMode.NoPruning"){
                 group.css("opacity", "0.4");
                 checkbox.prop("checked", false).prop("disabled", true);
             } else {

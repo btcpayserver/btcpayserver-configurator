@@ -139,7 +139,7 @@ public class ConfiguratorSettings
         result.AppendLine(". ./btcpay-setup.sh -i");
 
         if (ChainSettings.FastSync && ChainSettings.Bitcoin &&
-            ChainSettings.PruneMode == PruneMode.NoPruning)
+            ChainSettings.PruneMode != PruneMode.NoPruning)
         {
             result.AppendLine("cd contrib/FastSync");
             result.AppendLine("./load-utxo-set.sh");
