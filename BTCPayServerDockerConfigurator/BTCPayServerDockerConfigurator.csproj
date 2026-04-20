@@ -3,7 +3,7 @@
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Version>0.0.23</Version>
+        <Version>0.0.24</Version>
     </PropertyGroup>
 
     <ItemGroup>

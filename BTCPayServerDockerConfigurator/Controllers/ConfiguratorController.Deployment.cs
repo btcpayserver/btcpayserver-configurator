@@ -136,17 +136,15 @@ public partial class ConfiguratorController
             if (!test.RunCommand("whoami").Result.Contains("root",
                     StringComparison.InvariantCultureIgnoreCase))
             {
-                if (string.IsNullOrEmpty(ssh.RootPassword))
-                {
-                    test.RunCommand("sudo su -");
-                }
-                else
-                {
-                    test.RunCommand(
-                        $"echo \"{ssh.RootPassword}\" | sudo -S sleep 1 && sudo su -");
-                }
+                // Each RunCommand opens a separate SSH exec channel, so
+                // "sudo su -" in one channel won't affect the next.
+                // Combine elevation + verification in a single command.
+                var sudoWhoami = string.IsNullOrEmpty(ssh.RootPassword)
+                    ? test.RunCommand("sudo whoami")
+                    : test.RunCommand(
+                        $"echo \"{ssh.RootPassword}\" | sudo -S whoami");
 
-                if (!test.RunCommand("whoami").Result.Contains("root",
+                if (!sudoWhoami.Result.Contains("root",
                         StringComparison.InvariantCultureIgnoreCase))
                 {
                     return false;

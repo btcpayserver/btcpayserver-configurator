@@ -4,6 +4,7 @@ RUN apk add --no-cache icu-libs openssh-keygen
 ENV LC_ALL=en_US.UTF-8
 ENV LANG=en_US.UTF-8
 WORKDIR /app
+ENV ASPNETCORE_HTTP_PORTS=80
 EXPOSE 80
 EXPOSE 443
 
@@ -21,6 +22,6 @@ RUN dotnet publish "BTCPayServerDockerConfigurator.csproj" -c Release -o /app
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app .
-COPY Dockerfiles/entrypoint.sh docker-entrypoint.sh
+COPY entrypoint.sh docker-entrypoint.sh
 RUN chmod +x docker-entrypoint.sh
 ENTRYPOINT ["./docker-entrypoint.sh"]
