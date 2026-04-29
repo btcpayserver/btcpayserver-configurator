@@ -41,123 +41,134 @@ public partial class ConfiguratorController
         var loadFromServer = updateSettings.Additional?.LoadFromServer ?? false;
         updateSettings.Additional = ConstructDeploymentAdditionalData();
         updateSettings.Additional.LoadFromServer = loadFromServer;
-        switch (updateSettings.Settings.DeploymentType)
+        SshClient sshClient = null;
+        try
         {
-            case DeploymentType.RemoteMachine when ModelState.IsValid:
+            switch (updateSettings.Settings.DeploymentType)
             {
-                var ssh = new SSHSettings
+                case DeploymentType.RemoteMachine when ModelState.IsValid:
                 {
-                    Server = updateSettings.Settings.Host,
-                    Username = updateSettings.Settings.Username,
-                    RootPassword = updateSettings.Settings.RootPassword
-                };
-                if (updateSettings.Settings.AuthMethod == SSHAuthMethod.SSHKey &&
-                    !string.IsNullOrEmpty(updateSettings.Settings.SSHPrivateKey))
-                {
-                    ssh.PrivateKeyContent = updateSettings.Settings.SSHPrivateKey;
-                }
-                else
-                {
-                    ssh.Password = updateSettings.Settings.Password;
-                }
+                    var ssh = new SSHSettings
+                    {
+                        Server = updateSettings.Settings.Host,
+                        Username = updateSettings.Settings.Username,
+                        RootPassword = updateSettings.Settings.RootPassword
+                    };
+                    if (updateSettings.Settings.AuthMethod == SSHAuthMethod.SSHKey &&
+                        !string.IsNullOrEmpty(updateSettings.Settings.SSHPrivateKey))
+                    {
+                        ssh.PrivateKeyContent = updateSettings.Settings.SSHPrivateKey;
+                    }
+                    else
+                    {
+                        ssh.Password = updateSettings.Settings.Password;
+                    }
 
-                if (!await TestSSH(ssh))
-                {
-                    ModelState.AddModelError(
-                        nameof(updateSettings.Settings) + "." +
-                        nameof(updateSettings.Settings.Host),
-                        "Could not connect with specified SSH details");
-                }
+                    sshClient = await TestSSH(ssh);
+                    if (sshClient == null)
+                    {
+                        ModelState.AddModelError(
+                            nameof(updateSettings.Settings) + "." +
+                            nameof(updateSettings.Settings.Host),
+                            "Could not connect with specified SSH details");
+                    }
 
-                break;
-            }
-            case DeploymentType.ThisMachine when ModelState.IsValid:
-            {
-                if (!IsVerified ||
-                    !updateSettings.Additional.AvailableDeploymentTypes.Contains(
-                        DeploymentType.ThisMachine))
-                {
-                    ModelState.AddModelError(
-                        nameof(updateSettings.Settings) + "." +
-                        nameof(updateSettings.Settings.DeploymentType),
-                        "The selected deployment type was not available.");
-                    updateSettings.Settings.DeploymentType = DeploymentType.Manual;
+                    break;
                 }
-                else
+                case DeploymentType.ThisMachine when ModelState.IsValid:
                 {
-                    var ssh = _options.Value.ParseSSHConfiguration();
-                    if (!await TestSSH(ssh))
+                    if (!IsVerified ||
+                        !updateSettings.Additional.AvailableDeploymentTypes.Contains(
+                            DeploymentType.ThisMachine))
                     {
                         ModelState.AddModelError(
                             nameof(updateSettings.Settings) + "." +
                             nameof(updateSettings.Settings.DeploymentType),
-                            "Couldn't SSH into the host.");
+                            "The selected deployment type was not available.");
+                        updateSettings.Settings.DeploymentType = DeploymentType.Manual;
                     }
+                    else
+                    {
+                        var ssh = _options.Value.ParseSSHConfiguration();
+                        sshClient = await TestSSH(ssh);
+                        if (sshClient == null)
+                        {
+                            ModelState.AddModelError(
+                                nameof(updateSettings.Settings) + "." +
+                                nameof(updateSettings.Settings.DeploymentType),
+                                "Couldn't SSH into the host.");
+                        }
+                    }
+
+                    break;
                 }
-
-                break;
             }
-        }
 
-        if (!ModelState.IsValid)
-        {
-            return View(updateSettings);
-        }
+            if (!ModelState.IsValid)
+            {
+                return View(updateSettings);
+            }
 
-        ConfiguratorSettings configuratorSettings;
-        if (updateSettings.Settings.DeploymentType == DeploymentType.ThisMachine ||
-            (updateSettings.Settings.DeploymentType == DeploymentType.RemoteMachine &&
-             updateSettings.Additional.LoadFromServer))
-        {
-            configuratorSettings = await LoadSettingsThroughSSH(updateSettings.Settings);
-        }
-        else
-        {
-            configuratorSettings = string.IsNullOrEmpty(updateSettings.Json)
-                ? new ConfiguratorSettings()
-                : JsonSerializer.Deserialize<ConfiguratorSettings>(updateSettings.Json);
-            configuratorSettings.DeploymentSettings = updateSettings.Settings;
-        }
+            ConfiguratorSettings configuratorSettings;
+            if (updateSettings.Settings.DeploymentType == DeploymentType.ThisMachine ||
+                (updateSettings.Settings.DeploymentType == DeploymentType.RemoteMachine &&
+                 updateSettings.Additional.LoadFromServer))
+            {
+                configuratorSettings =
+                    await LoadSettingsThroughSSH(updateSettings.Settings, sshClient);
+                sshClient = null;
+            }
+            else
+            {
+                configuratorSettings = string.IsNullOrEmpty(updateSettings.Json)
+                    ? new ConfiguratorSettings()
+                    : JsonSerializer.Deserialize<ConfiguratorSettings>(updateSettings.Json);
+                configuratorSettings.DeploymentSettings = updateSettings.Settings;
+            }
 
-        SetConfiguratorSettings(configuratorSettings);
-        return RedirectToAction(nameof(DomainSettings));
+            SetConfiguratorSettings(configuratorSettings);
+            return RedirectToAction(nameof(DomainSettings));
+        }
+        finally
+        {
+            sshClient?.Dispose();
+        }
     }
 
-    private async Task<bool> TestSSH(SSHSettings ssh)
+    private async Task<SshClient> TestSSH(SSHSettings ssh)
     {
         if (ssh == null)
-            return false;
+            return null;
 
+        SshClient client = null;
         try
         {
-            using var test = await ssh.ConnectAsync();
-            if (!test.IsConnected) return false;
+            client = await ssh.ConnectAsync();
+            if (!client.IsConnected) { client.Dispose(); return null; }
 
-            if (!test.RunCommand("whoami").Result.Contains("root",
+            if (!client.RunCommand("whoami").Result.Contains("root",
                     StringComparison.InvariantCultureIgnoreCase))
             {
-                // Each RunCommand opens a separate SSH exec channel, so
-                // "sudo su -" in one channel won't affect the next.
-                // Combine elevation + verification in a single command.
                 var sudoWhoami = string.IsNullOrEmpty(ssh.RootPassword)
-                    ? test.RunCommand("sudo whoami")
-                    : test.RunCommand(
+                    ? client.RunCommand("sudo whoami")
+                    : client.RunCommand(
                         $"echo \"{ssh.RootPassword}\" | sudo -S whoami");
 
                 if (!sudoWhoami.Result.Contains("root",
                         StringComparison.InvariantCultureIgnoreCase))
                 {
-                    return false;
+                    client.Dispose();
+                    return null;
                 }
             }
 
-            await test.DisconnectAsync();
-            return true;
+            return client;
         }
         catch (Exception e)
         {
             _logger.LogError(e, "SSH connection error");
-            return false;
+            client?.Dispose();
+            return null;
         }
     }
 
@@ -184,46 +195,12 @@ public partial class ConfiguratorController
     }
 
     public async Task<ConfiguratorSettings> LoadSettingsThroughSSH(
-        DeploymentSettings settings)
+        DeploymentSettings settings, SshClient ssh)
     {
-        SSHSettings sshSettings = null;
         var result = new ConfiguratorSettings
         {
             DeploymentSettings = settings
         };
-        switch (settings.DeploymentType)
-        {
-            case DeploymentType.RemoteMachine when ModelState.IsValid:
-            {
-                sshSettings = new SSHSettings
-                {
-                    Server = settings.Host,
-                    Username = settings.Username
-                };
-                if (settings.AuthMethod == SSHAuthMethod.SSHKey &&
-                    !string.IsNullOrEmpty(settings.SSHPrivateKey))
-                {
-                    sshSettings.PrivateKeyContent = settings.SSHPrivateKey;
-                }
-                else
-                {
-                    sshSettings.Password = settings.Password;
-                }
-
-                break;
-            }
-            case DeploymentType.ThisMachine when ModelState.IsValid:
-            {
-                if (IsVerified)
-                {
-                    sshSettings = _options.Value.ParseSSHConfiguration();
-                }
-
-                break;
-            }
-        }
-
-        using var ssh = await sshSettings.ConnectAsync();
         result.AdvancedSettings ??= new AdvancedSettings();
 
         var preloadedEnvVars = new Dictionary<string, string>();
