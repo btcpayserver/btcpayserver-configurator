@@ -1,6 +1,5 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using Renci.SshNet;
 
 namespace BTCPayServerDockerConfigurator.Models;
 
@@ -23,7 +22,7 @@ public class ServerData
     public BitcoinNodeInfo BitcoinNode { get; set; }
     public bool Loaded { get; set; }
 
-    public static async Task<ServerData> Load(SshClient ssh)
+    public static async Task<ServerData> Load(IRemoteExecutor ssh)
     {
         var result = new ServerData();
         var cmd = await ssh.RunBash(FetchMemoryCommand);

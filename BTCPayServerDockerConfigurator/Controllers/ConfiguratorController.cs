@@ -13,6 +13,7 @@ public partial class ConfiguratorController : Controller
     private readonly ILogger<ConfiguratorController> _logger;
     private readonly DeploymentService _deploymentService;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly TunnelService _tunnelService;
 
     public bool IsVerified
     {
@@ -35,12 +36,14 @@ public partial class ConfiguratorController : Controller
     public ConfiguratorController(IOptions<ConfiguratorOptions> options,
         ILogger<ConfiguratorController> logger,
         DeploymentService deploymentService,
-        IHttpClientFactory httpClientFactory)
+        IHttpClientFactory httpClientFactory,
+        TunnelService tunnelService)
     {
         _options = options;
         _logger = logger;
         _deploymentService = deploymentService;
         _httpClientFactory = httpClientFactory;
+        _tunnelService = tunnelService;
     }
 
     private ConfiguratorSettings GetConfiguratorSettings()
@@ -83,6 +86,7 @@ public partial class ConfiguratorController : Controller
         switch (configuratorSettings.DeploymentSettings.DeploymentType)
         {
             case DeploymentType.Manual:
+            case DeploymentType.ReverseConnection:
                 break;
             case DeploymentType.ThisMachine:
                 try

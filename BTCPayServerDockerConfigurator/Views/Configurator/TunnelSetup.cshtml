@@ -1,0 +1,90 @@
+@{
+    ViewData["Title"] = "Connect your server";
+    ViewData["CurrentStep"] = 1;
+    var secret = (string)ViewBag.Secret;
+    var command = (string)ViewBag.Command;
+}
+<div class="container">
+    <div class="row mb-4">
+        <h2 class="text-center w-100">@ViewData["Title"]</h2>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-8 col-sm-12 offset-md-2">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center mb-3">Run this on your server</h3>
+                    <p class="text-muted text-center">Open a terminal on your VPS and paste this command. The configurator will read your server's current setup.</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control font-monospace" value="@command" id="tunnel-command" readonly onclick="this.select();">
+                        <button class="btn btn-outline-primary" type="button" id="copy-btn" onclick="copyCommand()">Copy</button>
+                    </div>
+                    <div class="alert alert-info small mb-0">
+                        <strong>Tip:</strong> If your SSH user is not root, either run with <code>sudo bash &lt;(curl ...)</code> or provide the root password below.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-4">
+        <div class="col-md-6 col-sm-12 offset-md-3 text-center">
+            <div id="status-waiting">
+                <div class="spinner-border text-primary mb-2" role="status"></div>
+                <p class="text-muted" id="status-text">Waiting for your server to connect...</p>
+            </div>
+            <div id="status-error" style="display:none">
+                <div class="alert alert-danger" id="error-message"></div>
+                <a href="@Url.Action("DeploymentDestination")" class="btn btn-secondary">Back</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script>
+    function copyCommand() {
+        var input = document.getElementById('tunnel-command');
+        input.select();
+        navigator.clipboard.writeText(input.value);
+        var btn = document.getElementById('copy-btn');
+        btn.textContent = 'Copied!';
+        setTimeout(function() { btn.textContent = 'Copy'; }, 2000);
+    }
+
+    function pollStatus() {
+        $.getJSON('@Url.Action("TunnelStatus", new { secret })', function(data) {
+            switch (data.state) {
+                case 'waitingforagent':
+                    $('#status-text').text('Waiting for your server to connect...');
+                    setTimeout(pollStatus, 2000);
+                    break;
+                case 'connected':
+                    $('#status-text').text('Connected! Testing access...');
+                    setTimeout(pollStatus, 2000);
+                    break;
+                case 'loading':
+                    $('#status-text').text('Reading server configuration...');
+                    setTimeout(pollStatus, 2000);
+                    break;
+                case 'done':
+                    window.location.href = '@Url.Action("TunnelComplete", new { secret })';
+                    break;
+                case 'error':
+                    $('#status-waiting').hide();
+                    $('#status-error').show();
+                    $('#error-message').text(data.error || 'An error occurred');
+                    break;
+                case 'expired':
+                    $('#status-waiting').hide();
+                    $('#status-error').show();
+                    $('#error-message').text('Session expired. Please try again.');
+                    break;
+            }
+        }).fail(function() {
+            setTimeout(pollStatus, 3000);
+        });
+    }
+
+    $(document).ready(pollStatus);
+    </script>
+}

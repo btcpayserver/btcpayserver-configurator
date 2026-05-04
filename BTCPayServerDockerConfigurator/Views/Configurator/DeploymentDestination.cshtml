@@ -41,6 +41,21 @@
                 </label>
             </div>
         }
+        @if (Model.Additional.AvailableDeploymentTypes.Contains(DeploymentType.ReverseConnection))
+        {
+            <div class="col-md-@(12 / Model.Additional.AvailableDeploymentTypes.Count)">
+                <label class="card-input-element-label">
+                    <input type="radio" asp-for="Settings.DeploymentType" value="@DeploymentType.ReverseConnection" class="card-input-element d-none"/>
+                    <div class="card shadow-sm w-100 h-100 mt-4 mt-md-0">
+                        <div class="card-img-top" style="background-image: url(assets/shell.png);"></div>
+                        <div class="card-body">
+                            <h3 class="card-title text-center">Reverse Connection</h3>
+                            <p class="card-text">Run a command on your server that connects back to us. No SSH credentials needed &mdash; your server reaches out, not the other way around.</p>
+                        </div>
+                    </div>
+                </label>
+            </div>
+        }
         @if (Model.Additional.AvailableDeploymentTypes.Contains(DeploymentType.Manual))
         {
             <div class="col-md-@(12 / Model.Additional.AvailableDeploymentTypes.Count)">
@@ -113,6 +128,21 @@
         </div>
     </div>
 
+    <div class="row mb-5" style="display: none" id="reverse-connection-form">
+        <div class="col-md-6 col-sm-12 offset-md-3">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h3 class="card-title text-center pt-2">Reverse Connection</h3>
+                    <p class="text-muted">We'll give you a command to run on your server. It connects back here so we can read your current configuration. No SSH credentials leave your machine.</p>
+                    <div class="form-group">
+                        <label asp-for="Settings.RootPassword">Root/sudo password (if your SSH user is not root)</label>
+                        <input type="password" class="form-control" asp-for="Settings.RootPassword" placeholder="Leave blank if running as root" value="@Model.Settings.RootPassword">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="sticky-cta d-flex justify-content-center">
         <button type="submit" class="btn btn-primary btn-lg btn-continue">Continue</button>
     </div>
@@ -132,11 +162,8 @@
 
     function toggleForm(){
          var selectedDeploymentType = $('input[name=Settings\\.DeploymentType]:checked').val();
-         if(selectedDeploymentType === "@nameof(DeploymentType.RemoteMachine)"){
-             $("#remote-machine-form").show();
-         }else{
-              $("#remote-machine-form").hide();
-         }
+         $("#remote-machine-form").toggle(selectedDeploymentType === "@nameof(DeploymentType.RemoteMachine)");
+         $("#reverse-connection-form").toggle(selectedDeploymentType === "@nameof(DeploymentType.ReverseConnection)");
     }
 
     function toggleAuthMethod(){

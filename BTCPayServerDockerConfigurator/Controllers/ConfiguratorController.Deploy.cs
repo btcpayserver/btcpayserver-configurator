@@ -22,7 +22,8 @@ public partial class ConfiguratorController
     {
         var model = GetConfiguratorSettings();
 
-        if (model.DeploymentSettings.DeploymentType == DeploymentType.Manual)
+        if (model.DeploymentSettings.DeploymentType is DeploymentType.Manual
+                or DeploymentType.ReverseConnection)
         {
             var id = Guid.NewGuid().ToString();
             var result = new UpdateSettings<ConfiguratorSettings, DeployAdditionalData>

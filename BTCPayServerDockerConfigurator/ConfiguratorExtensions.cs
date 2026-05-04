@@ -8,6 +8,8 @@ public static class ConfiguratorExtensions
     {
         services.AddOptions();
         services.AddSingleton<DeploymentService>();
+        services.AddSingleton<TunnelService>();
+        services.AddHostedService(sp => sp.GetRequiredService<TunnelService>());
         services.AddOptions<ConfiguratorOptions>();
         services.AddHttpClient();
         services.PostConfigure<ConfiguratorOptions>(options =>

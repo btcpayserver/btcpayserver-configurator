@@ -4,5 +4,6 @@ public enum DeploymentType
 {
     ThisMachine,
     RemoteMachine,
-    Manual
+    Manual,
+    ReverseConnection
 }

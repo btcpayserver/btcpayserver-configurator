@@ -102,6 +102,44 @@ public partial class ConfiguratorController
 
                     break;
                 }
+                case DeploymentType.ReverseConnection when ModelState.IsValid:
+                {
+                    var session = _tunnelService.CreateSession();
+                    var rootPassword = updateSettings.Settings.RootPassword;
+                    var deploymentSettings = updateSettings.Settings;
+                    _ = Task.Run(async () =>
+                    {
+                        try
+                        {
+                            await session.WaitForAgent(TimeSpan.FromMinutes(5));
+                            if (session.State == TunnelState.Error) return;
+
+                            session.State = TunnelState.Loading;
+                            if (!await TestRemoteRoot(session, rootPassword))
+                            {
+                                session.State = TunnelState.Error;
+                                session.ErrorMessage = "Could not verify root access";
+                                return;
+                            }
+
+                            session.LoadedSettings =
+                                await LoadSettingsThroughSSH(deploymentSettings, session);
+                            session.State = TunnelState.Done;
+                        }
+                        catch (TaskCanceledException)
+                        {
+                            session.State = TunnelState.Expired;
+                            session.ErrorMessage = "Timed out waiting for agent";
+                        }
+                        catch (Exception ex)
+                        {
+                            session.State = TunnelState.Error;
+                            session.ErrorMessage = ex.Message;
+                        }
+                    });
+                    return RedirectToAction("TunnelSetup",
+                        new { secret = session.Secret });
+                }
             }
 
             if (!ModelState.IsValid)
@@ -114,9 +152,10 @@ public partial class ConfiguratorController
                 (updateSettings.Settings.DeploymentType == DeploymentType.RemoteMachine &&
                  updateSettings.Additional.LoadFromServer))
             {
-                configuratorSettings =
-                    await LoadSettingsThroughSSH(updateSettings.Settings, sshClient);
+                using var executor = new SshRemoteExecutor(sshClient);
                 sshClient = null;
+                configuratorSettings =
+                    await LoadSettingsThroughSSH(updateSettings.Settings, executor);
             }
             else
             {
@@ -181,21 +220,22 @@ public partial class ConfiguratorController
         }
 
         additionalData.AvailableDeploymentTypes.Add(DeploymentType.RemoteMachine);
+        additionalData.AvailableDeploymentTypes.Add(DeploymentType.ReverseConnection);
         additionalData.AvailableDeploymentTypes.Add(DeploymentType.Manual);
         return additionalData;
     }
 
-    private async Task<string> GetVar(Dictionary<string, string> dictionary, SshClient client,
-        string name)
+    private async Task<string> GetVar(Dictionary<string, string> dictionary,
+        IRemoteExecutor executor, string name)
     {
         if (dictionary.TryGetValue(name, out var value))
             return value;
 
-        return await client.GetEnvVar(name);
+        return await executor.GetEnvVar(name);
     }
 
     public async Task<ConfiguratorSettings> LoadSettingsThroughSSH(
-        DeploymentSettings settings, SshClient ssh)
+        DeploymentSettings settings, IRemoteExecutor ssh)
     {
         var result = new ConfiguratorSettings
         {
@@ -346,5 +386,60 @@ public partial class ConfiguratorController
         result.ServerData = await ServerData.Load(ssh);
 
         return result;
+    }
+
+    private async Task<bool> TestRemoteRoot(IRemoteExecutor executor, string rootPassword)
+    {
+        var whoami = await executor.RunBash("whoami");
+        if (whoami.Output.Contains("root", StringComparison.InvariantCultureIgnoreCase))
+            return true;
+
+        var sudoWhoami = string.IsNullOrEmpty(rootPassword)
+            ? await executor.RunBash("sudo whoami")
+            : await executor.RunBash(
+                $"echo \"{rootPassword}\" | sudo -S whoami");
+
+        return sudoWhoami.Output.Contains("root",
+            StringComparison.InvariantCultureIgnoreCase);
+    }
+
+    [HttpGet("tunnel-setup/{secret}")]
+    public IActionResult TunnelSetup(string secret)
+    {
+        var session = _tunnelService.GetSession(secret);
+        if (session == null)
+            return RedirectToAction("DeploymentDestination");
+
+        var baseUrl = $"{Request.Scheme}://{Request.Host}{Request.PathBase}";
+        ViewBag.Secret = secret;
+        ViewBag.Command =
+            $"bash <(curl -sSf {baseUrl}/api/tunnel/{secret}/agent)";
+        return View();
+    }
+
+    [HttpGet("tunnel-status/{secret}")]
+    public IActionResult TunnelStatus(string secret)
+    {
+        var session = _tunnelService.GetSession(secret);
+        if (session == null)
+            return Json(new { state = "expired" });
+
+        return Json(new
+        {
+            state = session.State.ToString().ToLowerInvariant(),
+            error = session.ErrorMessage
+        });
+    }
+
+    [HttpGet("tunnel-complete/{secret}")]
+    public IActionResult TunnelComplete(string secret)
+    {
+        var session = _tunnelService.GetSession(secret);
+        if (session?.State != TunnelState.Done || session.LoadedSettings == null)
+            return RedirectToAction("DeploymentDestination");
+
+        SetConfiguratorSettings(session.LoadedSettings);
+        _tunnelService.RemoveSession(secret);
+        return RedirectToAction(nameof(DomainSettings));
     }
 }
