@@ -8,7 +8,7 @@
 
     <ItemGroup>
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="10.0.0" />
-        <PackageReference Include="SSH.NET" Version="2024.1.0" />
+        <PackageReference Include="SSH.NET" Version="2026.0.0" />
     </ItemGroup>
 
 </Project>
